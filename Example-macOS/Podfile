@@ -1,0 +1,10 @@
+target 'Example-macOS' do
+  platform :osx, '10.10'
+
+  # Pods for GTMAppAuth development
+  pod 'GTMAppAuth', :path => '../'
+
+  # In production, you would use:
+  # pod 'GTMAppAuth'
+
+end
