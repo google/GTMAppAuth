@@ -146,14 +146,15 @@ static GTMAppAuthGTMOAuth2Keychain* gGTMAppAuthFetcherAuthorizationGTMOAuth2Defa
 
 @end
 
-#pragma mark OGTMAppAuthGTMOAuth2Keychain
+#pragma mark GTMAppAuthGTMOAuth2Keychain
 
 @implementation GTMAppAuthGTMOAuth2Keychain
 
 + (GTMAppAuthGTMOAuth2Keychain *)defaultKeychain {
-  if (gGTMAppAuthFetcherAuthorizationGTMOAuth2DefaultKeychain == nil) {
+  static dispatch_once_t onceToken;
+  dispatch_once (&onceToken, ^{
     gGTMAppAuthFetcherAuthorizationGTMOAuth2DefaultKeychain = [[self alloc] init];
-  }
+  });
   return gGTMAppAuthFetcherAuthorizationGTMOAuth2DefaultKeychain;
 }
 
@@ -202,7 +203,7 @@ static GTMAppAuthGTMOAuth2Keychain* gGTMAppAuthFetcherAuthorizationGTMOAuth2Defa
                              error:(NSError **)error {
   OSStatus status = GTMAppAuthGTMOAuth2KeychainErrorBadArguments;
   NSData *result = nil;
-  if (0 < [service length] && 0 < [account length]) {
+  if (service.length > 0 && account.length > 0) {
     CFDataRef passwordData = NULL;
     NSMutableDictionary *keychainQuery = [self keychainQueryForService:service account:account];
     [keychainQuery setObject:(id)kCFBooleanTrue forKey:(id)kSecReturnData];

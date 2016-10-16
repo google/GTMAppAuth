@@ -41,7 +41,7 @@ static const char *kKeychainAccountName = "OAuth";
   }
 
   SecKeychainRef defaultKeychain = NULL;
-  const char *utf8ServiceName = [keychainItemName UTF8String];
+  const char *utf8ServiceName = keychainItemName.UTF8String;
   SecKeychainItemRef *dontWantItemRef = NULL;
 
   void *passwordBuff = NULL;

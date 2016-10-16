@@ -53,7 +53,7 @@ static NSString *const kRedirectURI =
 
 /*! @brief NSCoding key for the authorization property.
  */
-static NSString *const kGTMAppAuthExampleAuthorizerKey = @"authorization";
+static NSString *const kExampleAuthorizerKey = @"authorization";
 
 @interface GTMAppAuthExampleViewController () <OIDAuthStateChangeDelegate,
                                                OIDAuthStateErrorDelegate>
@@ -83,13 +83,11 @@ static NSString *const kGTMAppAuthExampleAuthorizerKey = @"authorization";
             "Instructions: https://github.com/openid/AppAuth-iOS/blob/master/Example-Mac/README.md");
 
   // verifies that the custom URI scheme has been updated in the Info.plist
-  NSArray __unused* urlTypes =
-      [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleURLTypes"];
-  NSAssert([urlTypes count] > 0, @"No custom URI scheme has been configured for the project.");
-  NSArray *urlSchemes =
-      [(NSDictionary *)[urlTypes objectAtIndex:0] objectForKey:@"CFBundleURLSchemes"];
-  NSAssert([urlSchemes count] > 0, @"No custom URI scheme has been configured for the project.");
-  NSString *urlScheme = [urlSchemes objectAtIndex:0];
+  NSArray *urlTypes = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleURLTypes"];
+  NSAssert(urlTypes.count > 0, @"No custom URI scheme has been configured for the project.");
+  NSArray *urlSchemes = ((NSDictionary *)urlTypes.firstObject)[@"CFBundleURLSchemes"];
+  NSAssert(urlSchemes.count > 0, @"No custom URI scheme has been configured for the project.");
+  NSString *urlScheme = urlSchemes.firstObject;
 
   NSAssert(![urlScheme isEqualToString:@"com.googleusercontent.apps.YOUR_CLIENT"],
            @"Configure the URI scheme in Info.plist (URL Types -> Item 0 -> URL Schemes -> Item 0) "
@@ -111,10 +109,9 @@ static NSString *const kGTMAppAuthExampleAuthorizerKey = @"authorization";
 - (void)saveState {
   if (_authorization.canAuthorize) {
     [GTMAppAuthFetcherAuthorization saveAuthorization:_authorization
-                                    toKeychainForName:kGTMAppAuthExampleAuthorizerKey];
+                                    toKeychainForName:kExampleAuthorizerKey];
   } else {
-    [GTMAppAuthFetcherAuthorization
-        removeAuthorizationFromKeychainForName:kGTMAppAuthExampleAuthorizerKey];
+    [GTMAppAuthFetcherAuthorization removeAuthorizationFromKeychainForName:kExampleAuthorizerKey];
   }
 }
 
@@ -122,7 +119,7 @@ static NSString *const kGTMAppAuthExampleAuthorizerKey = @"authorization";
  */
 - (void)loadState {
   GTMAppAuthFetcherAuthorization* authorization =
-      [GTMAppAuthFetcherAuthorization authorizationFromKeychainForName:kGTMAppAuthExampleAuthorizerKey];
+      [GTMAppAuthFetcherAuthorization authorizationFromKeychainForName:kExampleAuthorizerKey];
   [self setAuthorization:authorization];
 }
 

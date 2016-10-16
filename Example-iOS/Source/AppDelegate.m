@@ -15,11 +15,9 @@
         See the License for the specific language governing permissions and
         limitations under the License.
  */
-
 #import "AppDelegate.h"
 
 #import "AppAuth.h"
-
 #import "GTMAppAuthExampleViewController.h"
 
 @implementation AppDelegate
@@ -30,7 +28,7 @@
     didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
   UIWindow *window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
   UIViewController *mainViewController =
-      [[GTMAppAuthExampleViewController alloc] initWithNibName:nil bundle:nil];
+      [[GTMAppAuthExampleViewController alloc] init];
   window.rootViewController = mainViewController;
 
   _window = window;

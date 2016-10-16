@@ -66,7 +66,7 @@ static NSString *const kGTMOAuth2ServiceProviderGoogle = @"Google";
   [dict setValue:authorization.userEmailIsVerified forKey:kUserEmailIsVerifiedKey];
   [dict setValue:authorization.authState.scope forKey:kOAuth2ScopeKey];
 
-  NSString *result = [[self class] encodedQueryParametersForDictionary:dict];
+  NSString *result = [self encodedQueryParametersForDictionary:dict];
   return result;
 }
 
@@ -84,12 +84,12 @@ static NSString *const kGTMOAuth2ServiceProviderGoogle = @"Google";
   }
 
   GTMAppAuthFetcherAuthorization *authorization =
-      [[self class] authorizeFromPersistenceString:password
-                                   serviceProvider:serviceProvider
-                                          tokenURL:tokenURL
-                                       redirectURI:redirectURI
-                                          clientID:clientID
-                                      clientSecret:clientSecret];
+      [self authorizeFromPersistenceString:password
+                           serviceProvider:serviceProvider
+                                  tokenURL:tokenURL
+                               redirectURI:redirectURI
+                                  clientID:clientID
+                              clientSecret:clientSecret];
   return authorization;
 }
 
@@ -168,7 +168,7 @@ static NSString *const kGTMOAuth2ServiceProviderGoogle = @"Google";
   return auth;
 }
 
-#endif
+#endif // !GTM_OAUTH2_SKIP_GOOGLE_SUPPORT
 
 /*! @brief Removes stored tokens, such as when the user signs out.
     @return YES the tokens were removed successfully (or didn't exist).
@@ -182,8 +182,8 @@ static NSString *const kGTMOAuth2ServiceProviderGoogle = @"Google";
  */
 + (BOOL)saveAuthToKeychainForName:(NSString *)keychainItemName
                    authentication:(GTMAppAuthFetcherAuthorization *)auth {
-  [[self class] removeAuthFromKeychainForName:keychainItemName];
-  NSString *password = [[self class] persistenceResponseStringForAuthorization:auth];
+  [self removeAuthFromKeychainForName:keychainItemName];
+  NSString *password = [self persistenceResponseStringForAuthorization:auth];
 
   return [GTMKeychain savePasswordToKeychainForName:keychainItemName password:password];
 }
@@ -220,13 +220,11 @@ static NSString *const kGTMOAuth2ServiceProviderGoogle = @"Google";
   return [originalString stringByAddingPercentEncodingWithAllowedCharacters:cs];
 #else
   // Builds targeting iOS 6/OS X 10.8.
-  CFStringRef leaveUnescaped = NULL;
-
   CFStringRef escapedStr = NULL;
   if (originalString) {
     escapedStr = CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault,
                                                          (CFStringRef)originalString,
-                                                         leaveUnescaped,
+                                                         NULL,
                                                          (CFStringRef)kForceEscape,
                                                          kCFStringEncodingUTF8);
   }
@@ -243,10 +241,10 @@ static NSString *const kGTMOAuth2ServiceProviderGoogle = @"Google";
 
   NSArray *items = [responseStr componentsSeparatedByString:@"&"];
 
-  NSMutableDictionary *responseDict = [NSMutableDictionary dictionaryWithCapacity:[items count]];
+  NSMutableDictionary *responseDict = [NSMutableDictionary dictionaryWithCapacity:items.count];
 
   for (NSString *item in items) {
-    NSString *key = nil;
+    NSString *key;
     NSString *value = @"";
 
     NSRange equalsRange = [item rangeOfString:@"="];
@@ -255,14 +253,16 @@ static NSString *const kGTMOAuth2ServiceProviderGoogle = @"Google";
       key = [item substringToIndex:equalsRange.location];
 
       // There are characters after the '='
-      value = [item substringFromIndex:(equalsRange.location + 1)];
+      if (equalsRange.location + 1 < item.length) {
+        value = [item substringFromIndex:(equalsRange.location + 1)];
+      }
     } else {
       // The parameter has no '='
       key = item;
     }
 
-    NSString *plainKey = [[self class] unencodedOAuthParameterForString:key];
-    NSString *plainValue = [[self class] unencodedOAuthParameterForString:value];
+    NSString *plainKey = [self unencodedOAuthParameterForString:key];
+    NSString *plainValue = [self unencodedOAuthParameterForString:value];
 
     [responseDict setObject:plainValue forKey:plainKey];
   }
@@ -316,6 +316,6 @@ static NSString *const kGTMOAuth2ServiceProviderGoogle = @"Google";
   return kOOBString;
 }
 
-#endif
+#endif // !GTM_OAUTH2_SKIP_GOOGLE_SUPPORT
 
 @end

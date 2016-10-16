@@ -128,7 +128,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (NSString *)nativeClientRedirectURI;
 
-#endif
+#endif // !GTM_OAUTH2_SKIP_GOOGLE_SUPPORT
 
 @end
 

@@ -15,11 +15,9 @@
         See the License for the specific language governing permissions and
         limitations under the License.
  */
-
 #import "AppDelegate.h"
 
 #import <AppAuth/AppAuth.h>
-
 #import "GTMAppAuthExampleViewController.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -33,7 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
   _window.title = @"AppAuth Example for macOS";
   GTMAppAuthExampleViewController *contentViewController =
-      [[GTMAppAuthExampleViewController alloc] initWithNibName:nil bundle:nil];
+      [[GTMAppAuthExampleViewController alloc] init];
   contentViewController.appDelegate = self;
   _window.contentViewController = contentViewController;
 

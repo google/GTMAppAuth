@@ -158,7 +158,7 @@ NSString *const GTMAppAuthFetcherAuthorizationErrorRequestKey = @"request";
 
     _serviceProvider = [serviceProvider copy];
     _userID = [userID copy];
-    _userEmail = (NSString *)[userEmail copy];
+    _userEmail = [userEmail copy];
     _userEmailIsVerified = [userEmailIsVerified copy];
 
     // Decodes the ID Token locally to extract the email address.
@@ -230,23 +230,27 @@ NSString *const GTMAppAuthFetcherAuthorizationErrorRequestKey = @"request";
   NSArray *sections = [idToken componentsSeparatedByString:@"."];
   if (sections.count > 1) {
     // Gets the JWT payload section.
-    NSString *body = sections[1];
+    NSMutableString *body = [sections[1] mutableCopy];
 
     // Converts base64url to base64.
-    [body stringByReplacingOccurrencesOfString:@"-" withString:@"+"];
-    [body stringByReplacingOccurrencesOfString:@"_" withString:@"/"];
+    NSRange range = NSMakeRange(0, body.length);
+    [body replaceOccurrencesOfString:@"-" withString:@"+" options:NSLiteralSearch range:range];
+    [body replaceOccurrencesOfString:@"_" withString:@"/" options:NSLiteralSearch range:range];
 
     // Converts base64 no padding to base64 with padding
     while (body.length % 4 != 0) {
-      body = [body stringByAppendingString:@"="];
+      [body appendString:@"="];
     }
 
-    // Decodes base64.
+    // Decodes base64 string.
     NSData *decodedData = [[NSData alloc] initWithBase64EncodedString:body options:0];
 
     // Parses JSON.
     NSError *error;
     id object = [NSJSONSerialization JSONObjectWithData:decodedData options:0 error:&error];
+    if (error) {
+      NSLog(@"Error %@ parsing token payload %@", error, body);
+    }
     if ([object isKindOfClass:[NSDictionary class]]) {
       return (NSDictionary *)object;
     }
@@ -418,7 +422,7 @@ NSString *const GTMAppAuthFetcherAuthorizationErrorRequestKey = @"request";
     [invocation invoke];
   }
 
-  // If the a callback block exists, executes the block.
+  // If a callback block exists, executes the block.
   id handler = args.completionHandler;
   if (handler) {
     void (^authCompletionBlock)(NSError *) = handler;
@@ -442,6 +446,7 @@ NSString *const GTMAppAuthFetcherAuthorizationErrorRequestKey = @"request";
     NSUInteger argIndex = 0;
     BOOL found = NO;
     for (GTMAppAuthFetcherAuthorizationArgs *args in _authorizationQueue) {
+      // Checks pointer equality with given request, don't want to match equivalent requests.
       if ([args request] == request) {
         found = YES;
         break;
@@ -453,7 +458,7 @@ NSString *const GTMAppAuthFetcherAuthorizationErrorRequestKey = @"request";
       [_authorizationQueue removeObjectAtIndex:argIndex];
 
       // If the queue is now empty, go ahead and stop the fetcher.
-      if ([_authorizationQueue count] == 0) {
+      if (_authorizationQueue.count == 0) {
         [self stopAuthorization];
       }
     }
@@ -466,6 +471,7 @@ NSString *const GTMAppAuthFetcherAuthorizationErrorRequestKey = @"request";
   BOOL wasFound = NO;
   @synchronized(_authorizationQueue) {
     for (GTMAppAuthFetcherAuthorizationArgs *args in _authorizationQueue) {
+      // Checks pointer equality with given request, don't want to match equivalent requests.
       if ([args request] == request) {
         wasFound = YES;
         break;
