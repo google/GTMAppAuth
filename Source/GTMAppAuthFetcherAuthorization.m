@@ -306,7 +306,7 @@ NSString *const GTMAppAuthFetcherAuthorizationErrorRequestKey = @"request";
   }
 
   // Obtains fresh tokens from AppAuth.
-  [_authState withFreshTokensPerformAction:^(NSString *_Nullable accessToken,
+  [_authState performActionWithFreshTokens:^(NSString *_Nullable accessToken,
                                              NSString *_Nullable idToken,
                                              NSError *_Nullable error) {
     // Processes queue.

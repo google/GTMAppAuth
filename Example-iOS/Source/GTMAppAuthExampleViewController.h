@@ -41,7 +41,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (IBAction)authWithAutoCodeExchange:(nullable id)sender;
 
-/*! @brief Performs a Userinfo API call using @c OIDAuthState.withFreshTokensPerformAction.
+/*! @brief Performs a Userinfo API call using @c GTMAppAuthFetcherAuthorization.
     @param sender IBAction sender.
  */
 - (IBAction)userinfo:(nullable id)sender;
