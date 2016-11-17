@@ -98,6 +98,12 @@ NSString *const GTMAppAuthFetcherAuthorizationErrorRequestKey = @"request";
 
 @implementation GTMAppAuthFetcherAuthorizationArgs
 
+@synthesize request = _request;
+@synthesize delegate = _delegate;
+@synthesize selector = _selector;
+@synthesize completionHandler = _completionHandler;
+@synthesize error = _error;
+
 + (GTMAppAuthFetcherAuthorizationArgs *)argsWithRequest:(NSMutableURLRequest *)req
              delegate:(id)delegate
              selector:(SEL)selector
@@ -120,6 +126,9 @@ NSString *const GTMAppAuthFetcherAuthorizationErrorRequestKey = @"request";
 }
 
 @synthesize authState = _authState;
+@synthesize serviceProvider = _serviceProvider;
+@synthesize userID = _userID;
+@synthesize userEmailIsVerified = _userEmailIsVerified;
 
 // GTMFetcherAuthorizationProtocol doesn't specify atomic/nonatomic for these properties.
 #pragma clang diagnostic push
