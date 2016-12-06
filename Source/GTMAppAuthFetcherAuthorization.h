@@ -99,12 +99,12 @@ typedef void (^GTMAppAuthFetcherAuthorizationCompletion)(NSError *_Nullable erro
               userEmailIsVerified:(nullable NSString *)userEmailIsVerified
     NS_DESIGNATED_INITIALIZER;
 
-#if !GTM_OAUTH2_SKIP_GOOGLE_SUPPORT
+#if !GTM_APPAUTH_SKIP_GOOGLE_SUPPORT
 /*! @brief Convenience method to return an @c OIDServiceConfiguration for Google.
     @return A @c OIDServiceConfiguration object setup with Google OAuth endpoints.
  */
 + (OIDServiceConfiguration *)configurationForGoogle;
-#endif // !GTM_OAUTH2_SKIP_GOOGLE_SUPPORT
+#endif // !GTM_APPAUTH_SKIP_GOOGLE_SUPPORT
 
 /*! @brief Adds an authorization header to the given request, using the authorization state.
         Refreshes the access token if needed.

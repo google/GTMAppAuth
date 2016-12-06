@@ -1,0 +1,10 @@
+target 'Example-tvOS' do
+  platform :tvos, '9.0'
+
+  # Pods for GTMAppAuth development
+  pod 'GTMAppAuth', :path => '../'
+
+  # In production, you would use:
+  # pod 'GTMAppAuth'
+
+end

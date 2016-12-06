@@ -1,5 +1,5 @@
-/*! @file GTMAppAuth.h
-    @brief GTMAppAuth SDK
+/*! @file AppDelegate.h
+    @brief GTMAppAuth tvOS SDK Example
     @copyright
         Copyright 2016 Google Inc.
     @copydetails
@@ -16,18 +16,11 @@
         limitations under the License.
  */
 
-#import "GTMAppAuthFetcherAuthorization.h"
-#import "GTMAppAuthFetcherAuthorization+Keychain.h"
-#import "GTMTVAuthorizationRequest.h"
-#import "GTMTVAuthorizationResponse.h"
-#import "GTMTVAuthorizationService.h"
+#import <UIKit/UIKit.h>
 
-#if TARGET_OS_TV
-#elif TARGET_OS_WATCH
-#elif TARGET_OS_IOS
-#import "GTMOAuth2KeychainCompatibility.h"
-#elif TARGET_OS_MAC
-#import "GTMOAuth2KeychainCompatibility.h"
-#else
-#warn "Platform Undefined"
-#endif
+@interface AppDelegate : UIResponder <UIApplicationDelegate>
+
+@property (strong, nonatomic) UIWindow *window;
+
+@end
+

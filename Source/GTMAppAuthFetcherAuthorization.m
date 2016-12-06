@@ -219,7 +219,7 @@ NSString *const GTMAppAuthFetcherAuthorizationErrorRequestKey = @"request";
 
 # pragma mark - Convenience
 
-#if !GTM_OAUTH2_SKIP_GOOGLE_SUPPORT
+#if !GTM_APPAUTH_SKIP_GOOGLE_SUPPORT
 + (OIDServiceConfiguration *)configurationForGoogle {
   NSURL *authorizationEndpoint =
       [NSURL URLWithString:@"https://accounts.google.com/o/oauth2/v2/auth"];
@@ -231,7 +231,7 @@ NSString *const GTMAppAuthFetcherAuthorizationErrorRequestKey = @"request";
                                                        tokenEndpoint:tokenEndpoint];
   return configuration;
 }
-#endif // !GTM_OAUTH2_SKIP_GOOGLE_SUPPORT
+#endif // !GTM_APPAUTH_SKIP_GOOGLE_SUPPORT
 
 # pragma mark - ID Token extraction
 
