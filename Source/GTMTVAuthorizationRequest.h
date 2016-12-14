@@ -29,38 +29,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface GTMTVAuthorizationRequest : OIDAuthorizationRequest
 
-/*! @brief Designated initializer.
-    @param configuration The service's configuration.
-    @param clientID The client identifier.
-    @param clientSecret The client secret.
-    @param scope A scope string per the OAuth2 spec (a space-delimited set of scopes).
-    @param redirectURL The client's redirect URI.
-    @param responseType The expected response type.
-    @param state An opaque value used by the client to maintain state between the request and
-        callback.
-    @param codeVerifier The PKCE code verifier. See @c OIDAuthorizationRequest.generateCodeVerifier.
-    @param codeChallenge The PKCE code challenge, calculated from the code verifier such as with
-        @c OIDAuthorizationRequest.codeChallengeS256ForVerifier:.
-    @param codeChallengeMethod The PKCE code challenge method.
-        ::OIDOAuthorizationRequestCodeChallengeMethodS256 when
-        @c OIDAuthorizationRequest.codeChallengeS256ForVerifier: is used to create the code
-        challenge.
-    @param additionalParameters The client's additional authorization parameters.
- */
-- (instancetype)
-    initWithConfiguration:(GTMTVServiceConfiguration *)configuration
-                 clientId:(NSString *)clientID
-             clientSecret:(nullable NSString *)clientSecret
-                    scope:(nullable NSString *)scope
-              redirectURL:(NSURL *)redirectURL
-             responseType:(NSString *)responseType
-                    state:(nullable NSString *)state
-             codeVerifier:(nullable NSString *)codeVerifier
-            codeChallenge:(nullable NSString *)codeChallenge
-      codeChallengeMethod:(nullable NSString *)codeChallengeMethod
-     additionalParameters:(nullable NSDictionary<NSString *, NSString *> *)additionalParameters
-    NS_DESIGNATED_INITIALIZER;
-
 /*! @brief Creates a TV authorization request with opinionated defaults
     @param configuration The service's configuration.
     @param clientID The client identifier.
