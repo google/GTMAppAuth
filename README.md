@@ -328,8 +328,20 @@ created a new OAuth client, use that for these requests.
 
 ### Serialization & Migrating Existing Grants
 
-GTMAppAuth has a different way to serialize the authorization. Change how you
-serialize your `authorization` object using the new methods, e.g.:
+GTMAppAuth has a new data format and APIs for serialization. Unlike
+GTMOAuth2, GTMAppAuth serializes the configuration and history of the
+authorization, including the client id, and a record of the authorization
+request that resulted in the authorization grant.
+
+The client ID used for GTMAppAuth is [different](#oauth-client-registration) to
+the one used for GTMOAuth2. In order to keep track of the different client ids
+used for new and old grants, it's recommended to migrate to the new
+serialization format, which will store that for you. 
+[GTMOAuth2-compatible serialization](#gtmoauth2-compatible-serialization) is
+also offered, but not fully supported.
+
+Change how you serialize your `authorization` object using the new methods
+using the following example.
 
 ```objc
 // Serialize to Keychain
@@ -337,14 +349,15 @@ serialize your `authorization` object using the new methods, e.g.:
                                 toKeychainForName:kNewKeychainName];
 ```
 
-Be sure to use a *new* name for the keychain. Don't reuse your existing one!
+Be sure to use a *new* name for the keychain. Don't reuse your old one!
 
 For deserializing, we can preserve all existing grants (so users who authorized
 your app in GTMOAuth2 don't have to authorize it again). Remember that when
-deserializing the old data you need to use your *old* keychain name, and
-the old client id and client secret (if those changed). Pay particular care to
-use the old details when deserializing the GTMOAuth2 keychain, and the new
-details for all other GTMAppAuth calls.
+deserializing the *old* data you need to use your *old* keychain name, and
+the old client id and client secret (if those changed), and that when 
+serializing to the *new* format, use the *new* keychain name.
+Once again, pay particular care to use the old details when deserializing the
+GTMOAuth2 keychain, and the new details for all other GTMAppAuth calls.
 
 Keychain migration example:
 
