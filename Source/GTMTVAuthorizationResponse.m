@@ -99,10 +99,10 @@ static NSString *const kRequestKey = @"request";
 
 #pragma mark - Initializers
 
-- (nullable instancetype)init
+- (instancetype)init
     OID_UNAVAILABLE_USE_INITIALIZER(@selector(initWithRequest:parameters:));
 
-- (nullable instancetype)initWithRequest:(GTMTVAuthorizationRequest *)request
+- (instancetype)initWithRequest:(GTMTVAuthorizationRequest *)request
     parameters:(NSDictionary<NSString *, NSObject<NSCopying> *> *)parameters {
   self = [super initWithRequest:request parameters:parameters];
   return self;

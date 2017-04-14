@@ -69,7 +69,7 @@ extern NSString *const GTMTVDeviceTokenGrantType;
         properties are populated. Non-normative parameters are placed in the
         @c #additionalParameters dictionary.
  */
-- (nullable instancetype)initWithRequest:(GTMTVAuthorizationRequest *)request
+- (instancetype)initWithRequest:(GTMTVAuthorizationRequest *)request
     parameters:(NSDictionary<NSString *, NSObject<NSCopying> *> *)parameters
     NS_DESIGNATED_INITIALIZER;
 
