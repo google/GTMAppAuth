@@ -38,7 +38,6 @@ NS_ASSUME_NONNULL_BEGIN
     @param clientID The client identifier.
     @param clientSecret The client secret.
     @param scopes An array of scopes to combine into a single scope string per the OAuth2 spec.
-    @param TVAuthorizationURL The TV & limited input device authorization endpoint URL.
     @param additionalParameters The client's additional authorization parameters.
  */
 - (instancetype)
