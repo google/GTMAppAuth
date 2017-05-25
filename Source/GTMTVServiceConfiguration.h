@@ -16,7 +16,11 @@
         limitations under the License.
  */
 
-#import "OIDServiceConfiguration.h"
+#ifndef GTMAPPAUTH_USER_IMPORTS
+#import <AppAuth/AppAuth.h>
+#else // GTMAPPAUTH_USER_IMPORTS
+#import "AppAuth.h"
+#endif // GTMAPPAUTH_USER_IMPORTS
 
 NS_ASSUME_NONNULL_BEGIN
 
