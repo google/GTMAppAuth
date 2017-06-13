@@ -114,7 +114,7 @@ static NSString *const kGTMOAuth2ServiceProviderGoogle = @"Google";
                                                 clientSecret:clientSecret
                                                        scope:dict[kOAuth2ScopeKey]
                                                  redirectURL:redirectURI
-                                                responseType:@"token"
+                                                responseType:OIDResponseTypeCode
                                                        state:nil
                                                 codeVerifier:nil
                                                codeChallenge:nil
