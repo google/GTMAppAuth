@@ -39,7 +39,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /*! @brief Saves the password data to the keychain with the given identifier.
     @param keychainItemName Keychain name of the item.
-    @param passwordData Password data to save.
+    @param password Password data to save.
     @return YES when the password data was saved successfully.
  */
 + (BOOL)savePasswordDataToKeychainForName:(NSString *)keychainItemName
