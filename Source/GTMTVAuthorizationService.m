@@ -18,11 +18,16 @@
 
 #import "GTMTVAuthorizationService.h"
 
-#import "OIDAuthState.h"
-#import "OIDAuthorizationService.h"
+#ifndef GTMAPPAUTH_USER_IMPORTS
+#import <AppAuth/AppAuth.h>
+#import <AppAuth/OIDDefines.h>
+#import <AppAuth/OIDURLQueryComponent.h>
+#else // GTMAPPAUTH_USER_IMPORTS
+#import "AppAuth.h"
 #import "OIDDefines.h"
-#import "OIDErrorUtilities.h"
 #import "OIDURLQueryComponent.h"
+#endif // GTMAPPAUTH_USER_IMPORTS
+
 #import "GTMAppAuthFetcherAuthorization.h"
 #import "GTMTVAuthorizationRequest.h"
 #import "GTMTVAuthorizationResponse.h"

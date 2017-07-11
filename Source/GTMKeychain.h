@@ -43,7 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
     @return YES when the password data was saved successfully.
  */
 + (BOOL)savePasswordDataToKeychainForName:(NSString *)keychainItemName
-                             passwordData:(NSData *)password;
+                             passwordData:(NSData *)passwordData;
 
 /*! @brief Loads the password data from the keychain with the given identifier.
     @param keychainItemName Keychain name of the item.
