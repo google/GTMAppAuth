@@ -47,7 +47,7 @@ typedef void (^GTMTVAuthorizationCompletion)
         authorization when executed. Has no effect if called twice or after the authorization
         concluded.
  */
-typedef void (^GTMTVAuthorizationCancelBlock)();
+typedef void (^GTMTVAuthorizationCancelBlock)(void);
 
 /*! @brief Performs authorization flows designed for TVs and other limited input devices.
  */
