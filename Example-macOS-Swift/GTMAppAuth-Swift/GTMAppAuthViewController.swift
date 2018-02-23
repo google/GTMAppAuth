@@ -36,7 +36,7 @@ class GTMAppAuthViewController: NSViewController, OIDAuthStateChangeDelegate, OI
     // 3. Update the  `kRedirectURI` with the *reverse DNS notation* form of the client ID. For example, if the client ID is
     //    `YOUR_CLIENT.apps.googleusercontent.com`, the reverse DNS notation would be
     //    `com.googleusercontent.apps.YOUR_CLIENT`. A path component is added resulting in
-    //    `com.googleusercontent.apps.1045832126133-b1vtdlrvdb27hkmbmh49ka45b76lqbd4:/oauthredirect`.
+    //    `"com.googleusercontent.apps.<YOUR-CLIENT-ID>:/oauthredirect"`.
     // 4. If you want to access a specific service then update the scopes below. We have added in Scope to get ID and Profile data for the purpose of this demo. For additional Google scopes, you can get these from the Google scopes URL: https://developers.google.com/identity/protocols/googlescopes
     let scopesToAccess = [OIDScopeOpenID, OIDScopeProfile]
     
