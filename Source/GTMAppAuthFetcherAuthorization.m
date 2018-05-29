@@ -315,15 +315,17 @@ NSString *const GTMAppAuthFetcherAuthorizationErrorRequestKey = @"request";
   }
 
   // Obtains fresh tokens from AppAuth.
+  __weak GTMAppAuthFetcherAuthorization *weakSelf = self;
   [_authState performActionWithFreshTokens:^(NSString *_Nullable accessToken,
                                              NSString *_Nullable idToken,
                                              NSError *_Nullable error) {
+    GTMAppAuthFetcherAuthorization *strongSelf = weakSelf;
     // Processes queue.
-    @synchronized(_authorizationQueue) {
-      for (GTMAppAuthFetcherAuthorizationArgs *fetcherArgs in _authorizationQueue) {
+    @synchronized(strongSelf->_authorizationQueue) {
+      for (GTMAppAuthFetcherAuthorizationArgs *fetcherArgs in strongSelf->_authorizationQueue) {
         [self authorizeRequestImmediateArgs:fetcherArgs accessToken:accessToken error:error];
       }
-      [_authorizationQueue removeAllObjects];
+      [strongSelf->_authorizationQueue removeAllObjects];
     }
   }];
 }
