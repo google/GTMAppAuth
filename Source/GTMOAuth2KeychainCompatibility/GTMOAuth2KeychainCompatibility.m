@@ -18,7 +18,12 @@
 
 #import "GTMOAuth2KeychainCompatibility.h"
 
+#ifndef GTMAPPAUTH_USER_IMPORTS
+#import <AppAuth/AppAuth.h>
+#else // GTMAPPAUTH_USER_IMPORTS
 #import "AppAuth.h"
+#endif // GTMAPPAUTH_USER_IMPORTS
+
 #import "GTMKeychain.h"
 
 // standard OAuth keys
