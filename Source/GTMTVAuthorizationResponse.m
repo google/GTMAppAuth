@@ -105,9 +105,6 @@ static NSString *const kRequestKey = @"request";
 
 #pragma mark - Initializers
 
-- (instancetype)init
-    OID_UNAVAILABLE_USE_INITIALIZER(@selector(initWithRequest:parameters:));
-
 - (instancetype)initWithRequest:(GTMTVAuthorizationRequest *)request
     parameters:(NSDictionary<NSString *, NSObject<NSCopying> *> *)parameters {
   self = [super initWithRequest:request parameters:parameters];

@@ -121,6 +121,7 @@ static NSString *const kGTMOAuth2ServiceProviderGoogle = @"Google";
                                                  redirectURL:redirectURI
                                                 responseType:OIDResponseTypeCode
                                                        state:nil
+                                                       nonce:nil
                                                 codeVerifier:nil
                                                codeChallenge:nil
                                          codeChallengeMethod:nil
