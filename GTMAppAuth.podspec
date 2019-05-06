@@ -17,7 +17,7 @@ requests with AppAuth.
   #       obtaining authorization from the user. You can use the classes of
   #       GTMAppAuth with tokens obtained out of band to authorize requests
   #       on tvOS.
-  s.platforms    = { :ios => "7.0", :osx => "10.9", :tvos => "9.0" }
+  s.platforms    = { :ios => "7.0", :osx => "10.11", :tvos => "9.0" }
 
   s.homepage     = "https://github.com/google/GTMAppAuth"
   s.license      = "Apache License, Version 2.0"
