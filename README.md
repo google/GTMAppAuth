@@ -266,13 +266,13 @@ should serialize in GTMAppAuth format as described above).
 
 ## Included Samples
 
-Try out one of the included samples `Example-Mac` and `Example-iOS`. In the
-folder run `pod install`, then open the `xcworkspace` file.
+Try out one of the included sample apps under [Examples](Examples). In the
+apps folder run `pod install`, then open the resulting `xcworkspace` file.
 
 Be sure to follow the instructions in
-[Example-iOS/README.md](Example-iOS/README.md) or
-[Example-macOS/README.md](Example-macOS/README.md) to configure your own OAuth
-client ID for use with the example.
+[Example-iOS/README.md](Examples/Example-iOS/README.md) or
+[Example-macOS/README.md](Examples/Example-macOS/README.md) to configure
+your own OAuth client ID for use with the example.
 
 ## Differences with GTMOAuth2
 
