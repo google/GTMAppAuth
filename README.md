@@ -81,7 +81,7 @@ store the in-progress OIDAuthorizationFlowSession instance in a property:
 ```objc
 // property of the app's UIApplicationDelegate
 @property(nonatomic, nullable)
-    id<OIDAuthorizationFlowSession> currentAuthorizationFlow;
+    id<OIDExternalUserAgentSession> currentAuthorizationFlow;
 ```
 
 And in a location accessible by all controllers that need authorization, a
@@ -152,7 +152,7 @@ authorization session (created in the previous session).
            withReplyEvent:(NSAppleEventDescriptor *)replyEvent {
   NSString *URLString = [[event paramDescriptorForKeyword:keyDirectObject] stringValue];
   NSURL *URL = [NSURL URLWithString:URLString];
-  [_currentAuthorizationFlow resumeAuthorizationFlowWithURL:URL];
+  [_currentAuthorizationFlow resumeExternalUserAgentFlowWithURL:URL];
 }
 ```
 
@@ -164,7 +164,7 @@ authorization session (created in the previous session).
             options:(NSDictionary<NSString *, id> *)options {
   // Sends the URL to the current authorization flow (if any) which will
   // process it if it relates to an authorization response.
-  if ([_currentAuthorizationFlow resumeAuthorizationFlowWithURL:url]) {
+  if ([_currentAuthorizationFlow resumeExternalUserAgentFlowWithURL:url]) {
     _currentAuthorizationFlow = nil;
     return YES;
   }
