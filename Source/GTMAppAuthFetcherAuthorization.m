@@ -178,7 +178,7 @@ NSString *const GTMAppAuthFetcherAuthorizationErrorRequestKey = @"request";
     NSString *idToken = _authState.lastTokenResponse.idToken
         ? : _authState.lastAuthorizationResponse.idToken;
     if (idToken) {
-      NSDictionary *claimsDictionary = [[self class] extractIDTokenClaimsNoVerification:idToken];
+      NSDictionary *claimsDictionary = [[OIDIDToken alloc] initWithIDTokenString:idToken].claims;
       if (claimsDictionary) {
         _userEmail = (NSString *)[claimsDictionary[@"email"] copy];
         _userEmailIsVerified = [(NSNumber *)claimsDictionary[@"email_verified"] stringValue];
@@ -236,40 +236,6 @@ NSString *const GTMAppAuthFetcherAuthorizationErrorRequestKey = @"request";
   return configuration;
 }
 #endif // !GTM_APPAUTH_SKIP_GOOGLE_SUPPORT
-
-# pragma mark - ID Token extraction
-
-+ (nullable NSDictionary *)extractIDTokenClaimsNoVerification:(NSString *)idToken {
-  NSArray *sections = [idToken componentsSeparatedByString:@"."];
-  if (sections.count > 1) {
-    // Gets the JWT payload section.
-    NSMutableString *body = [sections[1] mutableCopy];
-
-    // Converts base64url to base64.
-    NSRange range = NSMakeRange(0, body.length);
-    [body replaceOccurrencesOfString:@"-" withString:@"+" options:NSLiteralSearch range:range];
-    [body replaceOccurrencesOfString:@"_" withString:@"/" options:NSLiteralSearch range:range];
-
-    // Converts base64 no padding to base64 with padding
-    while (body.length % 4 != 0) {
-      [body appendString:@"="];
-    }
-
-    // Decodes base64 string.
-    NSData *decodedData = [[NSData alloc] initWithBase64EncodedString:body options:0];
-
-    // Parses JSON.
-    NSError *error;
-    id object = [NSJSONSerialization JSONObjectWithData:decodedData options:0 error:&error];
-    if (error) {
-      NSLog(@"Error %@ parsing token payload %@", error, body);
-    }
-    if ([object isKindOfClass:[NSDictionary class]]) {
-      return (NSDictionary *)object;
-    }
-  }
-  return nil;
-}
 
 #pragma mark - GTMFetcherAuthorizationProtocol
 
