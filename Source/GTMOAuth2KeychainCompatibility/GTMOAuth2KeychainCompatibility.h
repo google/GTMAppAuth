@@ -39,7 +39,6 @@ NS_ASSUME_NONNULL_BEGIN
 /*! @brief Attempts to create a @c GTMAppAuthFetcherAuthorization from data stored in the keychain
         in GTMOAuth2 format, at the supplied keychain identifier.
     @param keychainItemName The keychain name.
-    @param serviceProvider An optional string to describe the service.
     @param tokenURL The OAuth token endpoint URL.
     @param redirectURI The OAuth redirect URI used when obtaining the original authorization.
     @param clientID The OAuth client id.
@@ -48,7 +47,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (nullable GTMAppAuthFetcherAuthorization *)
     authorizeFromKeychainForName:(NSString *)keychainItemName
-                 serviceProvider:(nullable NSString *)serviceProvider
                         tokenURL:(NSURL *)tokenURL
                      redirectURI:(NSString *)redirectURI
                         clientID:(NSString *)clientID
@@ -57,7 +55,6 @@ NS_ASSUME_NONNULL_BEGIN
 /*! @brief Attempts to create a @c GTMAppAuthFetcherAuthorization from a @c NSString
         representation of the GTMOAuth2 keychain data.
     @param persistenceString String representation of the GTMOAuth2 keychain data.
-    @param serviceProvider An optional string to describe the service.
     @param tokenURL The OAuth token endpoint URL.
     @param redirectURI The OAuth redirect URI used when obtaining the original authorization.
     @param clientID The OAuth client id.
@@ -66,7 +63,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (nullable GTMAppAuthFetcherAuthorization *)
     authorizeFromPersistenceString:(NSString *)persistenceString
-                   serviceProvider:(nullable NSString *)serviceProvider
                           tokenURL:(NSURL *)tokenURL
                        redirectURI:(NSString *)redirectURI
                           clientID:(NSString *)clientID

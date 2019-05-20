@@ -49,8 +49,6 @@ static NSString *const kUserEmailIsVerifiedKey = @"isVerified";
 //
 static NSString *const kOOBString = @"urn:ietf:wg:oauth:2.0:oob";
 
-static NSString *const kGTMOAuth2ServiceProviderGoogle = @"Google";
-
 @implementation GTMOAuth2KeychainCompatibility
 
 // This returns a "response string" that can be passed later to
@@ -76,11 +74,10 @@ static NSString *const kGTMOAuth2ServiceProviderGoogle = @"Google";
 }
 
 + (GTMAppAuthFetcherAuthorization *)authorizeFromKeychainForName:(NSString *)keychainItemName
-    serviceProvider:(nullable NSString *)serviceProvider
-           tokenURL:(NSURL *)tokenURL
-        redirectURI:(NSString *)redirectURI
-           clientID:(NSString *)clientID
-       clientSecret:(nullable NSString *)clientSecret {
+        tokenURL:(NSURL *)tokenURL
+     redirectURI:(NSString *)redirectURI
+        clientID:(NSString *)clientID
+    clientSecret:(nullable NSString *)clientSecret {
   // Loads password string from keychain.
   NSString *password = [GTMKeychain passwordFromKeychainForName:keychainItemName];
 
@@ -90,7 +87,6 @@ static NSString *const kGTMOAuth2ServiceProviderGoogle = @"Google";
 
   GTMAppAuthFetcherAuthorization *authorization =
       [self authorizeFromPersistenceString:password
-                           serviceProvider:serviceProvider
                                   tokenURL:tokenURL
                                redirectURI:redirectURI
                                   clientID:clientID
@@ -99,11 +95,10 @@ static NSString *const kGTMOAuth2ServiceProviderGoogle = @"Google";
 }
 
 + (GTMAppAuthFetcherAuthorization *)authorizeFromPersistenceString:(NSString *)persistenceString
-                               serviceProvider:(NSString *)serviceProvider
-                                      tokenURL:(NSURL *)tokenURL
-                                   redirectURI:(NSString *)redirectURIString
-                                      clientID:(NSString *)clientID
-                                  clientSecret:(NSString *)clientSecret {
+        tokenURL:(NSURL *)tokenURL
+     redirectURI:(NSString *)redirectURIString
+        clientID:(NSString *)clientID
+    clientSecret:(NSString *)clientSecret {
   // Parses persistence data into NSDictionary.
   NSDictionary *dict = [self dictionaryWithResponseString:persistenceString];
 
@@ -166,7 +161,6 @@ static NSString *const kGTMOAuth2ServiceProviderGoogle = @"Google";
 
   GTMAppAuthFetcherAuthorization *auth;
   auth = [self authorizeFromKeychainForName:keychainItemName
-                            serviceProvider:kGTMOAuth2ServiceProviderGoogle
                                    tokenURL:tokenURL
                                 redirectURI:redirectURI
                                    clientID:clientID
