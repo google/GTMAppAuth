@@ -189,38 +189,6 @@ NSString *const GTMAppAuthFetcherAuthorizationErrorRequestKey = @"request";
   return self;
 }
 
-#pragma mark - NSSecureCoding
-
-+ (BOOL)supportsSecureCoding {
-  return YES;
-}
-
-- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
-  OIDAuthState *authState =
-      [aDecoder decodeObjectOfClass:[OIDAuthState class] forKey:kAuthStateKey];
-  NSString *serviceProvider =
-      [aDecoder decodeObjectOfClass:[NSString class] forKey:kServiceProviderKey];
-  NSString *userID = [aDecoder decodeObjectOfClass:[NSString class] forKey:kUserIDKey];
-  NSString *userEmail = [aDecoder decodeObjectOfClass:[NSString class] forKey:kUserEmailKey];
-  NSString *userEmailIsVerified =
-      [aDecoder decodeObjectOfClass:[NSString class] forKey:kUserEmailIsVerifiedKey];
-
-  self = [self initWithAuthState:authState
-                 serviceProvider:serviceProvider
-                           userID:userID
-                        userEmail:userEmail
-              userEmailIsVerified:userEmailIsVerified];
-  return self;
-}
-
-- (void)encodeWithCoder:(NSCoder *)aCoder {
-  [aCoder encodeObject:_authState forKey:kAuthStateKey];
-  [aCoder encodeObject:_serviceProvider forKey:kServiceProviderKey];
-  [aCoder encodeObject:_userID forKey:kUserIDKey];
-  [aCoder encodeObject:_userEmail forKey:kUserEmailKey];
-  [aCoder encodeObject:_userEmailIsVerified forKey:kUserEmailIsVerifiedKey];
-}
-
 # pragma mark - Convenience
 
 #if !GTM_APPAUTH_SKIP_GOOGLE_SUPPORT
@@ -237,43 +205,7 @@ NSString *const GTMAppAuthFetcherAuthorizationErrorRequestKey = @"request";
 }
 #endif // !GTM_APPAUTH_SKIP_GOOGLE_SUPPORT
 
-#pragma mark - GTMFetcherAuthorizationProtocol
-
-#pragma mark Authorizing Requests
-
-/*! @brief Authorizing with a completion block.
- */
-- (void)authorizeRequest:(NSMutableURLRequest *)request
-       completionHandler:(GTMAppAuthFetcherAuthorizationCompletion)handler {
-  GTMAppAuthFetcherAuthorizationArgs *args =
-      [GTMAppAuthFetcherAuthorizationArgs argsWithRequest:request
-                                                 delegate:nil
-                                                 selector:NULL
-                                        completionHandler:handler];
-  [self authorizeRequestArgs:args];
-}
-
-/*! @brief Authorizing with a callback selector.
-    @discussion Selector has the signature:
-        - (void)authentication:(GTMAppAuthFetcherAuthorization *)auth
-                       request:(NSMutableURLRequest *)request
-             finishedWithError:(NSError *)error;
- */
-- (void)authorizeRequest:(NSMutableURLRequest *)request
-                delegate:(id)delegate
-       didFinishSelector:(SEL)sel {
-  GTMOAuth2AssertValidSelector(delegate, sel,
-                               @encode(GTMAppAuthFetcherAuthorization *),
-                               @encode(NSMutableURLRequest *),
-                               @encode(NSError *), 0);
-
-  GTMAppAuthFetcherAuthorizationArgs *args;
-  args = [GTMAppAuthFetcherAuthorizationArgs argsWithRequest:request
-                                                    delegate:delegate
-                                                    selector:sel
-                                           completionHandler:nil];
-  [self authorizeRequestArgs:args];
-}
+#pragma mark - Authorizing Requests
 
 /*! @brief Internal routine common to delegate and block invocations to queue requests while
         fresh tokens are obtained.
@@ -409,6 +341,30 @@ NSString *const GTMAppAuthFetcherAuthorizationErrorRequestKey = @"request";
   }
 }
 
+#pragma mark - GTMFetcherAuthorizationProtocol
+
+/*! @brief Authorizing with a callback selector.
+    @discussion Selector has the signature:
+        - (void)authentication:(GTMAppAuthFetcherAuthorization *)auth
+                       request:(NSMutableURLRequest *)request
+             finishedWithError:(NSError *)error;
+ */
+- (void)authorizeRequest:(NSMutableURLRequest *)request
+                delegate:(id)delegate
+       didFinishSelector:(SEL)sel {
+  GTMOAuth2AssertValidSelector(delegate, sel,
+                               @encode(GTMAppAuthFetcherAuthorization *),
+                               @encode(NSMutableURLRequest *),
+                               @encode(NSError *), 0);
+
+  GTMAppAuthFetcherAuthorizationArgs *args;
+  args = [GTMAppAuthFetcherAuthorizationArgs argsWithRequest:request
+                                                    delegate:delegate
+                                                    selector:sel
+                                           completionHandler:nil];
+  [self authorizeRequestArgs:args];
+}
+
 /*! @brief Removes all pending requests from the authorization queue.
  */
 - (void)stopAuthorization {
@@ -474,6 +430,18 @@ NSString *const GTMAppAuthFetcherAuthorizationErrorRequestKey = @"request";
   return [_authState isAuthorized];
 }
 
+/*! @brief Authorizing with a completion block.
+ */
+- (void)authorizeRequest:(NSMutableURLRequest *)request
+       completionHandler:(GTMAppAuthFetcherAuthorizationCompletion)handler {
+  GTMAppAuthFetcherAuthorizationArgs *args =
+  [GTMAppAuthFetcherAuthorizationArgs argsWithRequest:request
+                                             delegate:nil
+                                             selector:NULL
+                                    completionHandler:handler];
+  [self authorizeRequestArgs:args];
+}
+
 /*! @brief Forces a token refresh the next time a request is queued for authorization.
  */
 - (BOOL)primeForRefresh {
@@ -483,6 +451,38 @@ NSString *const GTMAppAuthFetcherAuthorizationErrorRequestKey = @"request";
   }
   [_authState setNeedsTokenRefresh];
   return YES;
+}
+
+#pragma mark - NSSecureCoding
+
++ (BOOL)supportsSecureCoding {
+  return YES;
+}
+
+- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
+  OIDAuthState *authState =
+      [aDecoder decodeObjectOfClass:[OIDAuthState class] forKey:kAuthStateKey];
+  NSString *serviceProvider =
+      [aDecoder decodeObjectOfClass:[NSString class] forKey:kServiceProviderKey];
+  NSString *userID = [aDecoder decodeObjectOfClass:[NSString class] forKey:kUserIDKey];
+  NSString *userEmail = [aDecoder decodeObjectOfClass:[NSString class] forKey:kUserEmailKey];
+  NSString *userEmailIsVerified =
+      [aDecoder decodeObjectOfClass:[NSString class] forKey:kUserEmailIsVerifiedKey];
+
+  self = [self initWithAuthState:authState
+                 serviceProvider:serviceProvider
+                           userID:userID
+                        userEmail:userEmail
+              userEmailIsVerified:userEmailIsVerified];
+  return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)aCoder {
+  [aCoder encodeObject:_authState forKey:kAuthStateKey];
+  [aCoder encodeObject:_serviceProvider forKey:kServiceProviderKey];
+  [aCoder encodeObject:_userID forKey:kUserIDKey];
+  [aCoder encodeObject:_userEmail forKey:kUserEmailKey];
+  [aCoder encodeObject:_userEmailIsVerified forKey:kUserEmailIsVerifiedKey];
 }
 
 @end
