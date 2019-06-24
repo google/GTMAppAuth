@@ -44,5 +44,5 @@ requests with AppAuth.
 
   s.frameworks = 'Security', 'SystemConfiguration'
   s.dependency 'GTMSessionFetcher', '~> 1.1'
-  s.dependency 'AppAuth', '~> 0.95'
+  s.dependency 'AppAuth', '~> 1.0'
 end
