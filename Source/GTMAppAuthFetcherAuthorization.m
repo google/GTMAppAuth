@@ -216,6 +216,9 @@ NSString *const GTMAppAuthFetcherAuthorizationErrorRequestKey = @"request";
     [_authorizationQueue addObject:args];
   }
 
+  NSDictionary<NSString *, NSString *> *additionalRefreshParameters = _tokenRefreshDelegate ?
+      [_tokenRefreshDelegate additionalRefreshParameters:self] : nil;
+
   // Obtains fresh tokens from AppAuth.
   [_authState performActionWithFreshTokens:^(NSString *_Nullable accessToken,
                                              NSString *_Nullable idToken,
@@ -227,7 +230,8 @@ NSString *const GTMAppAuthFetcherAuthorizationErrorRequestKey = @"request";
       }
       [self->_authorizationQueue removeAllObjects];
     }
-  }];
+  }
+               additionalRefreshParameters:additionalRefreshParameters];
 }
 
 /*! @brief Adds authorization headers to the given request, using the supplied access token, or

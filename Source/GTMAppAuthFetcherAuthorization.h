@@ -46,6 +46,23 @@ typedef NS_ENUM(NSInteger, GTMAppAuthFetcherAuthorizationError) {
 
 typedef void (^GTMAppAuthFetcherAuthorizationCompletion)(NSError *_Nullable error);
 
+@class GTMAppAuthFetcherAuthorization;
+
+/*! @protocol GTMAppAuthFetcherAuthorizationTokenRefreshDelegate
+    @brief Delegate of the GTMAppAuthFetcherAuthorization used to supply additional parameters on
+        token refresh.
+ */
+@protocol GTMAppAuthFetcherAuthorizationTokenRefreshDelegate <NSObject>
+
+/*! @brief Called before a token refresh request is performed.
+    @param authorization The @c GTMFetcherAuthorization performing the token refresh.
+    @return A dictionary of parameters to be added to the token refresh request.
+ */
+- (nullable NSDictionary<NSString *, NSString *> *)additionalRefreshParameters:
+    (GTMAppAuthFetcherAuthorization *)authorization;
+
+@end
+
 /*! @brief An implementation of the @c GTMFetcherAuthorizationProtocol protocol for the AppAuth
         library.
     @discussion Enables you to use AppAuth with the GTM Session Fetcher library.
@@ -75,6 +92,9 @@ typedef void (^GTMAppAuthFetcherAuthorizationCompletion)(NSError *_Nullable erro
         confirmed as belonging to the owner of the account.
  */
 @property(nullable, nonatomic, readonly) NSString *userEmailIsVerified;
+
+@property(nullable, nonatomic, weak) id<GTMAppAuthFetcherAuthorizationTokenRefreshDelegate>
+    tokenRefreshDelegate;
 
 /*! @brief Creates a new @c GTMAppAuthFetcherAuthorization using the given @c OIDAuthState from
         AppAuth.
