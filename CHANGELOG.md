@@ -1,6 +1,6 @@
 # GTMAppAuth Changelog
 
-## 0.8.0 (2019-06-23)
+## 0.8.0 (2019-08-01)
 
 * Added `tokenRefreshDelegate` to `GTMAppAuthFetcherAuthorization`.
 * Updated to depend on AppAuth 1.0.
