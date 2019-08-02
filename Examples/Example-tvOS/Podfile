@@ -7,4 +7,5 @@ target 'Example-tvOS' do
   # In production, you would use:
   # pod 'GTMAppAuth'
 
+  pod 'AppAuth/Core', '~> 1.0'
 end

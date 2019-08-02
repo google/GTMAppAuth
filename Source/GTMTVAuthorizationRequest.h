@@ -19,9 +19,9 @@
 #import <Foundation/Foundation.h>
 
 #ifndef GTMAPPAUTH_USER_IMPORTS
-#import <AppAuth/AppAuth.h>
+#import <AppAuth/AppAuthCore.h>
 #else // GTMAPPAUTH_USER_IMPORTS
-#import "AppAuth.h"
+#import "AppAuthCore.h"
 #endif // GTMAPPAUTH_USER_IMPORTS
 
 @class GTMTVServiceConfiguration;

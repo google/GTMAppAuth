@@ -20,11 +20,11 @@
 
 #import "GTMTVAuthorizationRequest.h"
 #ifndef GTMAPPAUTH_USER_IMPORTS
-#import <AppAuth/AppAuth.h>
+#import <AppAuth/AppAuthCore.h>
 #import <AppAuth/OIDDefines.h>
 #import <AppAuth/OIDFieldMapping.h>
 #else // GTMAPPAUTH_USER_IMPORTS
-#import "AppAuth.h"
+#import "AppAuthCore.h"
 #import "OIDDefines.h"
 #import "OIDFieldMapping.h"
 #endif // GTMAPPAUTH_USER_IMPORTS

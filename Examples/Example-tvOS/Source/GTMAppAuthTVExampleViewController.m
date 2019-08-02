@@ -18,7 +18,7 @@
 
 #import "GTMAppAuthTVExampleViewController.h"
 
-#import <AppAuth/AppAuth.h>
+#import <AppAuth/AppAuthCore.h>
 #import <GTMAppAuth/GTMAppAuth.h>
 
 #import "GTMSessionFetcher.h"
