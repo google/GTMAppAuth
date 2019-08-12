@@ -123,6 +123,10 @@ static NSString *const kOOBString = @"urn:ietf:wg:oauth:2.0:oob";
                                         additionalParameters:nil];
   OIDAuthorizationResponse *authResponse =
       [[OIDAuthorizationResponse alloc] initWithRequest:authRequest parameters:dict];
+  // Exclude scope and refresh token parameters from additionalParameters.
+  NSMutableDictionary *additionalParameters = [dict mutableCopy];
+  [additionalParameters removeObjectForKey:kOAuth2ScopeKey];
+  [additionalParameters removeObjectForKey:kOAuth2RefreshTokenKey];
   OIDTokenRequest *tokenRequest =
       [[OIDTokenRequest alloc] initWithConfiguration:authConfig
                                            grantType:@"token"
@@ -133,7 +137,7 @@ static NSString *const kOOBString = @"urn:ietf:wg:oauth:2.0:oob";
                                                scope:dict[kOAuth2ScopeKey]
                                         refreshToken:dict[kOAuth2RefreshTokenKey]
                                         codeVerifier:nil
-                                additionalParameters:dict];
+                                additionalParameters:additionalParameters];
   OIDTokenResponse *tokenResponse =
       [[OIDTokenResponse alloc] initWithRequest:tokenRequest parameters:dict];
   OIDAuthState *authState = [[OIDAuthState alloc] initWithAuthorizationResponse:authResponse
