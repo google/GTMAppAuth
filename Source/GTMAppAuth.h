@@ -18,9 +18,6 @@
 
 #import "GTMAppAuthFetcherAuthorization.h"
 #import "GTMAppAuthFetcherAuthorization+Keychain.h"
-#import "GTMTVAuthorizationRequest.h"
-#import "GTMTVAuthorizationResponse.h"
-#import "GTMTVAuthorizationService.h"
 
 #if TARGET_OS_TV
 #elif TARGET_OS_WATCH
