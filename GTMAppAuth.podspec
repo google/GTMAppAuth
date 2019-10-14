@@ -42,6 +42,9 @@ requests with AppAuth.
   s.tvos.source_files = "Source/iOS/GTMKeychain_iOS.m"
   s.tvos.deployment_target = '9.0'
 
+  s.watchos.source_files = "Source/iOS/GTMKeychain_iOS.m"
+  s.watchos.deployment_target = '6.0'
+
   s.framework = 'Security'
   s.dependency 'GTMSessionFetcher', '~> 1.1'
   s.dependency 'AppAuth/Core', '~> 1.0'
