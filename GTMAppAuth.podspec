@@ -43,6 +43,6 @@ requests with AppAuth.
   s.tvos.deployment_target = '9.0'
 
   s.frameworks = 'Security', 'SystemConfiguration'
-  s.dependency 'GTMSessionFetcher', '~> 1.1'
-  s.dependency 'AppAuth/Core', '~> 1.0'
+  s.dependency 'GTMSessionFetcher', '~> 1.4'
+  s.dependency 'AppAuth/Core', '~> 1.4'
 end

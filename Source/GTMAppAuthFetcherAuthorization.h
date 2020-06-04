@@ -16,7 +16,9 @@
         limitations under the License.
  */
 
-#ifndef GTMAPPAUTH_USER_IMPORTS
+#if SWIFT_PACKAGE || GTMAPPAUTH_USE_MODULAR_IMPORT
+@import GTMSessionFetcherCore;
+#elif GTMAPPAUTH_USER_IMPORTS
 #import <GTMSessionFetcher/GTMSessionFetcher.h>
 #else // GTMAPPAUTH_USER_IMPORTS
 #import "GTMSessionFetcher.h"

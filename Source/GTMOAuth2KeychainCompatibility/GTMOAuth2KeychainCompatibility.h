@@ -16,7 +16,11 @@
         limitations under the License.
  */
 
+#if SWIFT_PACKAGE
+#import "../GTMAppAuthFetcherAuthorization.h"
+#elif
 #import "GTMAppAuthFetcherAuthorization.h"
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 

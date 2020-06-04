@@ -16,9 +16,18 @@
         limitations under the License.
  */
 
+#import <TargetConditionals.h>
+
+#if TARGET_OS_OSX
+
+#if SWIFT_PACKAGE
+#import "../GTMKeychain.h"
+#elif
 #import "GTMKeychain.h"
+#endif
 
 #import <Security/Security.h>
+#import <Foundation/Foundation.h>
 
 static const char *kKeychainAccountName = "OAuth";
 
@@ -180,3 +189,5 @@ static const char *kKeychainAccountName = "OAuth";
 }
 
 @end
+
+#endif // TARGET_OS_OSX
