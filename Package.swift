@@ -46,10 +46,12 @@ let package = Package(
             ],
             path: "Source",
             sources: [
+                ".",
                 "GTMOAuth2KeychainCompatibility",
                 "iOS",
                 "macOS"
-            ]
+            ],
+            publicHeadersPath: "SwiftPackage"
         )
     ]
 )
