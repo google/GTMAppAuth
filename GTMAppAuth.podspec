@@ -16,8 +16,8 @@ requests with AppAuth.
   # Note: While tvOS is specified here, only iOS and macOS have support for
   #       obtaining authorization from the user. You can use the classes of
   #       GTMAppAuth with tokens obtained out of band to authorize requests
-  #       on tvOS.
-  s.platforms    = { :ios => "7.0", :osx => "10.11", :tvos => "9.0" }
+  #       on tvOS and watchOS.
+  s.platforms    = { :ios => "7.0", :osx => "10.11", :tvos => "9.0", :watchos => "6.0" }
 
   s.homepage     = "https://github.com/google/GTMAppAuth"
   s.license      = "Apache License, Version 2.0"
@@ -33,16 +33,20 @@ requests with AppAuth.
   s.ios.source_files = "Source/GTMOAuth2KeychainCompatibility/*.{h,m}",
                        "Source/iOS/**/*.{h,m}"
   s.ios.deployment_target = "7.0"
-  s.ios.framework    = "SafariServices"
+  s.ios.frameworks   = "SafariServices", "SystemConfiguration"
 
   s.osx.source_files = "Source/GTMOAuth2KeychainCompatibility/*.{h,m}",
                        "Source/macOS/**/*.{h,m}"
   s.osx.deployment_target = '10.11'
+  s.osx.framework   = "SystemConfiguration"
 
   s.tvos.source_files = "Source/iOS/GTMKeychain_iOS.m"
   s.tvos.deployment_target = '9.0'
 
-  s.frameworks = 'Security', 'SystemConfiguration'
+  s.watchos.source_files = "Source/iOS/GTMKeychain_iOS.m"
+  s.watchos.deployment_target = '6.0'
+
+  s.framework = 'Security'
   s.dependency 'GTMSessionFetcher', '~> 1.4'
   s.dependency 'AppAuth/Core', '~> 1.4'
 end
