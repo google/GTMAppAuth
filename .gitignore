@@ -1,1 +1,6 @@
 Docs/
+
+Package.pins
+Package.resolved
+.swiftpm
+.build

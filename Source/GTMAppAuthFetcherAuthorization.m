@@ -18,7 +18,9 @@
 
 #import "GTMAppAuthFetcherAuthorization.h"
 
-#ifndef GTMAPPAUTH_USER_IMPORTS
+#if SWIFT_PACKAGE || GTMAPPAUTH_USE_MODULAR_IMPORT
+@import AppAuthCore;
+#elif GTMAPPAUTH_USER_IMPORTS
 #import <AppAuth/AppAuthCore.h>
 #else // GTMAPPAUTH_USER_IMPORTS
 #import "AppAuthCore.h"

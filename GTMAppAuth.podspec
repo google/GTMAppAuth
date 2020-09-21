@@ -47,6 +47,6 @@ requests with AppAuth.
   s.watchos.deployment_target = '6.0'
 
   s.framework = 'Security'
-  s.dependency 'GTMSessionFetcher', '~> 1.1'
-  s.dependency 'AppAuth/Core', '~> 1.0'
+  s.dependency 'GTMSessionFetcher', '~> 1.4'
+  s.dependency 'AppAuth/Core', '~> 1.4'
 end
