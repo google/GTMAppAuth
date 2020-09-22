@@ -18,7 +18,7 @@
 
 #if SWIFT_PACKAGE
 #import "../GTMAppAuthFetcherAuthorization.h"
-#elif
+#else
 #import "GTMAppAuthFetcherAuthorization.h"
 #endif
 

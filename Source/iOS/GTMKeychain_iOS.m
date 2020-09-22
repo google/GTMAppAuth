@@ -22,7 +22,7 @@
 
 #if SWIFT_PACKAGE
 #import "../GTMKeychain.h"
-#elif
+#else
 #import "GTMKeychain.h"
 #endif
 
