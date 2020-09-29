@@ -29,12 +29,10 @@ requests with AppAuth.
   s.ios.source_files = "Source/GTMOAuth2KeychainCompatibility/*.{h,m}",
                        "Source/iOS/**/*.{h,m}"
   s.ios.deployment_target = "7.0"
-  s.ios.frameworks   = "SafariServices", "SystemConfiguration"
 
   s.osx.source_files = "Source/GTMOAuth2KeychainCompatibility/*.{h,m}",
                        "Source/macOS/**/*.{h,m}"
   s.osx.deployment_target = '10.11'
-  s.osx.framework   = "SystemConfiguration"
 
   s.tvos.source_files = "Source/iOS/GTMKeychain_iOS.m"
   s.tvos.deployment_target = '9.0'
