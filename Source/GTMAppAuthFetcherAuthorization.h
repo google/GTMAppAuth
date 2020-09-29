@@ -19,10 +19,10 @@
 #if SWIFT_PACKAGE || GTMAPPAUTH_USE_MODULAR_IMPORT
 @import GTMSessionFetcherCore;
 #elif GTMAPPAUTH_USER_IMPORTS
-#import <GTMSessionFetcher/GTMSessionFetcher.h>
-#else // GTMAPPAUTH_USER_IMPORTS
 #import "GTMSessionFetcher.h"
-#endif // GTMAPPAUTH_USER_IMPORTS
+#else
+#import <GTMSessionFetcher/GTMSessionFetcher.h>
+#endif
 
 @class OIDAuthState;
 @class OIDServiceConfiguration;
