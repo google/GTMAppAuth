@@ -1,5 +1,10 @@
 # GTMAppAuth Changelog
 
+## 1.1.0 (2020-09-29)
+
+* Added Swift Package Manager support.
+* Added watchOS support.
+
 ## 1.0.0 (2019-08-13)
 
 * Moved tvOS authorization support out to a branch.
