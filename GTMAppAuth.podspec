@@ -13,10 +13,6 @@ requests with AppAuth.
 
                    DESC
 
-  # Note: While tvOS is specified here, only iOS and macOS have support for
-  #       obtaining authorization from the user. You can use the classes of
-  #       GTMAppAuth with tokens obtained out of band to authorize requests
-  #       on tvOS and watchOS.
   s.platforms    = { :ios => "7.0", :osx => "10.11", :tvos => "9.0", :watchos => "6.0" }
 
   s.homepage     = "https://github.com/google/GTMAppAuth"
