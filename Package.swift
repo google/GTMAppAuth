@@ -23,7 +23,7 @@ let package = Package(
     name: "GTMAppAuth",
     platforms: [
         .macOS(.v10_11),
-        .iOS(.v7),
+        .iOS(.v8),
         .tvOS(.v9),
         .watchOS(.v6)
     ],
