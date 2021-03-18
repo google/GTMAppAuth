@@ -18,12 +18,21 @@
 
 #import "GTMOAuth2KeychainCompatibility.h"
 
+#if SWIFT_PACKAGE
+#import "../GTMAppAuthFetcherAuthorization.h"
+#else
+#import "GTMAppAuthFetcherAuthorization.h"
+#endif
+
 #if SWIFT_PACKAGE || GTMAPPAUTH_USE_MODULAR_IMPORT
 @import AppAuthCore;
+@import GTMSessionFetcherCore;
 #elif GTMAPPAUTH_USER_IMPORTS
 #import "AppAuthCore.h"
+#import "GTMSessionFetcher.h"
 #else
 #import <AppAuth/AppAuthCore.h>
+#import <GTMSessionFetcher/GTMSessionFetcher.h>
 #endif
 
 #import "../GTMKeychain.h"
