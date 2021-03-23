@@ -20,11 +20,7 @@
 
 #if TARGET_OS_OSX
 
-#if SWIFT_PACKAGE
-#import "../GTMKeychain.h"
-#else
-#import "GTMKeychain.h"
-#endif
+#import "GTMAppAuth/Sources/Public/GTMKeychain.h"
 
 #import <Security/Security.h>
 #import <Foundation/Foundation.h>

@@ -44,14 +44,19 @@ let package = Package(
                 "GTMSessionFetcherCore",
                 "AppAuthCore"
             ],
-            path: "Source",
+            path: "GTMAppAuth/Sources",
             sources: [
                 ".",
-                "GTMOAuth2KeychainCompatibility",
                 "iOS",
                 "macOS"
             ],
-            publicHeadersPath: "SwiftPackage"
+            publicHeadersPath: "Public",
+	    cSettings: [
+                .headerSearchPath("../../"),
+            ],
+	    linkerSettings: [
+                .linkedFramework("Security"),
+	    ]
         )
     ]
 )
