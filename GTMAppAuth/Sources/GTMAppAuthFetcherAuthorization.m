@@ -16,7 +16,7 @@
         limitations under the License.
  */
 
-#import "GTMAppAuthFetcherAuthorization.h"
+#import "GTMAppAuth/Sources/Public/GTMAppAuth/GTMAppAuthFetcherAuthorization.h"
 
 #if SWIFT_PACKAGE || GTMAPPAUTH_USE_MODULAR_IMPORT
 @import AppAuthCore;
