@@ -17,9 +17,7 @@ requests with AppAuth.
 
   s.homepage     = "https://github.com/google/GTMAppAuth"
   s.license      = "Apache License, Version 2.0"
-  s.authors      = { "William Denniss" => "wdenniss@google.com",
-                     "Zsika Phillip" => "zsika@google.com",
-                   }
+  s.author       = "Google LLC"
 
   s.source       = { :git => "https://github.com/google/GTMAppAuth.git", :tag => s.version }
   s.prefix_header_file = false
