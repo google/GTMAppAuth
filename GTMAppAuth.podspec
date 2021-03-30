@@ -13,8 +13,6 @@ requests with AppAuth.
 
                    DESC
 
-  s.platforms    = { :ios => "7.0", :osx => "10.11", :tvos => "9.0", :watchos => "6.0" }
-
   s.homepage     = "https://github.com/google/GTMAppAuth"
   s.license      = "Apache License, Version 2.0"
   s.author       = "Google LLC"
@@ -28,7 +26,7 @@ requests with AppAuth.
 
   s.ios.source_files = "GTMAppAuth/Sources/GTMOAuth2KeychainCompatibility/*.{h,m}",
                        "GTMAppAuth/Sources/iOS/GTMKeychain_iOS.m"
-  s.ios.deployment_target = "7.0"
+  s.ios.deployment_target = "9.0"
 
   s.osx.source_files = "GTMAppAuth/Sources/GTMOAuth2KeychainCompatibility/*.{h,m}",
                        "GTMAppAuth/Sources/macOS/GTMKeychain_macOS.m"
