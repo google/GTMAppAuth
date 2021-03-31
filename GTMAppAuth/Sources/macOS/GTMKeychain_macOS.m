@@ -20,7 +20,7 @@
 
 #if TARGET_OS_OSX
 
-#import "GTMAppAuth/Sources/Public/GTMKeychain.h"
+#import "GTMAppAuth/Sources/Public/GTMAppAuth/GTMKeychain.h"
 
 #import <Security/Security.h>
 #import <Foundation/Foundation.h>
