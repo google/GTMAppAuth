@@ -18,10 +18,12 @@
 
 #if !defined(__has_include)
   #error "__has_include not available."
+#elif __has_include(<GTMSessionFetcher/GTMSessionFetcher.h>)
+  #import <GTMSessionFetcher/GTMSessionFetcher.h>
 #elif __has_include("../GTMSessionFetcher.h")
   #import "../GTMSessionFetcher.h"
 #else
-  #import <GTMSessionFetcher/GTMSessionFetcher.h>
+# error "Failed to find GTMSessionFetcher"
 #endif
 
 @class OIDAuthState;
