@@ -1,5 +1,9 @@
 # GTMAppAuth Changelog
 
+## 1.2.1 (2021-04-2)
+
+* Address CocoaPod packaging issue in the 1.2.0 release.
+
 ## 1.2.0 (2021-03-31)
 
 * Addressed several Swift Package Manager issues.
