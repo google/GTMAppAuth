@@ -33,11 +33,9 @@ requests with AppAuth.
   s.osx.deployment_target = '10.11'
 
   s.tvos.source_files = "GTMAppAuth/Sources/iOS/GTMKeychain_iOS.m"
-  s.tvos.exclude_files = "GTMAppAuth/Sources/Public/GTMAppAuth/GTMOAuth2KeychainCompatibility.h"
   s.tvos.deployment_target = '9.0'
 
   s.watchos.source_files = "GTMAppAuth/Sources/iOS/GTMKeychain_iOS.m"
-  s.watchos.exclude_files = "GTMAppAuth/Sources/Public/GTMAppAuth/GTMOAuth2KeychainCompatibility.h"
   s.watchos.deployment_target = '6.0'
 
   s.pod_target_xcconfig = {
