@@ -1,6 +1,10 @@
+[![Version](https://img.shields.io/cocoapods/v/GTMAppAuth.svg?style=flat)](https://cocoapods.org/pods/GTMAppAuth)
+[![Platform](https://img.shields.io/cocoapods/p/GTMAppAuth.svg?style=flat)](https://cocoapods.org/pods/GTMAppAuth)
+[![License](https://img.shields.io/cocoapods/l/GTMAppAuth.svg?style=flat)](https://cocoapods.org/pods/GTMAppAuth)
+
 # GTMAppAuth for Apple Platforms
 
-GTMAppAuth enables you to use [AppAuth](http://openid.github.io/AppAuth-iOS)
+GTMAppAuth enables you to use [AppAuth](https://github.com/openid/AppAuth-iOS)
 with the
 [Google Toolbox for Mac - Session Fetcher](https://github.com/google/gtm-session-fetcher)
 and
