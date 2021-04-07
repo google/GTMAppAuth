@@ -27,8 +27,17 @@
   if (!passwordData) {
     return nil;
   }
-  GTMAppAuthFetcherAuthorization *authorization = (GTMAppAuthFetcherAuthorization *)
-      [NSKeyedUnarchiver unarchiveObjectWithData:passwordData];
+  GTMAppAuthFetcherAuthorization *authorization;
+  if (@available(iOS 11.0, macOS 10.13, tvOS 11.0, watchOS 4.0, *)) {
+    NSError *error;
+    authorization = (GTMAppAuthFetcherAuthorization *)
+        [NSKeyedUnarchiver unarchivedObjectOfClass:[GTMAppAuthFetcherAuthorization class]
+                                          fromData:passwordData
+                                             error:&error];
+  } else {
+    authorization = (GTMAppAuthFetcherAuthorization *)
+        [NSKeyedUnarchiver unarchiveObjectWithData:passwordData];
+  }
   return authorization;
 }
 
@@ -38,7 +47,15 @@
 
 + (BOOL)saveAuthorization:(GTMAppAuthFetcherAuthorization *)auth
         toKeychainForName:(NSString *)keychainItemName {
-  NSData *authorizationData = [NSKeyedArchiver archivedDataWithRootObject:auth];
+  NSData *authorizationData;
+  if (@available(iOS 11.0, macOS 10.13, tvOS 11.0, watchOS 4.0, *)) {
+    NSError *error;
+    authorizationData = [NSKeyedArchiver archivedDataWithRootObject:auth
+                                              requiringSecureCoding:YES
+                                                              error:&error];
+  } else {
+    authorizationData = [NSKeyedArchiver archivedDataWithRootObject:auth];
+  }
   return [GTMKeychain savePasswordDataToKeychainForName:keychainItemName
                                            passwordData:authorizationData];
 }
