@@ -1,5 +1,9 @@
 # GTMAppAuth Changelog
 
+## 1.2.2 (2021-05-4)
+
+* Fixed Swift Package Manager issue with Xcode 12.5.
+
 ## 1.2.1 (2021-04-2)
 
 * Address CocoaPod packaging issue in the 1.2.0 release.
