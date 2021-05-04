@@ -18,13 +18,11 @@
 
 #import "GTMAppAuthFetcherAuthorization.h"
 #import "GTMAppAuthFetcherAuthorization+Keychain.h"
-#import "GTMKeychain.h"
 
 #if TARGET_OS_TV
 #elif TARGET_OS_WATCH
-#elif TARGET_OS_IOS
-#import "GTMOAuth2KeychainCompatibility.h"
-#elif TARGET_OS_MAC
+#elif TARGET_OS_IOS || TARGET_OS_MAC
+#import "GTMKeychain.h"
 #import "GTMOAuth2KeychainCompatibility.h"
 #else
 #warn "Platform Undefined"
