@@ -18,6 +18,7 @@
 
 #import "GTMAppAuthFetcherAuthorization.h"
 #import "GTMAppAuthFetcherAuthorization+Keychain.h"
+#import "GTMKeychain.h"
 
 #if TARGET_OS_TV
 #elif TARGET_OS_WATCH
