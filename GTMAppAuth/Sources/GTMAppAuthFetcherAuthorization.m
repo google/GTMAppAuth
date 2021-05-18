@@ -26,7 +26,7 @@
 #import <AppAuth/AppAuthCore.h>
 #endif
 
-#define GTMOAuth2AssertValidSelector GTMBridgeAssertValidSelector
+#define GTMOAuth2AssertValidSelector GTMSessionFetcherAssertValidSelector
 
 /*! @brief Provides a template implementation for init-family methods which have been marked as
         NS_UNAVILABLE. Stops the compiler from giving a warning when it's the super class'
