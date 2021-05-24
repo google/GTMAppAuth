@@ -17,7 +17,7 @@ for authorizing requests with AppAuth.
 GTMAppAuth is an alternative authorizer to GTMOAuth2. The key differentiator is
 the use of the user's default browser for the authorization, which is more
 secure, more usable (the user's session can be reused) and follows modern OAuth
-[best practices for native apps](https://tools.ietf.org/html/draft-ietf-oauth-native-apps).
+[best practices for native apps](https://datatracker.ietf.org/doc/html/rfc8252).
 Compatibility methods for GTMOAuth2 are offered allowing you to migrate
 from GTMOAuth2 to GTMAppAuth preserving previously serialized authorizations
 (so users shouldn't need to re-authenticate).
