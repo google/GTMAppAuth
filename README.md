@@ -50,7 +50,7 @@ directly:
 NSURL *authorizationEndpoint =
     [NSURL URLWithString:@"https://accounts.google.com/o/oauth2/v2/auth"];
 NSURL *tokenEndpoint =
-    [NSURL URLWithString:@"https://www.googleapis.com/oauth2/v4/token"];
+    [NSURL URLWithString:@"https://oauth2.googleapis.com/token"];
 
 OIDServiceConfiguration *configuration =
     [[OIDServiceConfiguration alloc]
@@ -193,7 +193,7 @@ GTMSessionFetcherService *fetcherService = [[GTMSessionFetcherService alloc] ini
 fetcherService.authorizer = self.authorization;
 
 // Creates a fetcher for the API call.
-NSURL *userinfoEndpoint = [NSURL URLWithString:@"https://www.googleapis.com/oauth2/v3/userinfo"];
+NSURL *userinfoEndpoint = [NSURL URLWithString:@"https://openidconnect.googleapis.com/v1/userinfo"];
 GTMSessionFetcher *fetcher = [fetcherService fetcherWithURL:userinfoEndpoint];
 [fetcher beginFetchWithCompletionHandler:^(NSData *data, NSError *error) {
   // Checks for an error.
