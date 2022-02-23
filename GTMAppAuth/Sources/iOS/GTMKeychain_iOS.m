@@ -18,7 +18,7 @@
 
 #import <TargetConditionals.h>
 
-#if TARGET_OS_IPHONE
+#if TARGET_OS_IOS || TARGET_OS_MACCATALYST || TARGET_OS_TV || TARGET_OS_WATCH
 
 #import "GTMAppAuth/Sources/Public/GTMAppAuth/GTMKeychain.h"
 
@@ -290,4 +290,4 @@ static GTMAppAuthGTMOAuth2Keychain* gGTMAppAuthFetcherAuthorizationGTMOAuth2Defa
 
 @end
 
-#endif // TARGET_OS_IPHONE
+#endif // TARGET_OS_IOS || TARGET_OS_MACCATALYST || TARGET_OS_TV || TARGET_OS_WATCH
