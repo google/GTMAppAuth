@@ -106,6 +106,9 @@ static const char *kKeychainAccountName = "OAuth";
 }
 
 + (BOOL)removePasswordFromKeychainForName:(NSString *)keychainItemName {
+  // before accessing the keychain, check preferences to verify that we've
+  // previously saved a token to the keychain (so we don't needlessly raise
+  // a keychain access permission dialog)
   NSString *prefKey = [self prefsKeyForName:keychainItemName];
   NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
   if (![defaults boolForKey:prefKey]) {
@@ -139,7 +142,7 @@ static const char *kKeychainAccountName = "OAuth";
 }
 
 + (BOOL)savePasswordToKeychainForName:(NSString *)keychainItemName password:(NSString *)password {
-  // Remove the existing key to prevent the keychain error: errSecDuplicateItem.
+  // Remove any existing entry to prevent the keychain error: errSecDuplicateItem.
   [self removePasswordFromKeychainForName:keychainItemName];
 
   SecKeychainRef defaultKeychain = NULL;
@@ -166,7 +169,7 @@ static const char *kKeychainAccountName = "OAuth";
 
 + (BOOL)savePasswordDataToKeychainForName:(NSString *)keychainItemName
                              passwordData:(NSData *)passwordData {
-  // Remove the existing key to prevent the keychain error: errSecDuplicateItem.
+  // Remove any existing entry to prevent the keychain error: errSecDuplicateItem.
   [self removePasswordFromKeychainForName:keychainItemName];
 
   SecKeychainRef defaultKeychain = NULL;
