@@ -46,7 +46,6 @@ let package = Package(
             sources: [
                 ".",
                 "iOS",
-                "macOS"
             ],
             publicHeadersPath: "Public",
 	    cSettings: [

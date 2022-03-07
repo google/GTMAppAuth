@@ -18,8 +18,6 @@
 
 #import <TargetConditionals.h>
 
-#if TARGET_OS_IPHONE
-
 #import "GTMAppAuth/Sources/Public/GTMAppAuth/GTMKeychain.h"
 
 #import <Security/Security.h>
@@ -181,6 +179,9 @@ static GTMAppAuthGTMOAuth2Keychain* gGTMAppAuthFetcherAuthorizationGTMOAuth2Defa
                                                         account, (id)kSecAttrAccount,
                                                         service, (id)kSecAttrService,
                                                         nil];
+#if TARGET_OS_OSX
+  [query setValue:(id)kCFBooleanTrue forKey:(id)kSecUseDataProtectionKeychain];
+#endif
   return query;
 }
 
@@ -289,5 +290,3 @@ static GTMAppAuthGTMOAuth2Keychain* gGTMAppAuthFetcherAuthorizationGTMOAuth2Defa
 }
 
 @end
-
-#endif // TARGET_OS_IPHONE
