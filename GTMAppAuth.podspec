@@ -30,7 +30,7 @@ requests with AppAuth.
 
   s.osx.source_files = "GTMAppAuth/Sources/GTMOAuth2KeychainCompatibility/*.{h,m}",
                        "GTMAppAuth/Sources/macOS/GTMKeychain_macOS.m"
-  s.osx.deployment_target = '10.11'
+  s.osx.deployment_target = '10.12'
 
   s.tvos.source_files = "GTMAppAuth/Sources/iOS/GTMKeychain_iOS.m"
   s.tvos.deployment_target = '9.0'
