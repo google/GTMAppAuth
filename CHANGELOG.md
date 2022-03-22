@@ -4,11 +4,11 @@
 
 * Fixed Keychain duplicate entry error on macOS. ([#138](https://github.com/google/GTMAppAuth/pull/138))
 
-## 1.2.2 (2021-05-4)
+## 1.2.2 (2021-05-04)
 
 * Fixed Swift Package Manager issue with Xcode 12.5.
 
-## 1.2.1 (2021-04-2)
+## 1.2.1 (2021-04-02)
 
 * Address CocoaPod packaging issue in the 1.2.0 release.
 
