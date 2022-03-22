@@ -3,6 +3,7 @@
 ## 1.2.3 (2022-03-22)
 
 * Fixed Keychain duplicate entry error on macOS. ([#138](https://github.com/google/GTMAppAuth/pull/138))
+* Match GTMSessionFetcher's min macOS version to avoid warnings. ([#142](https://github.com/google/GTMAppAuth/pull/142))
 
 ## 1.2.2 (2021-05-04)
 
