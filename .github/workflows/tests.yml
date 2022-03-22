@@ -21,3 +21,10 @@ jobs:
       run: bundle install
     - name: Lint podspec using local source
       run: pod lib lint --verbose --allow-warnings
+
+  spm-build-test:
+    runs-on: macOS-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build package
+      run: swift build
