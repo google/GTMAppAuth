@@ -1,5 +1,9 @@
 # GTMAppAuth Changelog
 
+## 1.2.3 (2022-03-22)
+
+* Fixed Keychain dupicate entry error on macOS. ([#138](https://github.com/google/GTMAppAuth/pull/138))
+
 ## 1.2.2 (2021-05-4)
 
 * Fixed Swift Package Manager issue with Xcode 12.5.
