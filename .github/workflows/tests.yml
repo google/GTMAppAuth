@@ -26,7 +26,5 @@ jobs:
     runs-on: macOS-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Build unit test target
+    - name: Build package
       run: swift build
-    - name: Run unit test target
-      run: swift test
