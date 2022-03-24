@@ -29,7 +29,7 @@
     return nil;
   }
   GTMAppAuthFetcherAuthorization *authorization;
-  if (@available(iOS 11.0, *)) {
+  if (@available(iOS 11.0, macOS 10.13, tvOS 11.0, watchOS 4.0, *)) {
     authorization = (GTMAppAuthFetcherAuthorization *)
         [NSKeyedUnarchiver unarchivedObjectOfClass:[GTMAppAuthFetcherAuthorization class]                                 fromData:passwordData
                                              error:nil];
@@ -47,7 +47,7 @@
 + (BOOL)saveAuthorization:(GTMAppAuthFetcherAuthorization *)auth
         toKeychainForName:(NSString *)keychainItemName {
   NSData *authorizationData;
-  if (@available(iOS 11.0, *)) {
+  if (@available(iOS 11.0, macOS 10.13, tvOS 11.0, watchOS 4.0, *)) {
     authorizationData = [NSKeyedArchiver archivedDataWithRootObject:auth
                                               requiringSecureCoding:YES
                                                               error:nil];
