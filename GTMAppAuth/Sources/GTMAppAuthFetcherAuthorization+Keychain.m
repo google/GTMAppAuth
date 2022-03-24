@@ -31,7 +31,8 @@
   GTMAppAuthFetcherAuthorization *authorization;
   if (@available(iOS 11.0, macOS 10.13, tvOS 11.0, watchOS 4.0, *)) {
     authorization = (GTMAppAuthFetcherAuthorization *)
-        [NSKeyedUnarchiver unarchivedObjectOfClass:[GTMAppAuthFetcherAuthorization class]                                 fromData:passwordData
+        [NSKeyedUnarchiver unarchivedObjectOfClass:[GTMAppAuthFetcherAuthorization class]
+                                          fromData:passwordData
                                              error:nil];
   } else {
     authorization = (GTMAppAuthFetcherAuthorization *)
