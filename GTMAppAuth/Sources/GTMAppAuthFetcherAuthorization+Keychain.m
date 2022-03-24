@@ -22,13 +22,21 @@
 
 @implementation GTMAppAuthFetcherAuthorization (Keychain)
 
-+ (GTMAppAuthFetcherAuthorization *)authorizationFromKeychainForName:(NSString *)keychainItemName {
++ (nullable GTMAppAuthFetcherAuthorization *)
+    authorizationFromKeychainForName:(NSString *)keychainItemName {
   NSData *passwordData = [GTMKeychain passwordDataFromKeychainForName:keychainItemName];
   if (!passwordData) {
     return nil;
   }
-  GTMAppAuthFetcherAuthorization *authorization = (GTMAppAuthFetcherAuthorization *)
-      [NSKeyedUnarchiver unarchiveObjectWithData:passwordData];
+  GTMAppAuthFetcherAuthorization *authorization;
+  if (@available(iOS 11.0, *)) {
+    authorization = (GTMAppAuthFetcherAuthorization *)
+        [NSKeyedUnarchiver unarchivedObjectOfClass:[GTMAppAuthFetcherAuthorization class]                                 fromData:passwordData
+                                             error:nil];
+  } else {
+    authorization = (GTMAppAuthFetcherAuthorization *)
+        [NSKeyedUnarchiver unarchiveObjectWithData:passwordData];
+  }
   return authorization;
 }
 
@@ -38,7 +46,14 @@
 
 + (BOOL)saveAuthorization:(GTMAppAuthFetcherAuthorization *)auth
         toKeychainForName:(NSString *)keychainItemName {
-  NSData *authorizationData = [NSKeyedArchiver archivedDataWithRootObject:auth];
+  NSData *authorizationData;
+  if (@available(iOS 11.0, *)) {
+    authorizationData = [NSKeyedArchiver archivedDataWithRootObject:auth
+                                              requiringSecureCoding:YES
+                                                              error:nil];
+  } else {
+    authorizationData = [NSKeyedArchiver archivedDataWithRootObject:auth];
+  }
   return [GTMKeychain savePasswordDataToKeychainForName:keychainItemName
                                            passwordData:authorizationData];
 }
