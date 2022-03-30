@@ -35,8 +35,11 @@
                                           fromData:passwordData
                                              error:nil];
   } else {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     authorization = (GTMAppAuthFetcherAuthorization *)
         [NSKeyedUnarchiver unarchiveObjectWithData:passwordData];
+#pragma clang diagnostic pop
   }
   return authorization;
 }
@@ -53,7 +56,10 @@
                                               requiringSecureCoding:YES
                                                               error:nil];
   } else {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     authorizationData = [NSKeyedArchiver archivedDataWithRootObject:auth];
+#pragma clang diagnostic pop
   }
   return [GTMKeychain savePasswordDataToKeychainForName:keychainItemName
                                            passwordData:authorizationData];
