@@ -55,6 +55,16 @@ let package = Package(
 	    linkerSettings: [
                 .linkedFramework("Security"),
 	    ]
+        ),
+        .target(
+ 	    name: "GTMAppAuth-UnitTests",
+	    dependencies: [
+	    	"GTMAppAuth",
+	    ],
+	    path: "GTMAppAuth/UnitTests",
+	    linkerSettings: [
+                .linkedFramework("Security"),
+            ]
         )
     ]
 )

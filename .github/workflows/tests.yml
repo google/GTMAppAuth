@@ -22,9 +22,29 @@ jobs:
     - name: Lint podspec using local source
       run: pod lib lint --verbose --allow-warnings
 
-  spm-build-test:
+spm-build-test:
     runs-on: macOS-latest
+    strategy:
+      matrix:
+        sdk: ['macosx', 'iphonesimulator']
+        include:
+          - sdk: 'macosx'
+            destination: '"platform=OS X,arch=x86_64"'
+          - sdk: 'iphonesimulator'
+            destination: '"platform=iOS Simulator,name=iPhone 11"'
     steps:
     - uses: actions/checkout@v2
-    - name: Build package
-      run: swift build
+    - name: Build unit test target
+      run: |
+        xcodebuild \
+          -scheme GTMAppAuth \
+          -sdk ${{ matrix.sdk }} \
+          -destination ${{ matrix.destination }} \
+          build-for-testing
+    - name: Run unit test target
+      run: |
+        xcodebuild \
+          -scheme GTMAppAuth \
+          -sdk ${{ matrix.sdk }} \
+          -destination ${{ matrix.destination }} \
+          test-without-building
