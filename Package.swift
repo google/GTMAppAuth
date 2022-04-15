@@ -56,7 +56,7 @@ let package = Package(
                 .linkedFramework("Security"),
 	    ]
         ),
-        .target(
+        .testTarget(
  	    name: "GTMAppAuth-UnitTests",
 	    dependencies: [
 	    	"GTMAppAuth",
