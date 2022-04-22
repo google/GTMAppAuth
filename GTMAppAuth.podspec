@@ -43,7 +43,8 @@ requests with AppAuth.
   s.watchos.deployment_target = watchos_deployment_target
 
   s.pod_target_xcconfig = {
-    'HEADER_SEARCH_PATHS' => '"${PODS_TARGET_SRCROOT}"'
+    'HEADER_SEARCH_PATHS' => '"${PODS_TARGET_SRCROOT}"',
+    'SWIFT_OBJC_BRIDGING_HEADER' => '${SRCROOT}/GTMAppAuth/GTMAppAuth/UnitTests/GTMAppAuthTests-Bridging-Header.h'
   }
 
   s.framework = 'Security'
@@ -55,6 +56,6 @@ requests with AppAuth.
       :ios => ios_deployment_target,
       :osx => osx_deployment_target
     }
-    test_spec.source_files = "GTMAppAuth/UnitTests/*.swift"
+    test_spec.source_files = "GTMAppAuth/UnitTests/*"
   end
 end
