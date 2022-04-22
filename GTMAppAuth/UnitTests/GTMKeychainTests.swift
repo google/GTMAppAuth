@@ -1,5 +1,9 @@
 import XCTest
 
+#if SWIFT_PACKAGE
+import AppAuth
+#endif
+
 class GTMKeychainTests: XCTestCase {
     
     let kIssuer: String = "https://accounts.google.com"
