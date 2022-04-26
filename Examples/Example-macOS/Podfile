@@ -7,5 +7,5 @@ target 'Example-macOS' do
   # In production, you would use:
   # pod 'GTMAppAuth'
 
-  pod 'AppAuth', '~> 1.0'
+  pod 'AppAuth', '~> 1.5'
 end
