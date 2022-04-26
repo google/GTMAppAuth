@@ -181,7 +181,6 @@ static NSString *const kExampleAuthorizerKey = @"authorization";
     OIDAuthorizationRequest *request =
         [[OIDAuthorizationRequest alloc] initWithConfiguration:configuration
                                                       clientId:kClientID
-                                                  clientSecret:nil
                                                         scopes:@[OIDScopeOpenID, OIDScopeProfile]
                                                    redirectURL:redirectURI
                                                   responseType:OIDResponseTypeCode
