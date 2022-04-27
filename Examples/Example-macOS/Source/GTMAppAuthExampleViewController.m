@@ -36,12 +36,6 @@ static NSString *const kIssuer = @"https://accounts.google.com";
  */
 static NSString *const kClientID = @"YOUR_CLIENT.apps.googleusercontent.com";
 
-/*! @brief The OAuth client secret.
-    @discussion For Google, register your client at
-        https://console.developers.google.com/apis/credentials?project=_
- */
-static NSString *const kClientSecret = @"YOUR_CLIENT_SECRET";
-
 /*! @brief The OAuth redirect URI for the client @c kClientID.
     @discussion With Google, the scheme of the redirect URI is the reverse DNS notation of the
         client ID. This scheme must be registered as a scheme in the project's Info
@@ -187,7 +181,6 @@ static NSString *const kExampleAuthorizerKey = @"authorization";
     OIDAuthorizationRequest *request =
         [[OIDAuthorizationRequest alloc] initWithConfiguration:configuration
                                                       clientId:kClientID
-                                                  clientSecret:kClientSecret
                                                         scopes:@[OIDScopeOpenID, OIDScopeProfile]
                                                    redirectURL:redirectURI
                                                   responseType:OIDResponseTypeCode
@@ -195,6 +188,7 @@ static NSString *const kExampleAuthorizerKey = @"authorization";
     // performs authentication request
     self.appDelegate.currentAuthorizationFlow =
         [OIDAuthState authStateByPresentingAuthorizationRequest:request
+                                               presentingWindow:self.view.window
                             callback:^(OIDAuthState *_Nullable authState,
                                        NSError *_Nullable error) {
       if (authState) {
