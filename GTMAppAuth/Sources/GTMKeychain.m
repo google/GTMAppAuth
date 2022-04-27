@@ -175,7 +175,6 @@ static GTMAppAuthGTMOAuth2Keychain* gGTMAppAuthFetcherAuthorizationGTMOAuth2Defa
 + (NSMutableDictionary *)keychainQueryForService:(NSString *)service account:(NSString *)account {
   NSMutableDictionary *query =
       [NSMutableDictionary dictionaryWithObjectsAndKeys:(id)kSecClassGenericPassword, (id)kSecClass,
-                                                        @"OAuth", (id)kSecAttrGeneric,
                                                         account, (id)kSecAttrAccount,
                                                         service, (id)kSecAttrService,
                                                         nil];
