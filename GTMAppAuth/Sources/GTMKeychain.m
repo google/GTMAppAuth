@@ -18,8 +18,6 @@
 
 #import <TargetConditionals.h>
 
-#if TARGET_OS_IPHONE
-
 #import "GTMAppAuth/Sources/Public/GTMAppAuth/GTMKeychain.h"
 
 #import <Security/Security.h>
@@ -289,5 +287,3 @@ static GTMAppAuthGTMOAuth2Keychain* gGTMAppAuthFetcherAuthorizationGTMOAuth2Defa
 }
 
 @end
-
-#endif // TARGET_OS_IPHONE

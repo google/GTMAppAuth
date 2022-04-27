@@ -45,8 +45,6 @@ let package = Package(
             path: "GTMAppAuth/Sources",
             sources: [
                 ".",
-                "iOS",
-                "macOS"
             ],
             publicHeadersPath: "Public",
 	    cSettings: [

@@ -24,18 +24,9 @@ requests with AppAuth.
   s.public_header_files = "GTMAppAuth/Sources/Public/GTMAppAuth/*.h"
   s.requires_arc = true
 
-  s.ios.source_files = "GTMAppAuth/Sources/GTMOAuth2KeychainCompatibility/*.{h,m}",
-                       "GTMAppAuth/Sources/iOS/GTMKeychain_iOS.m"
   s.ios.deployment_target = "9.0"
-
-  s.osx.source_files = "GTMAppAuth/Sources/GTMOAuth2KeychainCompatibility/*.{h,m}",
-                       "GTMAppAuth/Sources/macOS/GTMKeychain_macOS.m"
   s.osx.deployment_target = '10.12'
-
-  s.tvos.source_files = "GTMAppAuth/Sources/iOS/GTMKeychain_iOS.m"
   s.tvos.deployment_target = '9.0'
-
-  s.watchos.source_files = "GTMAppAuth/Sources/iOS/GTMKeychain_iOS.m"
   s.watchos.deployment_target = '6.0'
 
   s.pod_target_xcconfig = {
