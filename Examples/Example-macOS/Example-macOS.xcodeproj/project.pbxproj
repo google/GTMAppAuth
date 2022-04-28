@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C1AF3AE72818785B003BAEFF /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = C1AF3AE52818785B003BAEFF /* Podfile */; };
+		C1AF3AE82818785B003BAEFF /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = C1AF3AE62818785B003BAEFF /* README.md */; };
 		CBD96061721C32C2145292E2 /* libPods-Example-macOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 32C094C5B99537BF96A14D4E /* libPods-Example-macOS.a */; };
 		F6016E951D2BD988003497D7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = F6016E8B1D2BD988003497D7 /* AppDelegate.m */; };
 		F6016E971D2BD988003497D7 /* GTMAppAuthExampleViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F6016E8D1D2BD988003497D7 /* GTMAppAuthExampleViewController.m */; };
@@ -23,6 +25,8 @@
 		653C5E3C17C4D280AA39A08B /* libPods-Example-Mac.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Example-Mac.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A707A6A09FEE94A105421FD6 /* Pods-Example-Mac.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Example-Mac.release.xcconfig"; path = "Pods/Target Support Files/Pods-Example-Mac/Pods-Example-Mac.release.xcconfig"; sourceTree = "<group>"; };
 		C16FBAA1467EEE61F09B9C78 /* Pods-Example-Mac.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Example-Mac.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Example-Mac/Pods-Example-Mac.debug.xcconfig"; sourceTree = "<group>"; };
+		C1AF3AE52818785B003BAEFF /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; };
+		C1AF3AE62818785B003BAEFF /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		F6016E701D2AC11F003497D7 /* Example-macOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Example-macOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F6016E8B1D2BD988003497D7 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = Source/AppDelegate.m; sourceTree = "<group>"; };
 		F6016E8D1D2BD988003497D7 /* GTMAppAuthExampleViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GTMAppAuthExampleViewController.m; path = Source/GTMAppAuthExampleViewController.m; sourceTree = "<group>"; };
@@ -70,6 +74,8 @@
 		F6016E671D2AC11E003497D7 = {
 			isa = PBXGroup;
 			children = (
+				C1AF3AE52818785B003BAEFF /* Podfile */,
+				C1AF3AE62818785B003BAEFF /* README.md */,
 				F6016E8A1D2BD973003497D7 /* Source */,
 				F6016E711D2AC11F003497D7 /* Products */,
 				8ADFA8B34C1A7009C6F624AF /* Pods */,
@@ -112,8 +118,6 @@
 				F6016E6C1D2AC11F003497D7 /* Sources */,
 				F6016E6D1D2AC11F003497D7 /* Frameworks */,
 				F6016E6E1D2AC11F003497D7 /* Resources */,
-				52872C7E76CB3EA69F4392F7 /* [CP] Embed Pods Frameworks */,
-				1C5B2EF60536044DE119E500 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -143,6 +147,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -163,6 +168,8 @@
 			files = (
 				F6016E981D2BD988003497D7 /* GTMAppAuthExampleViewController.xib in Resources */,
 				F6016E9C1D2BD9C0003497D7 /* Assets.xcassets in Resources */,
+				C1AF3AE82818785B003BAEFF /* README.md in Resources */,
+				C1AF3AE72818785B003BAEFF /* Podfile in Resources */,
 				F6016E991D2BD988003497D7 /* MainMenu.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -170,49 +177,22 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		1C5B2EF60536044DE119E500 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Example-macOS/Pods-Example-macOS-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		52872C7E76CB3EA69F4392F7 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Example-macOS/Pods-Example-macOS-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		C9395BB900D0A44A3F7EB0BE /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
 			);
 			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Example-macOS-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
