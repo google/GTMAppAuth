@@ -14,10 +14,10 @@ libraries on iOS, macOS, tvOS, and watchOS by providing an implementation of
 [`GTMFetcherAuthorizationProtocol`](https://github.com/google/gtm-session-fetcher/blob/2a3b5264108e80d62003b770ff02eb7364ff1365/Source/GTMSessionFetcher.h#L660)
 for authorizing requests with AppAuth.
 
-GTMAppAuth is an alternative authorizer to GTMOAuth2. The key differentiator is
-the use of the user's default browser for the authorization, which is more
-secure, more usable (the user's session can be reused) and follows modern OAuth
-[best practices for native apps](https://datatracker.ietf.org/doc/html/rfc8252).
+GTMAppAuth is an alternative authorizer to [GTMOAuth2](https://github.com/google/gtm-oauth2)
+. The key differentiator is the use of the user's default browser for the
+authorization, which is more secure, more usable (the user's session can be
+reused) and follows modern OAuth [best practices for native apps](https://datatracker.ietf.org/doc/html/rfc8252).
 Compatibility methods for GTMOAuth2 are offered allowing you to migrate
 from GTMOAuth2 to GTMAppAuth preserving previously serialized authorizations
 (so users shouldn't need to re-authenticate).
@@ -226,10 +226,11 @@ GTMSessionFetcher *fetcher = [fetcherService fetcherWithURL:userinfoEndpoint];
 }];
 ```
 
-### Serialization
+### Serialization to the Keychain
 
-You can easily serialize `GTMAppAuthFetcherAuthorization` objects using the
-included Keychain category.
+You can easily serialize `GTMAppAuthFetcherAuthorization` objects and store
+them in Keychain items using the included
+`GTMAppAuthFetcherAuthorization+Keychain` category.
 
 ```objc
 // Serialize to Keychain
@@ -245,7 +246,28 @@ GTMAppAuthFetcherAuthorization* authorization =
     removeAuthorizationFromKeychainForName:kGTMAppAuthExampleAuthorizerKey];
 ```
 
-### GTMOAuth2-compatible Serialization
+#### Keychain Storage
+
+Serialized `GTMAppAuthFetcherAuthorization` instances are stored using Keychain
+items of the [`kSecClassGenericPassword`](https://developer.apple.com/documentation/security/ksecclassgenericpassword?language=objc)
+class with a [`kSecAttrAccount`](https://developer.apple.com/documentation/security/ksecattraccount?language=objc)
+value of "OAuth" and a developer supplied value for [`kSecAttrService`](https://developer.apple.com/documentation/security/ksecattrservice?language=objc).
+For this use of generic password items, the combination of account and service
+values acts as the
+[primary key](https://developer.apple.com/documentation/security/1542001-security_framework_result_codes/errsecduplicateitem?language=objc)
+of the Keychain items.  An `NSCoding` compliant serialization of the relevant
+`GTMAppAuthFetcherAuthorization` instance is supplied as the value for
+[`kSecValueData`](https://developer.apple.com/documentation/security/ksecvaluedata?language=objc)
+and this is encrypted and stored by
+[Keychain Services](https://developer.apple.com/documentation/security/keychain_services?language=objc)
+. The
+[`kSecAttrAccessible`](https://developer.apple.com/documentation/security/ksecattraccessible?language=objc)
+key is set to
+[`kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly`](https://developer.apple.com/documentation/security/ksecattraccessibleafterfirstunlockthisdeviceonly?language=objc)
+in order to allow background access after initial device unlock following a
+restart.  
+
+#### GTMOAuth2 Compatibility
 
 To assist the migration from GTMOAuth2 to GTMAppAuth, GTMOAuth2-compatible
 serialization methods are provided in `GTMOAuth2KeychainCompatibility`.
