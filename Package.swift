@@ -49,20 +49,20 @@ let package = Package(
                 "macOS"
             ],
             publicHeadersPath: "Public",
-	    cSettings: [
-                .headerSearchPath("../../"),
-            ],
-	    linkerSettings: [
-                .linkedFramework("Security"),
-	    ]
+            cSettings: [
+                    .headerSearchPath("../../"),
+                ],
+            linkerSettings: [
+                    .linkedFramework("Security"),
+            ]
         ),
         .testTarget(
- 	    name: "GTMAppAuth-UnitTests",
-	    dependencies: [
-	    	"GTMAppAuth",
-	    ],
-	    path: "GTMAppAuth/UnitTests",
-	    linkerSettings: [
+            name: "GTMAppAuth-UnitTests",
+            dependencies: [
+                "GTMAppAuth",
+            ],
+            path: "GTMAppAuth/UnitTests",
+            linkerSettings: [
                 .linkedFramework("Security"),
             ]
         )

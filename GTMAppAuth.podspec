@@ -44,7 +44,7 @@ requests with AppAuth.
 
   s.pod_target_xcconfig = {
     'HEADER_SEARCH_PATHS' => '"${PODS_TARGET_SRCROOT}"',
-    'SWIFT_OBJC_BRIDGING_HEADER' => '${SRCROOT}/GTMAppAuth/GTMAppAuth/UnitTests/GTMAppAuthTests-Bridging-Header.h'
+    'SWIFT_OBJC_BRIDGING_HEADER' => '${PODS_TARGET_SRCROOT}/GTMAppAuth/UnitTests/GTMAppAuthTests-Bridging-Header.h',
   }
 
   s.framework = 'Security'
@@ -52,10 +52,11 @@ requests with AppAuth.
   s.dependency 'AppAuth/Core', '~> 1.4'
   
   s.test_spec 'Tests' do |test_spec|
-    test_spec.platforms = {
+      test_spec.platforms = {
       :ios => ios_deployment_target,
       :osx => osx_deployment_target
     }
-    test_spec.source_files = "GTMAppAuth/UnitTests/*"
+    test_spec.source_files = "GTMAppAuth/UnitTests/*.{h,swift}"
+
   end
 end
