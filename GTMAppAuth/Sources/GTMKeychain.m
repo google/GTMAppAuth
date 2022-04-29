@@ -16,8 +16,6 @@
         limitations under the License.
  */
 
-#import <TargetConditionals.h>
-
 #import "GTMAppAuth/Sources/Public/GTMAppAuth/GTMKeychain.h"
 
 #import <Security/Security.h>
