@@ -226,18 +226,17 @@ GTMSessionFetcher *fetcher = [fetcherService fetcherWithURL:userinfoEndpoint];
 }];
 ```
 
-### Serialization to the Keychain
+### Saving to the Keychain
 
-You can easily serialize `GTMAppAuthFetcherAuthorization` objects and store
-them in Keychain items using the included
-`GTMAppAuthFetcherAuthorization+Keychain` category.
+You can easily save `GTMAppAuthFetcherAuthorization` instances to the Keychain using
+the included `GTMAppAuthFetcherAuthorization+Keychain` category.
 
 ```objc
-// Serialize to Keychain
+// Save to Keychain
 [GTMAppAuthFetcherAuthorization saveAuthorization:_authorization
                                 toKeychainForName:kGTMAppAuthExampleAuthorizerKey];
 
-// Deserialize from Keychain
+// Restore from Keychain
 GTMAppAuthFetcherAuthorization* authorization =
     [GTMAppAuthFetcherAuthorization authorizationFromKeychainForName:kGTMAppAuthExampleAuthorizerKey];
 
@@ -248,32 +247,31 @@ GTMAppAuthFetcherAuthorization* authorization =
 
 #### Keychain Storage
 
-Serialized `GTMAppAuthFetcherAuthorization` instances are stored using Keychain
-items of the [`kSecClassGenericPassword`](https://developer.apple.com/documentation/security/ksecclassgenericpassword?language=objc)
+`GTMAppAuthFetcherAuthorization` instances are stored using Keychain items of the
+[`kSecClassGenericPassword`](https://developer.apple.com/documentation/security/ksecclassgenericpassword?language=objc)
 class with a [`kSecAttrAccount`](https://developer.apple.com/documentation/security/ksecattraccount?language=objc)
 value of "OAuth" and a developer supplied value for [`kSecAttrService`](https://developer.apple.com/documentation/security/ksecattrservice?language=objc).
 For this use of generic password items, the combination of account and service
 values acts as the
 [primary key](https://developer.apple.com/documentation/security/1542001-security_framework_result_codes/errsecduplicateitem?language=objc)
-of the Keychain items.  An `NSCoding` compliant serialization of the relevant
-`GTMAppAuthFetcherAuthorization` instance is supplied as the value for
-[`kSecValueData`](https://developer.apple.com/documentation/security/ksecvaluedata?language=objc)
-and this is encrypted and stored by
-[Keychain Services](https://developer.apple.com/documentation/security/keychain_services?language=objc)
-. The
+of the Keychain items.  The
 [`kSecAttrAccessible`](https://developer.apple.com/documentation/security/ksecattraccessible?language=objc)
 key is set to
 [`kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly`](https://developer.apple.com/documentation/security/ksecattraccessibleafterfirstunlockthisdeviceonly?language=objc)
 in order to allow background access after initial device unlock following a
-restart.  
+restart.  A [keyed archive](https://developer.apple.com/documentation/foundation/nskeyedarchiver?language=objc)
+representation of the relevant `GTMAppAuthFetcherAuthorization` instance is supplied as the value for
+[`kSecValueData`](https://developer.apple.com/documentation/security/ksecvaluedata?language=objc)
+and this is encrypted and stored by
+[Keychain Services](https://developer.apple.com/documentation/security/keychain_services?language=objc).
 
 #### GTMOAuth2 Compatibility
 
 To assist the migration from GTMOAuth2 to GTMAppAuth, GTMOAuth2-compatible
-serialization methods are provided in `GTMOAuth2KeychainCompatibility`.
+Keychain methods are provided in `GTMOAuth2KeychainCompatibility`.
 
 ```objc
-// Deserialize from Keychain
+// Restore from Keychain
 GTMAppAuthFetcherAuthorization *auth =
     [GTMOAuth2KeychainCompatibility authForGoogleFromKeychainForName:kKeychainItemName
                                                             clientID:clientID
@@ -283,11 +281,11 @@ GTMAppAuthFetcherAuthorization *auth =
 [GTMOAuth2KeychainCompatibility removeAuthFromKeychainForName:kKeychainItemName];
 ```
 
-You can also serialize to GTMOAuth2 format, though this is discouraged (you
-should serialize in GTMAppAuth format as described above).
+You can also save to GTMOAuth2 format, though this is discouraged (you
+should save in GTMAppAuth format as described above).
 
 ```objc
-// Serialize to Keychain
+// Save to Keychain
 [GTMOAuth2KeychainCompatibility saveAuthToKeychainForName:kKeychainItemName
                                            authentication:authorization];
 ```
