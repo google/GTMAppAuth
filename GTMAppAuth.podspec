@@ -19,8 +19,7 @@ requests with AppAuth.
 
   s.source       = { :git => "https://github.com/google/GTMAppAuth.git", :tag => s.version }
   s.prefix_header_file = false
-  s.source_files = "GTMAppAuth/Sources/*.{h,m}",
-                   "GTMAppAuth/Sources/Public/GTMAppAuth/*.h"
+  s.source_files = "GTMAppAuth/Sources/**/*.{h,m}",
   s.public_header_files = "GTMAppAuth/Sources/Public/GTMAppAuth/*.h"
   s.requires_arc = true
 
