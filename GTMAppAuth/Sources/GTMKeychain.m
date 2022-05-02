@@ -20,14 +20,13 @@
 
 #import <Security/Security.h>
 
-typedef NS_ENUM(NSInteger, GTMAppAuthFetcherAuthorizationGTMAppAuthGTMOAuth2KeychainError) {
-  GTMAppAuthGTMOAuth2KeychainErrorBadArguments = -1301,
-  GTMAppAuthGTMOAuth2KeychainErrorNoPassword = -1302
-};
-
 /*! @brief Keychain helper class.
  */
 @interface GTMAppAuthGTMOAuth2Keychain : NSObject
+
+// When set to YES, all Keychain queries will have
+// kSecUseDataProtectionKeychain set to true on macOS 10.15+.  Defaults to NO.
+@property(nonatomic) BOOL dataProtectionKeychain;
 
 + (GTMAppAuthGTMOAuth2Keychain *)defaultKeychain;
 
@@ -37,8 +36,8 @@ typedef NS_ENUM(NSInteger, GTMAppAuthFetcherAuthorizationGTMAppAuthGTMOAuth2Keyc
                            error:(NSError **)error;
 
 - (NSData *)passwordDataForService:(NSString *)service
-                             account:(NSString *)account
-                               error:(NSError **)error;
+                           account:(NSString *)account
+                             error:(NSError **)error;
 
 // OK to pass nil for the error parameter.
 - (BOOL)removePasswordForService:(NSString *)service
@@ -66,23 +65,32 @@ typedef NS_ENUM(NSInteger, GTMAppAuthFetcherAuthorizationGTMAppAuthGTMOAuth2Keyc
 
 @end
 
-NSString *const kGTMAppAuthFetcherAuthorizationGTMOAuth2ErrorDomain  = @"com.google.GTMOAuth2";
-NSString *const kGTMAppAuthFetcherAuthorizationGTMOAuth2KeychainErrorDomain =
-    @"com.google.GTMOAuthKeychain";
 static NSString *const kGTMAppAuthFetcherAuthorizationGTMOAuth2AccountName = @"OAuth";
-static GTMAppAuthGTMOAuth2Keychain* gGTMAppAuthFetcherAuthorizationGTMOAuth2DefaultKeychain = nil;
 
 @implementation GTMKeychain
 
 + (BOOL)removePasswordFromKeychainForName:(NSString *)keychainItemName {
+  return [GTMKeychain removePasswordFromKeychainForName:keychainItemName
+                             withDataProtectionKeychain:NO];
+}
+
++ (BOOL)removePasswordFromKeychainForName:(NSString *)keychainItemName
+               withDataProtectionKeychain:(BOOL)dataProtectionKeychain {
   GTMAppAuthGTMOAuth2Keychain *keychain = [GTMAppAuthGTMOAuth2Keychain defaultKeychain];
+  keychain.dataProtectionKeychain = dataProtectionKeychain;
   return [keychain removePasswordForService:keychainItemName
                                     account:kGTMAppAuthFetcherAuthorizationGTMOAuth2AccountName
                                       error:nil];
 }
 
 + (NSString *)passwordFromKeychainForName:(NSString *)keychainItemName {
+  return [GTMKeychain passwordFromKeychainForName:keychainItemName withDataProtectionKeychain:NO];
+}
+
++ (NSString *)passwordFromKeychainForName:(NSString *)keychainItemName
+               withDataProtectionKeychain:(BOOL)dataProtectionKeychain {
   GTMAppAuthGTMOAuth2Keychain *keychain = [GTMAppAuthGTMOAuth2Keychain defaultKeychain];
+  keychain.dataProtectionKeychain = dataProtectionKeychain;
   NSError *error;
   NSString *password =
       [keychain passwordForService:keychainItemName
@@ -91,38 +99,39 @@ static GTMAppAuthGTMOAuth2Keychain* gGTMAppAuthFetcherAuthorizationGTMOAuth2Defa
   return password;
 }
 
-+ (BOOL)savePasswordToKeychainForName:(NSString *)keychainItemName password:(NSString *)password {
-  return [self savePasswordToKeychainForName:keychainItemName
-                                    password:password
-                               accessibility:NULL
-                                       error:NULL];
++ (BOOL)savePasswordToKeychainForName:(NSString *)keychainItemName
+                             password:(NSString *)password {
+  return [GTMKeychain savePasswordToKeychainForName:keychainItemName
+                                           password:password
+                         withDataProtectionKeychain:NO];
 }
 
-+ (BOOL)savePasswordToKeychainForName:(NSString *)keychainItemName password:(NSString *)password
-                    accessibility:(CFTypeRef)accessibility
-                            error:(NSError **)error {
-  if (accessibility == NULL) {
-    accessibility = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly;
-  }
-  // make a response string containing the values we want to save
++ (BOOL)savePasswordToKeychainForName:(NSString *)keychainItemName
+                             password:(NSString *)password
+           withDataProtectionKeychain:(BOOL)dataProtectionKeychain {
+  CFTypeRef accessibility = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly;
   GTMAppAuthGTMOAuth2Keychain *keychain = [GTMAppAuthGTMOAuth2Keychain defaultKeychain];
+  keychain.dataProtectionKeychain = dataProtectionKeychain;
   return [keychain setPassword:password
                     forService:keychainItemName
                  accessibility:accessibility
                        account:kGTMAppAuthFetcherAuthorizationGTMOAuth2AccountName
-                         error:error];
+                         error:NULL];
 }
 
-/*! @brief Saves the password string to the keychain with the given identifier.
-    @param keychainItemName Keychain name of the item.
-    @param password Password string to save.
-    @return YES when the password string was saved successfully.
- */
 + (BOOL)savePasswordDataToKeychainForName:(NSString *)keychainItemName
                              passwordData:(NSData *)password {
+  return [GTMKeychain savePasswordDataToKeychainForName:keychainItemName
+                                           passwordData:password
+                             withDataProtectionKeychain:NO];
+}
+
++ (BOOL)savePasswordDataToKeychainForName:(NSString *)keychainItemName
+                             passwordData:(NSData *)password
+               withDataProtectionKeychain:(BOOL)dataProtectionKeychain {
   CFTypeRef accessibility = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly;
-  // make a response string containing the values we want to save
   GTMAppAuthGTMOAuth2Keychain *keychain = [GTMAppAuthGTMOAuth2Keychain defaultKeychain];
+  keychain.dataProtectionKeychain = dataProtectionKeychain;
   return [keychain setPasswordData:password
                         forService:keychainItemName
                      accessibility:accessibility
@@ -130,12 +139,15 @@ static GTMAppAuthGTMOAuth2Keychain* gGTMAppAuthFetcherAuthorizationGTMOAuth2Defa
                              error:NULL];
 }
 
-/*! @brief Loads the password string from the keychain with the given identifier.
-    @param keychainItemName Keychain name of the item.
-    @return The password string at the given identifier, or nil.
- */
 + (NSData *)passwordDataFromKeychainForName:(NSString *)keychainItemName {
+  return [GTMKeychain passwordDataFromKeychainForName:keychainItemName
+                           withDataProtectionKeychain:NO];
+}
+
++ (NSData *)passwordDataFromKeychainForName:(NSString *)keychainItemName
+                 withDataProtectionKeychain:(BOOL)dataProtectionKeychain {
   GTMAppAuthGTMOAuth2Keychain *keychain = [GTMAppAuthGTMOAuth2Keychain defaultKeychain];
+  keychain.dataProtectionKeychain = dataProtectionKeychain;
   NSError *error;
   NSData *password =
       [keychain passwordDataForService:keychainItemName
@@ -146,9 +158,26 @@ static GTMAppAuthGTMOAuth2Keychain* gGTMAppAuthFetcherAuthorizationGTMOAuth2Defa
 
 @end
 
-#pragma mark GTMAppAuthGTMOAuth2Keychain
+
+typedef NS_ENUM(NSInteger, GTMAppAuthFetcherAuthorizationGTMAppAuthGTMOAuth2KeychainError) {
+  GTMAppAuthGTMOAuth2KeychainErrorBadArguments = -1301,
+  GTMAppAuthGTMOAuth2KeychainErrorNoPassword = -1302
+};
+
+NSString *const kGTMAppAuthFetcherAuthorizationGTMOAuth2KeychainErrorDomain =
+    @"com.google.GTMOAuthKeychain";
+
+static GTMAppAuthGTMOAuth2Keychain* gGTMAppAuthFetcherAuthorizationGTMOAuth2DefaultKeychain = nil;
 
 @implementation GTMAppAuthGTMOAuth2Keychain
+
+- (instancetype)init {
+  self = [super init];
+  if (self) {
+    _dataProtectionKeychain = NO;
+  }
+  return self;
+}
 
 + (GTMAppAuthGTMOAuth2Keychain *)defaultKeychain {
   static dispatch_once_t onceToken;
@@ -157,7 +186,6 @@ static GTMAppAuthGTMOAuth2Keychain* gGTMAppAuthFetcherAuthorizationGTMOAuth2Defa
   });
   return gGTMAppAuthFetcherAuthorizationGTMOAuth2DefaultKeychain;
 }
-
 
 // For unit tests: allow setting a mock object
 + (void)setDefaultKeychain:(GTMAppAuthGTMOAuth2Keychain *)keychain {
@@ -170,17 +198,20 @@ static GTMAppAuthGTMOAuth2Keychain* gGTMAppAuthFetcherAuthorizationGTMOAuth2Defa
   return [NSString stringWithFormat:@"com.google.GTMOAuth.%@%@", service, account];
 }
 
-+ (NSMutableDictionary *)keychainQueryForService:(NSString *)service account:(NSString *)account {
+- (NSMutableDictionary *)keychainQueryForService:(NSString *)service account:(NSString *)account {
   NSMutableDictionary *query =
       [NSMutableDictionary dictionaryWithObjectsAndKeys:(id)kSecClassGenericPassword, (id)kSecClass,
                                                         account, (id)kSecAttrAccount,
                                                         service, (id)kSecAttrService,
                                                         nil];
+#if TARGET_OS_OSX && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101500
+  if (@available(macOS 10.15, *)) {
+    if (self.dataProtectionKeychain) {
+      [query setObject:(id)kCFBooleanTrue forKey:(id)kSecUseDataProtectionKeychain];
+    }
+  }
+#endif
   return query;
-}
-
-- (NSMutableDictionary *)keychainQueryForService:(NSString *)service account:(NSString *)account {
-  return [[self class] keychainQueryForService:service account:account];
 }
 
 - (NSString *)passwordForService:(NSString *)service

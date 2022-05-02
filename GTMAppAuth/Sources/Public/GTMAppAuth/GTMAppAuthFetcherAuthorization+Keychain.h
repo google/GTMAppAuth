@@ -33,11 +33,31 @@ NS_ASSUME_NONNULL_BEGIN
 + (nullable GTMAppAuthFetcherAuthorization *)
     authorizationFromKeychainForName:(NSString *)keychainItemName;
 
+/*! @brief Attempts to create a @c GTMAppAuthFetcherAuthorization from data stored in the keychain
+        in GTMAppAuth format.
+    @param keychainItemName The keychain name.
+    @param dataProtectionKeychain Whether or not to use the data protection
+        keychain on macOS 10.15+.
+    @return A @c GTMAppAuthFetcherAuthorization object, or nil.
+ */
++ (nullable GTMAppAuthFetcherAuthorization *)
+    authorizationFromKeychainForName:(NSString *)keychainItemName
+          withDataProtectionKeychain:(BOOL)dataProtectionKeychain;
+
 /*! @brief Removes a stored authorization state.
     @param keychainItemName The keychain name.
     @return YES the tokens were removed successfully (or didn't exist).
  */
 + (BOOL)removeAuthorizationFromKeychainForName:(NSString *)keychainItemName;
+
+/*! @brief Removes a stored authorization state.
+    @param keychainItemName The keychain name.
+    @param dataProtectionKeychain Whether or not to use the data protection
+        keychain on macOS 10.15+.
+    @return YES the tokens were removed successfully (or didn't exist).
+ */
++ (BOOL)removeAuthorizationFromKeychainForName:(NSString *)keychainItemName
+                    withDataProtectionKeychain:(BOOL)dataProtectionKeychain;
 
 /*! @brief Saves the authorization state to the keychain, in GTMAppAuth format.
     @param auth The authorization to save.
@@ -46,6 +66,17 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (BOOL)saveAuthorization:(GTMAppAuthFetcherAuthorization *)auth
         toKeychainForName:(NSString *)keychainItemName;
+
+/*! @brief Saves the authorization state to the keychain, in GTMAppAuth format.
+    @param auth The authorization to save.
+    @param keychainItemName The keychain name.
+    @param dataProtectionKeychain Whether or not to use the data protection
+        keychain on macOS 10.15+.
+    @return YES when the state was saved successfully.
+ */
++ (BOOL)saveAuthorization:(GTMAppAuthFetcherAuthorization *)auth
+             toKeychainForName:(NSString *)keychainItemName
+    withDataProtectionKeychain:(BOOL)dataProtectionKeychain;
 
 @end
 

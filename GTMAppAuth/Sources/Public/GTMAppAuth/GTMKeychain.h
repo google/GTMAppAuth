@@ -31,11 +31,31 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (BOOL)savePasswordToKeychainForName:(NSString *)keychainItemName password:(NSString *)password;
 
+/*! @brief Saves the password string to the keychain with the given identifier.
+    @param keychainItemName Keychain name of the item.
+    @param password Password string to save.
+    @param dataProtectionKeychain Whether or not to use the data protection
+        keychain on macOS 10.15+.
+    @return YES when the password string was saved successfully.
+ */
++ (BOOL)savePasswordToKeychainForName:(NSString *)keychainItemName
+                             password:(NSString *)password
+           withDataProtectionKeychain:(BOOL)dataProtectionKeychain;
+
 /*! @brief Loads the password string from the keychain with the given identifier.
     @param keychainItemName Keychain name of the item.
     @return The password string at the given identifier, or nil.
  */
 + (nullable NSString *)passwordFromKeychainForName:(NSString *)keychainItemName;
+
+/*! @brief Loads the password string from the keychain with the given identifier.
+    @param keychainItemName Keychain name of the item.
+    @param dataProtectionKeychain Whether or not to use the data protection
+        keychain on macOS 10.15+.
+    @return The password string at the given identifier, or nil.
+ */
++ (nullable NSString *)passwordFromKeychainForName:(NSString *)keychainItemName
+                        withDataProtectionKeychain:(BOOL)dataProtectionKeychain;
 
 /*! @brief Saves the password data to the keychain with the given identifier.
     @param keychainItemName Keychain name of the item.
@@ -45,17 +65,46 @@ NS_ASSUME_NONNULL_BEGIN
 + (BOOL)savePasswordDataToKeychainForName:(NSString *)keychainItemName
                              passwordData:(NSData *)passwordData;
 
+/*! @brief Saves the password data to the keychain with the given identifier.
+    @param keychainItemName Keychain name of the item.
+    @param passwordData Password data to save.
+    @param dataProtectionKeychain Whether or not to use the data protection
+        keychain on macOS 10.15+.
+    @return YES when the password data was saved successfully.
+ */
++ (BOOL)savePasswordDataToKeychainForName:(NSString *)keychainItemName
+                             passwordData:(NSData *)passwordData
+               withDataProtectionKeychain:(BOOL)dataProtectionKeychain;
+
 /*! @brief Loads the password data from the keychain with the given identifier.
     @param keychainItemName Keychain name of the item.
     @return The password data at the given identifier, or nil.
  */
 + (nullable NSData *)passwordDataFromKeychainForName:(NSString *)keychainItemName;
 
+/*! @brief Loads the password data from the keychain with the given identifier.
+    @param keychainItemName Keychain name of the item.
+    @param dataProtectionKeychain Whether or not to use the data protection
+        keychain on macOS 10.15+.
+    @return The password data at the given identifier, or nil.
+ */
++ (nullable NSData *)passwordDataFromKeychainForName:(NSString *)keychainItemName
+                          withDataProtectionKeychain:(BOOL)dataProtectionKeychain;
+
 /*! @brief Removes stored password string, such as when the user signs out.
     @param keychainItemName Keychain name of the item.
     @return YES if the password string was removed successfully (or didn't exist).
  */
 + (BOOL)removePasswordFromKeychainForName:(NSString *)keychainItemName;
+
+/*! @brief Removes stored password string, such as when the user signs out.
+    @param keychainItemName Keychain name of the item.
+    @param dataProtectionKeychain Whether or not to use the data protection
+        keychain on macOS 10.15+.
+    @return YES if the password string was removed successfully (or didn't exist).
+ */
++ (BOOL)removePasswordFromKeychainForName:(NSString *)keychainItemName
+               withDataProtectionKeychain:(BOOL)dataProtectionKeychain;
 
 @end
 

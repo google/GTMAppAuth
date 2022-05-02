@@ -23,7 +23,14 @@
 @implementation GTMAppAuthFetcherAuthorization (Keychain)
 
 + (GTMAppAuthFetcherAuthorization *)authorizationFromKeychainForName:(NSString *)keychainItemName {
-  NSData *passwordData = [GTMKeychain passwordDataFromKeychainForName:keychainItemName];
+  return [GTMAppAuthFetcherAuthorization authorizationFromKeychainForName:keychainItemName
+                                               withDataProtectionKeychain:NO];
+}
+
++ (GTMAppAuthFetcherAuthorization *)authorizationFromKeychainForName:(NSString *)keychainItemName
+                                          withDataProtectionKeychain:(BOOL)dataProtectionKeychain {
+  NSData *passwordData = [GTMKeychain passwordDataFromKeychainForName:keychainItemName
+                                           withDataProtectionKeychain:dataProtectionKeychain];
   if (!passwordData) {
     return nil;
   }
@@ -33,14 +40,30 @@
 }
 
 + (BOOL)removeAuthorizationFromKeychainForName:(NSString *)keychainItemName {
-  return [GTMKeychain removePasswordFromKeychainForName:keychainItemName];
+  return [GTMAppAuthFetcherAuthorization removeAuthorizationFromKeychainForName:keychainItemName
+                                                     withDataProtectionKeychain:NO];
+}
+
++ (BOOL)removeAuthorizationFromKeychainForName:(NSString *)keychainItemName
+                    withDataProtectionKeychain:(BOOL)dataProtectionKeychain {
+  return [GTMKeychain removePasswordFromKeychainForName:keychainItemName
+                             withDataProtectionKeychain:dataProtectionKeychain];
 }
 
 + (BOOL)saveAuthorization:(GTMAppAuthFetcherAuthorization *)auth
         toKeychainForName:(NSString *)keychainItemName {
+  return [GTMAppAuthFetcherAuthorization saveAuthorization:auth
+                                         toKeychainForName:keychainItemName
+                                withDataProtectionKeychain:NO];
+}
+
++ (BOOL)saveAuthorization:(GTMAppAuthFetcherAuthorization *)auth
+             toKeychainForName:(NSString *)keychainItemName
+    withDataProtectionKeychain:(BOOL)dataProtectionKeychain {
   NSData *authorizationData = [NSKeyedArchiver archivedDataWithRootObject:auth];
   return [GTMKeychain savePasswordDataToKeychainForName:keychainItemName
-                                           passwordData:authorizationData];
+                                           passwordData:authorizationData
+                             withDataProtectionKeychain:dataProtectionKeychain];
 }
 
 @end
