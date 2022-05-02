@@ -200,6 +200,8 @@ static GTMAppAuthGTMOAuth2Keychain* gGTMAppAuthFetcherAuthorizationGTMOAuth2Defa
                                                         account, (id)kSecAttrAccount,
                                                         service, (id)kSecAttrService,
                                                         nil];
+  // kSecUseDataProtectionKeychain is a no-op on platforms other than macOS 10.15+.  For clarity, we
+  // set it here only when supported by the Apple SDK and when relevant at runtime.
 #if TARGET_OS_OSX && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101500
   if (@available(macOS 10.15, *)) {
     if (self.dataProtectionKeychain) {
