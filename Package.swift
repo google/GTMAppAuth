@@ -43,11 +43,6 @@ let package = Package(
                 "AppAuthCore"
             ],
             path: "GTMAppAuth/Sources",
-            sources: [
-                ".",
-                "iOS",
-                "macOS"
-            ],
             publicHeadersPath: "Public",
 	    cSettings: [
                 .headerSearchPath("../../"),
