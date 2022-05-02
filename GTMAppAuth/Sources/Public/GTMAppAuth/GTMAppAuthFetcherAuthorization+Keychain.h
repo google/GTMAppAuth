@@ -42,7 +42,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (nullable GTMAppAuthFetcherAuthorization *)
     authorizationFromKeychainForName:(NSString *)keychainItemName
-          withDataProtectionKeychain:(BOOL)dataProtectionKeychain;
+          withDataProtectionKeychain:(BOOL)dataProtectionKeychain API_AVAILABLE(macosx(10.15));
 
 /*! @brief Removes a stored authorization state.
     @param keychainItemName The keychain name.
@@ -57,7 +57,8 @@ NS_ASSUME_NONNULL_BEGIN
     @return YES the tokens were removed successfully (or didn't exist).
  */
 + (BOOL)removeAuthorizationFromKeychainForName:(NSString *)keychainItemName
-                    withDataProtectionKeychain:(BOOL)dataProtectionKeychain;
+                    withDataProtectionKeychain:(BOOL)dataProtectionKeychain
+    API_AVAILABLE(macosx(10.15));
 
 /*! @brief Saves the authorization state to the keychain, in GTMAppAuth format.
     @param auth The authorization to save.
@@ -76,7 +77,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (BOOL)saveAuthorization:(GTMAppAuthFetcherAuthorization *)auth
              toKeychainForName:(NSString *)keychainItemName
-    withDataProtectionKeychain:(BOOL)dataProtectionKeychain;
+    withDataProtectionKeychain:(BOOL)dataProtectionKeychain API_AVAILABLE(macosx(10.15));
 
 @end
 

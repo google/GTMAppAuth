@@ -23,8 +23,11 @@
 @implementation GTMAppAuthFetcherAuthorization (Keychain)
 
 + (GTMAppAuthFetcherAuthorization *)authorizationFromKeychainForName:(NSString *)keychainItemName {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wpartial-availability"
   return [GTMAppAuthFetcherAuthorization authorizationFromKeychainForName:keychainItemName
                                                withDataProtectionKeychain:NO];
+#pragma clang diagnostic pop
 }
 
 + (GTMAppAuthFetcherAuthorization *)authorizationFromKeychainForName:(NSString *)keychainItemName
@@ -40,8 +43,11 @@
 }
 
 + (BOOL)removeAuthorizationFromKeychainForName:(NSString *)keychainItemName {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wpartial-availability"
   return [GTMAppAuthFetcherAuthorization removeAuthorizationFromKeychainForName:keychainItemName
                                                      withDataProtectionKeychain:NO];
+#pragma clang diagnostic pop
 }
 
 + (BOOL)removeAuthorizationFromKeychainForName:(NSString *)keychainItemName
@@ -52,9 +58,12 @@
 
 + (BOOL)saveAuthorization:(GTMAppAuthFetcherAuthorization *)auth
         toKeychainForName:(NSString *)keychainItemName {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wpartial-availability"
   return [GTMAppAuthFetcherAuthorization saveAuthorization:auth
                                          toKeychainForName:keychainItemName
                                 withDataProtectionKeychain:NO];
+#pragma clang diagnostic pop
 }
 
 + (BOOL)saveAuthorization:(GTMAppAuthFetcherAuthorization *)auth

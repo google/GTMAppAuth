@@ -70,8 +70,11 @@ static NSString *const kGTMAppAuthFetcherAuthorizationGTMOAuth2AccountName = @"O
 @implementation GTMKeychain
 
 + (BOOL)removePasswordFromKeychainForName:(NSString *)keychainItemName {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wpartial-availability"
   return [GTMKeychain removePasswordFromKeychainForName:keychainItemName
                              withDataProtectionKeychain:NO];
+#pragma clang diagnostic pop
 }
 
 + (BOOL)removePasswordFromKeychainForName:(NSString *)keychainItemName
@@ -84,7 +87,10 @@ static NSString *const kGTMAppAuthFetcherAuthorizationGTMOAuth2AccountName = @"O
 }
 
 + (NSString *)passwordFromKeychainForName:(NSString *)keychainItemName {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wpartial-availability"
   return [GTMKeychain passwordFromKeychainForName:keychainItemName withDataProtectionKeychain:NO];
+#pragma clang diagnostic pop
 }
 
 + (NSString *)passwordFromKeychainForName:(NSString *)keychainItemName
@@ -101,9 +107,12 @@ static NSString *const kGTMAppAuthFetcherAuthorizationGTMOAuth2AccountName = @"O
 
 + (BOOL)savePasswordToKeychainForName:(NSString *)keychainItemName
                              password:(NSString *)password {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wpartial-availability"
   return [GTMKeychain savePasswordToKeychainForName:keychainItemName
                                            password:password
                          withDataProtectionKeychain:NO];
+#pragma clang diagnostic pop
 }
 
 + (BOOL)savePasswordToKeychainForName:(NSString *)keychainItemName
@@ -121,9 +130,12 @@ static NSString *const kGTMAppAuthFetcherAuthorizationGTMOAuth2AccountName = @"O
 
 + (BOOL)savePasswordDataToKeychainForName:(NSString *)keychainItemName
                              passwordData:(NSData *)password {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wpartial-availability"
   return [GTMKeychain savePasswordDataToKeychainForName:keychainItemName
                                            passwordData:password
                              withDataProtectionKeychain:NO];
+#pragma clang diagnostic pop
 }
 
 + (BOOL)savePasswordDataToKeychainForName:(NSString *)keychainItemName
@@ -140,8 +152,11 @@ static NSString *const kGTMAppAuthFetcherAuthorizationGTMOAuth2AccountName = @"O
 }
 
 + (NSData *)passwordDataFromKeychainForName:(NSString *)keychainItemName {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wpartial-availability"
   return [GTMKeychain passwordDataFromKeychainForName:keychainItemName
                            withDataProtectionKeychain:NO];
+#pragma clang diagnostic pop
 }
 
 + (NSData *)passwordDataFromKeychainForName:(NSString *)keychainItemName
