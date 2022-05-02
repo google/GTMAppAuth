@@ -194,10 +194,6 @@ static GTMAppAuthGTMOAuth2Keychain* gGTMAppAuthFetcherAuthorizationGTMOAuth2Defa
   }
 }
 
-- (NSString *)keyForService:(NSString *)service account:(NSString *)account {
-  return [NSString stringWithFormat:@"com.google.GTMOAuth.%@%@", service, account];
-}
-
 - (NSMutableDictionary *)keychainQueryForService:(NSString *)service account:(NSString *)account {
   NSMutableDictionary *query =
       [NSMutableDictionary dictionaryWithObjectsAndKeys:(id)kSecClassGenericPassword, (id)kSecClass,
