@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 /*! @brief Saves the password string to the keychain with the given identifier.
     @param keychainItemName Keychain name of the item.
     @param password Password string to save.
-    @return YES when the password string was saved successfully.
+    @return YES if the password string was saved successfully.
  */
 + (BOOL)savePasswordToKeychainForName:(NSString *)keychainItemName
                              password:(NSString *)password;
@@ -39,7 +39,7 @@ NS_ASSUME_NONNULL_BEGIN
     @param password Password string to save.
     @param dataProtectionKeychain Whether or not to use the data protection
         keychain on macOS 10.15+.
-    @return YES when the password string was saved successfully.
+    @return YES if the password string was saved successfully.
  */
 + (BOOL)savePasswordToKeychainForName:(NSString *)keychainItemName
                              password:(NSString *)password
@@ -66,7 +66,7 @@ NS_ASSUME_NONNULL_BEGIN
 /*! @brief Saves the password data to the keychain with the given identifier.
     @param keychainItemName Keychain name of the item.
     @param passwordData Password data to save.
-    @return YES when the password data was saved successfully.
+    @return YES if the password data was saved successfully.
  */
 + (BOOL)savePasswordDataToKeychainForName:(NSString *)keychainItemName
                              passwordData:(NSData *)passwordData;
@@ -78,7 +78,7 @@ NS_ASSUME_NONNULL_BEGIN
     @param passwordData Password data to save.
     @param dataProtectionKeychain Whether or not to use the data protection
         keychain on macOS 10.15+.
-    @return YES when the password data was saved successfully.
+    @return YES if the password data was saved successfully.
  */
 + (BOOL)savePasswordDataToKeychainForName:(NSString *)keychainItemName
                              passwordData:(NSData *)passwordData

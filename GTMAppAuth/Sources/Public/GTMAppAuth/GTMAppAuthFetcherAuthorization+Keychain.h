@@ -47,7 +47,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /*! @brief Removes a stored authorization state.
     @param keychainItemName The keychain name.
-    @return YES the tokens were removed successfully (or didn't exist).
+    @return YES if the tokens were removed successfully (or didn't exist).
  */
 + (BOOL)removeAuthorizationFromKeychainForName:(NSString *)keychainItemName;
 
@@ -57,7 +57,7 @@ NS_ASSUME_NONNULL_BEGIN
     @param keychainItemName The keychain name.
     @param dataProtectionKeychain Whether or not to use the data protection
         keychain on macOS 10.15+.
-    @return YES the tokens were removed successfully (or didn't exist).
+    @return YES if the tokens were removed successfully (or didn't exist).
  */
 + (BOOL)removeAuthorizationFromKeychainForName:(NSString *)keychainItemName
                     withDataProtectionKeychain:(BOOL)dataProtectionKeychain
