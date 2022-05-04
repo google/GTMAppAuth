@@ -1,5 +1,10 @@
 # GTMAppAuth Changelog
 
+## 1.3.0 (2022-05-05)
+
+* Added the option to use the data protection keychain on macOS. ([#151](https://github.com/google/GTMAppAuth/pull/151))
+* Unified the keychain access layer, moving macOS to the modern SecItem API. ([#150](https://github.com/google/GTMAppAuth/pull/150))
+
 ## 1.2.3 (2022-03-22)
 
 * Fixed Keychain duplicate entry error on macOS. ([#138](https://github.com/google/GTMAppAuth/pull/138))
