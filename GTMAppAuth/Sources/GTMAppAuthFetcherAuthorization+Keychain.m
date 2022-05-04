@@ -26,14 +26,14 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wpartial-availability"
   return [GTMAppAuthFetcherAuthorization authorizationFromKeychainForName:keychainItemName
-                                               withDataProtectionKeychain:NO];
+                                                   dataProtectionKeychain:NO];
 #pragma clang diagnostic pop
 }
 
 + (GTMAppAuthFetcherAuthorization *)authorizationFromKeychainForName:(NSString *)keychainItemName
-                                          withDataProtectionKeychain:(BOOL)dataProtectionKeychain {
+                                              dataProtectionKeychain:(BOOL)dataProtectionKeychain {
   NSData *passwordData = [GTMKeychain passwordDataFromKeychainForName:keychainItemName
-                                           withDataProtectionKeychain:dataProtectionKeychain];
+                                               dataProtectionKeychain:dataProtectionKeychain];
   if (!passwordData) {
     return nil;
   }
@@ -46,14 +46,14 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wpartial-availability"
   return [GTMAppAuthFetcherAuthorization removeAuthorizationFromKeychainForName:keychainItemName
-                                                     withDataProtectionKeychain:NO];
+                                                        dataProtectionKeychain:NO];
 #pragma clang diagnostic pop
 }
 
 + (BOOL)removeAuthorizationFromKeychainForName:(NSString *)keychainItemName
-                    withDataProtectionKeychain:(BOOL)dataProtectionKeychain {
+                        dataProtectionKeychain:(BOOL)dataProtectionKeychain {
   return [GTMKeychain removePasswordFromKeychainForName:keychainItemName
-                             withDataProtectionKeychain:dataProtectionKeychain];
+                                 dataProtectionKeychain:dataProtectionKeychain];
 }
 
 + (BOOL)saveAuthorization:(GTMAppAuthFetcherAuthorization *)auth
@@ -62,17 +62,17 @@
 #pragma clang diagnostic ignored "-Wpartial-availability"
   return [GTMAppAuthFetcherAuthorization saveAuthorization:auth
                                          toKeychainForName:keychainItemName
-                                withDataProtectionKeychain:NO];
+                                    dataProtectionKeychain:NO];
 #pragma clang diagnostic pop
 }
 
 + (BOOL)saveAuthorization:(GTMAppAuthFetcherAuthorization *)auth
              toKeychainForName:(NSString *)keychainItemName
-    withDataProtectionKeychain:(BOOL)dataProtectionKeychain {
+        dataProtectionKeychain:(BOOL)dataProtectionKeychain {
   NSData *authorizationData = [NSKeyedArchiver archivedDataWithRootObject:auth];
   return [GTMKeychain savePasswordDataToKeychainForName:keychainItemName
                                            passwordData:authorizationData
-                             withDataProtectionKeychain:dataProtectionKeychain];
+                                 dataProtectionKeychain:dataProtectionKeychain];
 }
 
 @end

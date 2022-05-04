@@ -43,7 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (BOOL)savePasswordToKeychainForName:(NSString *)keychainItemName
                              password:(NSString *)password
-           withDataProtectionKeychain:(BOOL)dataProtectionKeychain API_AVAILABLE(macosx(10.15));
+               dataProtectionKeychain:(BOOL)dataProtectionKeychain API_AVAILABLE(macosx(10.15));
 
 /*! @brief Loads the password string from the keychain with the given identifier.
     @param keychainItemName Keychain name of the item.
@@ -60,7 +60,7 @@ NS_ASSUME_NONNULL_BEGIN
     @return The password string at the given identifier, or nil.
  */
 + (nullable NSString *)passwordFromKeychainForName:(NSString *)keychainItemName
-                        withDataProtectionKeychain:(BOOL)dataProtectionKeychain
+                            dataProtectionKeychain:(BOOL)dataProtectionKeychain
     API_AVAILABLE(macosx(10.15));
 
 /*! @brief Saves the password data to the keychain with the given identifier.
@@ -82,7 +82,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (BOOL)savePasswordDataToKeychainForName:(NSString *)keychainItemName
                              passwordData:(NSData *)passwordData
-               withDataProtectionKeychain:(BOOL)dataProtectionKeychain API_AVAILABLE(macosx(10.15));
+                   dataProtectionKeychain:(BOOL)dataProtectionKeychain API_AVAILABLE(macosx(10.15));
 
 /*! @brief Loads the password data from the keychain with the given identifier.
     @param keychainItemName Keychain name of the item.
@@ -99,7 +99,7 @@ NS_ASSUME_NONNULL_BEGIN
     @return The password data at the given identifier, or nil.
  */
 + (nullable NSData *)passwordDataFromKeychainForName:(NSString *)keychainItemName
-                          withDataProtectionKeychain:(BOOL)dataProtectionKeychain
+                              dataProtectionKeychain:(BOOL)dataProtectionKeychain
     API_AVAILABLE(macosx(10.15));
 
 /*! @brief Removes stored password string, such as when the user signs out.
@@ -117,7 +117,7 @@ NS_ASSUME_NONNULL_BEGIN
     @return YES if the password string was removed successfully (or didn't exist).
  */
 + (BOOL)removePasswordFromKeychainForName:(NSString *)keychainItemName
-               withDataProtectionKeychain:(BOOL)dataProtectionKeychain API_AVAILABLE(macosx(10.15));
+                   dataProtectionKeychain:(BOOL)dataProtectionKeychain API_AVAILABLE(macosx(10.15));
 
 @end
 
