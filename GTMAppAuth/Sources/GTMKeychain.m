@@ -26,7 +26,7 @@
 
 // When set to YES, all Keychain queries will have
 // kSecUseDataProtectionKeychain set to true on macOS 10.15+.  Defaults to NO.
-@property(nonatomic) BOOL dataProtectionKeychain;
+@property(nonatomic) BOOL useDataProtectionKeychain;
 
 + (GTMAppAuthGTMOAuth2Keychain *)defaultKeychain;
 
@@ -80,7 +80,7 @@ static NSString *const kGTMAppAuthFetcherAuthorizationGTMOAuth2AccountName = @"O
 + (BOOL)removePasswordFromKeychainForName:(NSString *)keychainItemName
                    dataProtectionKeychain:(BOOL)dataProtectionKeychain {
   GTMAppAuthGTMOAuth2Keychain *keychain = [GTMAppAuthGTMOAuth2Keychain defaultKeychain];
-  keychain.dataProtectionKeychain = dataProtectionKeychain;
+  keychain.useDataProtectionKeychain = dataProtectionKeychain;
   return [keychain removePasswordForService:keychainItemName
                                     account:kGTMAppAuthFetcherAuthorizationGTMOAuth2AccountName
                                       error:nil];
@@ -96,7 +96,7 @@ static NSString *const kGTMAppAuthFetcherAuthorizationGTMOAuth2AccountName = @"O
 + (NSString *)passwordFromKeychainForName:(NSString *)keychainItemName
                    dataProtectionKeychain:(BOOL)dataProtectionKeychain {
   GTMAppAuthGTMOAuth2Keychain *keychain = [GTMAppAuthGTMOAuth2Keychain defaultKeychain];
-  keychain.dataProtectionKeychain = dataProtectionKeychain;
+  keychain.useDataProtectionKeychain = dataProtectionKeychain;
   NSError *error;
   NSString *password =
       [keychain passwordForService:keychainItemName
@@ -120,7 +120,7 @@ static NSString *const kGTMAppAuthFetcherAuthorizationGTMOAuth2AccountName = @"O
                dataProtectionKeychain:(BOOL)dataProtectionKeychain {
   CFTypeRef accessibility = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly;
   GTMAppAuthGTMOAuth2Keychain *keychain = [GTMAppAuthGTMOAuth2Keychain defaultKeychain];
-  keychain.dataProtectionKeychain = dataProtectionKeychain;
+  keychain.useDataProtectionKeychain = dataProtectionKeychain;
   return [keychain setPassword:password
                     forService:keychainItemName
                  accessibility:accessibility
@@ -143,7 +143,7 @@ static NSString *const kGTMAppAuthFetcherAuthorizationGTMOAuth2AccountName = @"O
                    dataProtectionKeychain:(BOOL)dataProtectionKeychain {
   CFTypeRef accessibility = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly;
   GTMAppAuthGTMOAuth2Keychain *keychain = [GTMAppAuthGTMOAuth2Keychain defaultKeychain];
-  keychain.dataProtectionKeychain = dataProtectionKeychain;
+  keychain.useDataProtectionKeychain = dataProtectionKeychain;
   return [keychain setPasswordData:password
                         forService:keychainItemName
                      accessibility:accessibility
@@ -162,7 +162,7 @@ static NSString *const kGTMAppAuthFetcherAuthorizationGTMOAuth2AccountName = @"O
 + (NSData *)passwordDataFromKeychainForName:(NSString *)keychainItemName
                      dataProtectionKeychain:(BOOL)dataProtectionKeychain {
   GTMAppAuthGTMOAuth2Keychain *keychain = [GTMAppAuthGTMOAuth2Keychain defaultKeychain];
-  keychain.dataProtectionKeychain = dataProtectionKeychain;
+  keychain.useDataProtectionKeychain = dataProtectionKeychain;
   NSError *error;
   NSData *password =
       [keychain passwordDataForService:keychainItemName
@@ -189,7 +189,7 @@ static GTMAppAuthGTMOAuth2Keychain* gGTMAppAuthFetcherAuthorizationGTMOAuth2Defa
 - (instancetype)init {
   self = [super init];
   if (self) {
-    _dataProtectionKeychain = NO;
+    _useDataProtectionKeychain = NO;
   }
   return self;
 }
@@ -219,7 +219,7 @@ static GTMAppAuthGTMOAuth2Keychain* gGTMAppAuthFetcherAuthorizationGTMOAuth2Defa
   // set it here only when supported by the Apple SDK and when relevant at runtime.
 #if TARGET_OS_OSX && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101500
   if (@available(macOS 10.15, *)) {
-    if (self.dataProtectionKeychain) {
+    if (self.useDataProtectionKeychain) {
       [query setObject:(id)kCFBooleanTrue forKey:(id)kSecUseDataProtectionKeychain];
     }
   }
