@@ -73,14 +73,14 @@ static NSString *const kGTMAppAuthFetcherAuthorizationGTMOAuth2AccountName = @"O
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wpartial-availability"
   return [GTMKeychain removePasswordFromKeychainForName:keychainItemName
-                                 dataProtectionKeychain:NO];
+                              useDataProtectionKeychain:NO];
 #pragma clang diagnostic pop
 }
 
 + (BOOL)removePasswordFromKeychainForName:(NSString *)keychainItemName
-                   dataProtectionKeychain:(BOOL)dataProtectionKeychain {
+                useDataProtectionKeychain:(BOOL)useDataProtectionKeychain {
   GTMAppAuthGTMOAuth2Keychain *keychain = [GTMAppAuthGTMOAuth2Keychain defaultKeychain];
-  keychain.useDataProtectionKeychain = dataProtectionKeychain;
+  keychain.useDataProtectionKeychain = useDataProtectionKeychain;
   return [keychain removePasswordForService:keychainItemName
                                     account:kGTMAppAuthFetcherAuthorizationGTMOAuth2AccountName
                                       error:nil];
@@ -89,14 +89,14 @@ static NSString *const kGTMAppAuthFetcherAuthorizationGTMOAuth2AccountName = @"O
 + (NSString *)passwordFromKeychainForName:(NSString *)keychainItemName {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wpartial-availability"
-  return [GTMKeychain passwordFromKeychainForName:keychainItemName dataProtectionKeychain:NO];
+  return [GTMKeychain passwordFromKeychainForName:keychainItemName useDataProtectionKeychain:NO];
 #pragma clang diagnostic pop
 }
 
 + (NSString *)passwordFromKeychainForName:(NSString *)keychainItemName
-                   dataProtectionKeychain:(BOOL)dataProtectionKeychain {
+                useDataProtectionKeychain:(BOOL)useDataProtectionKeychain {
   GTMAppAuthGTMOAuth2Keychain *keychain = [GTMAppAuthGTMOAuth2Keychain defaultKeychain];
-  keychain.useDataProtectionKeychain = dataProtectionKeychain;
+  keychain.useDataProtectionKeychain = useDataProtectionKeychain;
   NSError *error;
   NSString *password =
       [keychain passwordForService:keychainItemName
@@ -111,16 +111,16 @@ static NSString *const kGTMAppAuthFetcherAuthorizationGTMOAuth2AccountName = @"O
 #pragma clang diagnostic ignored "-Wpartial-availability"
   return [GTMKeychain savePasswordToKeychainForName:keychainItemName
                                            password:password
-                             dataProtectionKeychain:NO];
+                          useDataProtectionKeychain:NO];
 #pragma clang diagnostic pop
 }
 
 + (BOOL)savePasswordToKeychainForName:(NSString *)keychainItemName
                              password:(NSString *)password
-               dataProtectionKeychain:(BOOL)dataProtectionKeychain {
+            useDataProtectionKeychain:(BOOL)useDataProtectionKeychain {
   CFTypeRef accessibility = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly;
   GTMAppAuthGTMOAuth2Keychain *keychain = [GTMAppAuthGTMOAuth2Keychain defaultKeychain];
-  keychain.useDataProtectionKeychain = dataProtectionKeychain;
+  keychain.useDataProtectionKeychain = useDataProtectionKeychain;
   return [keychain setPassword:password
                     forService:keychainItemName
                  accessibility:accessibility
@@ -134,16 +134,16 @@ static NSString *const kGTMAppAuthFetcherAuthorizationGTMOAuth2AccountName = @"O
 #pragma clang diagnostic ignored "-Wpartial-availability"
   return [GTMKeychain savePasswordDataToKeychainForName:keychainItemName
                                            passwordData:password
-                                 dataProtectionKeychain:NO];
+                              useDataProtectionKeychain:NO];
 #pragma clang diagnostic pop
 }
 
 + (BOOL)savePasswordDataToKeychainForName:(NSString *)keychainItemName
                              passwordData:(NSData *)password
-                   dataProtectionKeychain:(BOOL)dataProtectionKeychain {
+                useDataProtectionKeychain:(BOOL)useDataProtectionKeychain {
   CFTypeRef accessibility = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly;
   GTMAppAuthGTMOAuth2Keychain *keychain = [GTMAppAuthGTMOAuth2Keychain defaultKeychain];
-  keychain.useDataProtectionKeychain = dataProtectionKeychain;
+  keychain.useDataProtectionKeychain = useDataProtectionKeychain;
   return [keychain setPasswordData:password
                         forService:keychainItemName
                      accessibility:accessibility
@@ -155,14 +155,14 @@ static NSString *const kGTMAppAuthFetcherAuthorizationGTMOAuth2AccountName = @"O
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wpartial-availability"
   return [GTMKeychain passwordDataFromKeychainForName:keychainItemName
-                               dataProtectionKeychain:NO];
+                            useDataProtectionKeychain:NO];
 #pragma clang diagnostic pop
 }
 
 + (NSData *)passwordDataFromKeychainForName:(NSString *)keychainItemName
-                     dataProtectionKeychain:(BOOL)dataProtectionKeychain {
+                  useDataProtectionKeychain:(BOOL)useDataProtectionKeychain {
   GTMAppAuthGTMOAuth2Keychain *keychain = [GTMAppAuthGTMOAuth2Keychain defaultKeychain];
-  keychain.useDataProtectionKeychain = dataProtectionKeychain;
+  keychain.useDataProtectionKeychain = useDataProtectionKeychain;
   NSError *error;
   NSData *password =
       [keychain passwordDataForService:keychainItemName

@@ -37,13 +37,13 @@ NS_ASSUME_NONNULL_BEGIN
         will not be accessible without migration.
     @param keychainItemName Keychain name of the item.
     @param password Password string to save.
-    @param dataProtectionKeychain A Boolean value that indicates whether to use the data protection
-        keychain on macOS 10.15+.
+    @param useDataProtectionKeychain A Boolean value that indicates whether to use the data
+        protection keychain on macOS 10.15+.
     @return YES if the password string was saved successfully.
  */
 + (BOOL)savePasswordToKeychainForName:(NSString *)keychainItemName
                              password:(NSString *)password
-               dataProtectionKeychain:(BOOL)dataProtectionKeychain API_AVAILABLE(macosx(10.15));
+            useDataProtectionKeychain:(BOOL)useDataProtectionKeychain API_AVAILABLE(macosx(10.15));
 
 /*! @brief Loads the password string from the keychain with the given identifier.
     @param keychainItemName Keychain name of the item.
@@ -55,12 +55,12 @@ NS_ASSUME_NONNULL_BEGIN
         choose to start using the data protection keychain on macOS, any items previously created
         will not be accessible without migration.
     @param keychainItemName Keychain name of the item.
-    @param dataProtectionKeychain A Boolean value that indicates whether to use the data protection
-        keychain on macOS 10.15+.
+    @param useDataProtectionKeychain A Boolean value that indicates whether to use the data
+        protection keychain on macOS 10.15+.
     @return The password string at the given identifier, or nil.
  */
 + (nullable NSString *)passwordFromKeychainForName:(NSString *)keychainItemName
-                            dataProtectionKeychain:(BOOL)dataProtectionKeychain
+                         useDataProtectionKeychain:(BOOL)useDataProtectionKeychain
     API_AVAILABLE(macosx(10.15));
 
 /*! @brief Saves the password data to the keychain with the given identifier.
@@ -76,13 +76,14 @@ NS_ASSUME_NONNULL_BEGIN
         will not be accessible without migration.
     @param keychainItemName Keychain name of the item.
     @param passwordData Password data to save.
-    @param dataProtectionKeychain A Boolean value that indicates whether to use the data protection
-        keychain on macOS 10.15+.
+    @param useDataProtectionKeychain A Boolean value that indicates whether to use the data
+        protection keychain on macOS 10.15+.
     @return YES if the password data was saved successfully.
  */
 + (BOOL)savePasswordDataToKeychainForName:(NSString *)keychainItemName
                              passwordData:(NSData *)passwordData
-                   dataProtectionKeychain:(BOOL)dataProtectionKeychain API_AVAILABLE(macosx(10.15));
+                useDataProtectionKeychain:(BOOL)useDataProtectionKeychain
+    API_AVAILABLE(macosx(10.15));
 
 /*! @brief Loads the password data from the keychain with the given identifier.
     @param keychainItemName Keychain name of the item.
@@ -94,12 +95,12 @@ NS_ASSUME_NONNULL_BEGIN
         choose to start using the data protection keychain on macOS, any items previously created
         will not be accessible without migration.
     @param keychainItemName Keychain name of the item.
-    @param dataProtectionKeychain A Boolean value that indicates whether to use the data protection
-        keychain on macOS 10.15+.
+    @param useDataProtectionKeychain A Boolean value that indicates whether to use the data
+        protection keychain on macOS 10.15+.
     @return The password data at the given identifier, or nil.
  */
 + (nullable NSData *)passwordDataFromKeychainForName:(NSString *)keychainItemName
-                              dataProtectionKeychain:(BOOL)dataProtectionKeychain
+                           useDataProtectionKeychain:(BOOL)useDataProtectionKeychain
     API_AVAILABLE(macosx(10.15));
 
 /*! @brief Removes stored password string, such as when the user signs out.
@@ -112,12 +113,13 @@ NS_ASSUME_NONNULL_BEGIN
         choose to start using the data protection keychain on macOS, any items previously created
         will not be accessible without migration.
     @param keychainItemName Keychain name of the item.
-    @param dataProtectionKeychain A Boolean value that indicates whether to use the data protection
-        keychain on macOS 10.15+.
+    @param useDataProtectionKeychain A Boolean value that indicates whether to use the data
+        protection keychain on macOS 10.15+.
     @return YES if the password string was removed successfully (or didn't exist).
  */
 + (BOOL)removePasswordFromKeychainForName:(NSString *)keychainItemName
-                   dataProtectionKeychain:(BOOL)dataProtectionKeychain API_AVAILABLE(macosx(10.15));
+                useDataProtectionKeychain:(BOOL)useDataProtectionKeychain
+    API_AVAILABLE(macosx(10.15));
 
 @end
 
