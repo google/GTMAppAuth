@@ -37,7 +37,7 @@ NS_ASSUME_NONNULL_BEGIN
         in GTMAppAuth format.  Note that if you choose to start using the data protection keychain on
         macOS, any items previously created will not be accessible without migration.
     @param keychainItemName The keychain name.
-    @param dataProtectionKeychain Whether or not to use the data protection
+    @param dataProtectionKeychain A Boolean value that indicates whether to use the data protection
         keychain on macOS 10.15+.
     @return A @c GTMAppAuthFetcherAuthorization object, or nil.
  */
@@ -55,7 +55,7 @@ NS_ASSUME_NONNULL_BEGIN
         protection keychain on macOS, any items previously created will not be accessible without
         migration.
     @param keychainItemName The keychain name.
-    @param dataProtectionKeychain Whether or not to use the data protection
+    @param dataProtectionKeychain A Boolean value that indicates whether to use the data protection
         keychain on macOS 10.15+.
     @return YES if the tokens were removed successfully (or didn't exist).
  */
@@ -76,7 +76,7 @@ NS_ASSUME_NONNULL_BEGIN
         will not be accessible without migration.
     @param auth The authorization to save.
     @param keychainItemName The keychain name.
-    @param dataProtectionKeychain Whether or not to use the data protection
+    @param dataProtectionKeychain A Boolean value that indicates whether to use the data protection
         keychain on macOS 10.15+.
     @return YES when the state was saved successfully.
  */

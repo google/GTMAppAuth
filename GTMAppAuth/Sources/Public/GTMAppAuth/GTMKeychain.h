@@ -37,7 +37,7 @@ NS_ASSUME_NONNULL_BEGIN
         will not be accessible without migration.
     @param keychainItemName Keychain name of the item.
     @param password Password string to save.
-    @param dataProtectionKeychain Whether or not to use the data protection
+    @param dataProtectionKeychain A Boolean value that indicates whether to use the data protection
         keychain on macOS 10.15+.
     @return YES if the password string was saved successfully.
  */
@@ -55,7 +55,7 @@ NS_ASSUME_NONNULL_BEGIN
         choose to start using the data protection keychain on macOS, any items previously created
         will not be accessible without migration.
     @param keychainItemName Keychain name of the item.
-    @param dataProtectionKeychain Whether or not to use the data protection
+    @param dataProtectionKeychain A Boolean value that indicates whether to use the data protection
         keychain on macOS 10.15+.
     @return The password string at the given identifier, or nil.
  */
@@ -76,7 +76,7 @@ NS_ASSUME_NONNULL_BEGIN
         will not be accessible without migration.
     @param keychainItemName Keychain name of the item.
     @param passwordData Password data to save.
-    @param dataProtectionKeychain Whether or not to use the data protection
+    @param dataProtectionKeychain A Boolean value that indicates whether to use the data protection
         keychain on macOS 10.15+.
     @return YES if the password data was saved successfully.
  */
@@ -94,7 +94,7 @@ NS_ASSUME_NONNULL_BEGIN
         choose to start using the data protection keychain on macOS, any items previously created
         will not be accessible without migration.
     @param keychainItemName Keychain name of the item.
-    @param dataProtectionKeychain Whether or not to use the data protection
+    @param dataProtectionKeychain A Boolean value that indicates whether to use the data protection
         keychain on macOS 10.15+.
     @return The password data at the given identifier, or nil.
  */
@@ -112,7 +112,7 @@ NS_ASSUME_NONNULL_BEGIN
         choose to start using the data protection keychain on macOS, any items previously created
         will not be accessible without migration.
     @param keychainItemName Keychain name of the item.
-    @param dataProtectionKeychain Whether or not to use the data protection
+    @param dataProtectionKeychain A Boolean value that indicates whether to use the data protection
         keychain on macOS 10.15+.
     @return YES if the password string was removed successfully (or didn't exist).
  */
