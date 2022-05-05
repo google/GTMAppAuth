@@ -265,6 +265,13 @@ representation of the relevant `GTMAppAuthFetcherAuthorization` instance is supp
 and this is encrypted and stored by
 [Keychain Services](https://developer.apple.com/documentation/security/keychain_services?language=objc).
 
+For macOS, two Keychain storage options are available: the traditional file-based Keychain storage
+which uses access control lists and the more modern [data protection keychain storage](https://developer.apple.com/documentation/security/ksecusedataprotectionkeychain?language=objc)
+which uses Keychain access control groups. By default, GTMAppAuth uses the file-based Keychain storage on macOS.  You may opt into using data protection keychain storage by using the parameter
+`useDataProtectionKeychain:YES` in your method calls.  Note that Keychain items stored via one
+storage type will not be available via the other and macOS apps that choose to use the data
+protection Keychain will need to be signed in order for Keychain operations to succeed.
+
 #### GTMOAuth2 Compatibility
 
 To assist the migration from GTMOAuth2 to GTMAppAuth, GTMOAuth2-compatible
