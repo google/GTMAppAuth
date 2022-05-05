@@ -16,10 +16,6 @@
         limitations under the License.
  */
 
-#import <TargetConditionals.h>
-
-#if TARGET_OS_IPHONE
-
 #import "GTMAppAuth/Sources/Public/GTMAppAuth/GTMKeychain.h"
 
 #import <Security/Security.h>
@@ -177,7 +173,6 @@ static GTMAppAuthGTMOAuth2Keychain* gGTMAppAuthFetcherAuthorizationGTMOAuth2Defa
 + (NSMutableDictionary *)keychainQueryForService:(NSString *)service account:(NSString *)account {
   NSMutableDictionary *query =
       [NSMutableDictionary dictionaryWithObjectsAndKeys:(id)kSecClassGenericPassword, (id)kSecClass,
-                                                        @"OAuth", (id)kSecAttrGeneric,
                                                         account, (id)kSecAttrAccount,
                                                         service, (id)kSecAttrService,
                                                         nil];
@@ -188,7 +183,6 @@ static GTMAppAuthGTMOAuth2Keychain* gGTMAppAuthFetcherAuthorizationGTMOAuth2Defa
   return [[self class] keychainQueryForService:service account:account];
 }
 
-// iPhone
 - (NSString *)passwordForService:(NSString *)service
                          account:(NSString *)account
                            error:(NSError **)error {
@@ -201,7 +195,6 @@ static GTMAppAuthGTMOAuth2Keychain* gGTMAppAuthFetcherAuthorizationGTMOAuth2Defa
   return result;
 }
 
-// iPhone
 - (NSData *)passwordDataForService:(NSString *)service
                            account:(NSString *)account
                              error:(NSError **)error {
@@ -230,7 +223,6 @@ static GTMAppAuthGTMOAuth2Keychain* gGTMAppAuthFetcherAuthorizationGTMOAuth2Defa
   return result;
 }
 
-// iPhone
 - (BOOL)removePasswordForService:(NSString *)service
                          account:(NSString *)account
                            error:(NSError **)error {
@@ -247,7 +239,6 @@ static GTMAppAuthGTMOAuth2Keychain* gGTMAppAuthFetcherAuthorizationGTMOAuth2Defa
   return status == noErr;
 }
 
-// iPhone
 - (BOOL)setPassword:(NSString *)password
          forService:(NSString *)service
       accessibility:(CFTypeRef)accessibility
@@ -289,5 +280,3 @@ static GTMAppAuthGTMOAuth2Keychain* gGTMAppAuthFetcherAuthorizationGTMOAuth2Defa
 }
 
 @end
-
-#endif // TARGET_OS_IPHONE
