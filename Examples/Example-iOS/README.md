@@ -1,4 +1,4 @@
-# Example Project
+# iOS Example
 
 ## Getting Started
 
