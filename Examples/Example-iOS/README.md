@@ -1,25 +1,37 @@
 # Example Project
 
-## CocoaPods Dependencies
+## Getting Started
+
+Choose which package manager you'd like to use.
+
+### Swift Package Manager
+
+In the Example-iOS folder, run the following command to open the Swift Pacakage Manager
+project:
+
+```
+open Example-iOS.xcodeproj
+```
+
+### CocoaPods
 
 1. In the Example-iOS folder, run the following command to install the required
-library pods.
+library pods:
 
 ```
 $ pod install
 ```
 
-2. Open the workspace:
+2. Open the generated workspace for the CocoaPods project:
 
 ```
-$ open Example-iOS.xcworkspace
+$ open Example-iOSForPod.xcworkspace
 ```
 
 ## Configuration
 
 The example doesn't work out of the box, you need to configure it your own
 client ID.
-
 
 ### Creating a Google OAuth Client
 
