@@ -17,7 +17,8 @@
  */
 #import "AppDelegate.h"
 
-#import "AppAuth.h"
+@import AppAuth;
+
 #import "GTMAppAuthExampleViewController.h"
 
 @implementation AppDelegate

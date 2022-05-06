@@ -3,15 +3,13 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		752F55BA15B460ACCE0FD738 /* Pods_Example_macOSForPod.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7CF3A59C2835F55252724C60 /* Pods_Example_macOSForPod.framework */; };
 		C1AF3AE72818785B003BAEFF /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = C1AF3AE52818785B003BAEFF /* Podfile */; };
 		C1AF3AE82818785B003BAEFF /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = C1AF3AE62818785B003BAEFF /* README.md */; };
-		C1B5D3652825B0870068D12B /* GTMAppAuth in Frameworks */ = {isa = PBXBuildFile; productRef = C1B5D3642825B0870068D12B /* GTMAppAuth */; };
-		C1B5D3682825B0A00068D12B /* AppAuth in Frameworks */ = {isa = PBXBuildFile; productRef = C1B5D3672825B0A00068D12B /* AppAuth */; };
-		C1B5D36B2825B0C30068D12B /* GTMSessionFetcherCore in Frameworks */ = {isa = PBXBuildFile; productRef = C1B5D36A2825B0C30068D12B /* GTMSessionFetcherCore */; };
 		F6016E951D2BD988003497D7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = F6016E8B1D2BD988003497D7 /* AppDelegate.m */; };
 		F6016E971D2BD988003497D7 /* GTMAppAuthExampleViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F6016E8D1D2BD988003497D7 /* GTMAppAuthExampleViewController.m */; };
 		F6016E981D2BD988003497D7 /* GTMAppAuthExampleViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = F6016E8F1D2BD988003497D7 /* GTMAppAuthExampleViewController.xib */; };
@@ -21,9 +19,16 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0A4FF8529F6CB026E8761914 /* Pods-Example-macOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Example-macOS.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Example-macOS/Pods-Example-macOS.debug.xcconfig"; sourceTree = "<group>"; };
+		17ED18F385D7B6C8F74C44FF /* Pods-Example-macOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Example-macOS.release.xcconfig"; path = "Pods/Target Support Files/Pods-Example-macOS/Pods-Example-macOS.release.xcconfig"; sourceTree = "<group>"; };
+		205021A395121B79EDC95E14 /* Pods-Example-macOSForPod.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Example-macOSForPod.release.xcconfig"; path = "Pods/Target Support Files/Pods-Example-macOSForPod/Pods-Example-macOSForPod.release.xcconfig"; sourceTree = "<group>"; };
+		653C5E3C17C4D280AA39A08B /* libPods-Example-Mac.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Example-Mac.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		7CF3A59C2835F55252724C60 /* Pods_Example_macOSForPod.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Example_macOSForPod.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A707A6A09FEE94A105421FD6 /* Pods-Example-Mac.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Example-Mac.release.xcconfig"; path = "Pods/Target Support Files/Pods-Example-Mac/Pods-Example-Mac.release.xcconfig"; sourceTree = "<group>"; };
+		C038925153E5660B28A1DF48 /* Pods-Example-macOSForPod.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Example-macOSForPod.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Example-macOSForPod/Pods-Example-macOSForPod.debug.xcconfig"; sourceTree = "<group>"; };
+		C16FBAA1467EEE61F09B9C78 /* Pods-Example-Mac.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Example-Mac.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Example-Mac/Pods-Example-Mac.debug.xcconfig"; sourceTree = "<group>"; };
 		C1AF3AE52818785B003BAEFF /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; };
 		C1AF3AE62818785B003BAEFF /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		C1B5D36D2825B0D80068D12B /* GTMAppAuth */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = GTMAppAuth; path = ../..; sourceTree = "<group>"; };
 		F6016E701D2AC11F003497D7 /* Example-macOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Example-macOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F6016E8B1D2BD988003497D7 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = Source/AppDelegate.m; sourceTree = "<group>"; };
 		F6016E8D1D2BD988003497D7 /* GTMAppAuthExampleViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GTMAppAuthExampleViewController.m; path = Source/GTMAppAuthExampleViewController.m; sourceTree = "<group>"; };
@@ -41,31 +46,44 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C1B5D36B2825B0C30068D12B /* GTMSessionFetcherCore in Frameworks */,
-				C1B5D3682825B0A00068D12B /* AppAuth in Frameworks */,
-				C1B5D3652825B0870068D12B /* GTMAppAuth in Frameworks */,
+				752F55BA15B460ACCE0FD738 /* Pods_Example_macOSForPod.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		C1B5D36C2825B0D80068D12B /* Packages */ = {
+		405789D7DCF3C985E2E5D070 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				C1B5D36D2825B0D80068D12B /* GTMAppAuth */,
+				653C5E3C17C4D280AA39A08B /* libPods-Example-Mac.a */,
+				7CF3A59C2835F55252724C60 /* Pods_Example_macOSForPod.framework */,
 			);
-			name = Packages;
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		8ADFA8B34C1A7009C6F624AF /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				C16FBAA1467EEE61F09B9C78 /* Pods-Example-Mac.debug.xcconfig */,
+				A707A6A09FEE94A105421FD6 /* Pods-Example-Mac.release.xcconfig */,
+				0A4FF8529F6CB026E8761914 /* Pods-Example-macOS.debug.xcconfig */,
+				17ED18F385D7B6C8F74C44FF /* Pods-Example-macOS.release.xcconfig */,
+				C038925153E5660B28A1DF48 /* Pods-Example-macOSForPod.debug.xcconfig */,
+				205021A395121B79EDC95E14 /* Pods-Example-macOSForPod.release.xcconfig */,
+			);
+			name = Pods;
 			sourceTree = "<group>";
 		};
 		F6016E671D2AC11E003497D7 = {
 			isa = PBXGroup;
 			children = (
-				C1B5D36C2825B0D80068D12B /* Packages */,
 				C1AF3AE52818785B003BAEFF /* Podfile */,
 				C1AF3AE62818785B003BAEFF /* README.md */,
 				F6016E8A1D2BD973003497D7 /* Source */,
 				F6016E711D2AC11F003497D7 /* Products */,
+				8ADFA8B34C1A7009C6F624AF /* Pods */,
+				405789D7DCF3C985E2E5D070 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -96,24 +114,21 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		F6016E6F1D2AC11F003497D7 /* Example-macOS */ = {
+		F6016E6F1D2AC11F003497D7 /* Example-macOSForPod */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = F6016E811D2AC11F003497D7 /* Build configuration list for PBXNativeTarget "Example-macOS" */;
+			buildConfigurationList = F6016E811D2AC11F003497D7 /* Build configuration list for PBXNativeTarget "Example-macOSForPod" */;
 			buildPhases = (
+				C9395BB900D0A44A3F7EB0BE /* [CP] Check Pods Manifest.lock */,
 				F6016E6C1D2AC11F003497D7 /* Sources */,
 				F6016E6D1D2AC11F003497D7 /* Frameworks */,
 				F6016E6E1D2AC11F003497D7 /* Resources */,
+				C81DF0217F9307E498C207B2 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = "Example-macOS";
-			packageProductDependencies = (
-				C1B5D3642825B0870068D12B /* GTMAppAuth */,
-				C1B5D3672825B0A00068D12B /* AppAuth */,
-				C1B5D36A2825B0C30068D12B /* GTMSessionFetcherCore */,
-			);
+			name = "Example-macOSForPod";
 			productName = "Example-Mac";
 			productReference = F6016E701D2AC11F003497D7 /* Example-macOS.app */;
 			productType = "com.apple.product-type.application";
@@ -132,7 +147,7 @@
 					};
 				};
 			};
-			buildConfigurationList = F6016E6B1D2AC11E003497D7 /* Build configuration list for PBXProject "Example-macOS" */;
+			buildConfigurationList = F6016E6B1D2AC11E003497D7 /* Build configuration list for PBXProject "Example-macOSForPod" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -142,16 +157,11 @@
 				Base,
 			);
 			mainGroup = F6016E671D2AC11E003497D7;
-			packageReferences = (
-				C1B5D3632825B0870068D12B /* XCRemoteSwiftPackageReference "GTMAppAuth" */,
-				C1B5D3662825B0A00068D12B /* XCRemoteSwiftPackageReference "AppAuth-iOS" */,
-				C1B5D3692825B0C30068D12B /* XCRemoteSwiftPackageReference "gtm-session-fetcher" */,
-			);
 			productRefGroup = F6016E711D2AC11F003497D7 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				F6016E6F1D2AC11F003497D7 /* Example-macOS */,
+				F6016E6F1D2AC11F003497D7 /* Example-macOSForPod */,
 			);
 		};
 /* End PBXProject section */
@@ -170,6 +180,49 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		C81DF0217F9307E498C207B2 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Example-macOSForPod/Pods-Example-macOSForPod-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/AppAuth/AppAuth.framework",
+				"${BUILT_PRODUCTS_DIR}/GTMAppAuth/GTMAppAuth.framework",
+				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AppAuth.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMAppAuth.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Example-macOSForPod/Pods-Example-macOSForPod-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		C9395BB900D0A44A3F7EB0BE /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Example-macOSForPod-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		F6016E6C1D2AC11F003497D7 /* Sources */ = {
@@ -287,14 +340,12 @@
 		};
 		F6016E821D2AC11F003497D7 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = C038925153E5660B28A1DF48 /* Pods-Example-macOSForPod.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Source/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.example.GTMAppAuth.Example-macOS";
 				PRODUCT_NAME = "Example-macOS";
 			};
@@ -302,14 +353,12 @@
 		};
 		F6016E831D2AC11F003497D7 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 205021A395121B79EDC95E14 /* Pods-Example-macOSForPod.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Source/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.example.GTMAppAuth.Example-macOS";
 				PRODUCT_NAME = "Example-macOS";
 			};
@@ -318,7 +367,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		F6016E6B1D2AC11E003497D7 /* Build configuration list for PBXProject "Example-macOS" */ = {
+		F6016E6B1D2AC11E003497D7 /* Build configuration list for PBXProject "Example-macOSForPod" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F6016E7F1D2AC11F003497D7 /* Debug */,
@@ -327,7 +376,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		F6016E811D2AC11F003497D7 /* Build configuration list for PBXNativeTarget "Example-macOS" */ = {
+		F6016E811D2AC11F003497D7 /* Build configuration list for PBXNativeTarget "Example-macOSForPod" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F6016E821D2AC11F003497D7 /* Debug */,
@@ -337,51 +386,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		C1B5D3632825B0870068D12B /* XCRemoteSwiftPackageReference "GTMAppAuth" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/google/GTMAppAuth.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
-			};
-		};
-		C1B5D3662825B0A00068D12B /* XCRemoteSwiftPackageReference "AppAuth-iOS" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/openid/AppAuth-iOS.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
-			};
-		};
-		C1B5D3692825B0C30068D12B /* XCRemoteSwiftPackageReference "gtm-session-fetcher" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/google/gtm-session-fetcher.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		C1B5D3642825B0870068D12B /* GTMAppAuth */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = C1B5D3632825B0870068D12B /* XCRemoteSwiftPackageReference "GTMAppAuth" */;
-			productName = GTMAppAuth;
-		};
-		C1B5D3672825B0A00068D12B /* AppAuth */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = C1B5D3662825B0A00068D12B /* XCRemoteSwiftPackageReference "AppAuth-iOS" */;
-			productName = AppAuth;
-		};
-		C1B5D36A2825B0C30068D12B /* GTMSessionFetcherCore */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = C1B5D3692825B0C30068D12B /* XCRemoteSwiftPackageReference "gtm-session-fetcher" */;
-			productName = GTMSessionFetcherCore;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = F6016E681D2AC11E003497D7 /* Project object */;
 }
