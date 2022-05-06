@@ -1,18 +1,31 @@
-# Example Project
+# macOS Example
 
-## CocoaPods Dependencies
+## Getting Started
+
+Choose which package manager you'd like to use.
+
+### Swift Package Manager
+
+In the Example-macOS folder, run the following command to open the Swift Pacakage Manager
+project:
+
+```
+open Example-macOS.xcodeproj
+```
+
+### CocoaPods
 
 1. In the Example-macOS folder, run the following command to install the required
-library pods.
+library pods:
 
 ```
 $ pod install
 ```
 
-2. Open the workspace:
+2. Open the generated workspace for the CocoaPods project:
 
 ```
-$ open Example-macOS.xcworkspace
+$ open Example-macOSForPod.xcworkspace
 ```
 
 ## Configuration

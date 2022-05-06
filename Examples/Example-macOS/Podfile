@@ -1,6 +1,9 @@
-target 'Example-macOS' do
   platform :osx, '10.12'
 
+target 'Example-macOSForPod' do
+  use_frameworks!
+  project 'Example-macOSForPod.xcodeproj'
+  
   # Pods for GTMAppAuth development
   pod 'GTMAppAuth', :path => '../../'
 
@@ -8,4 +11,5 @@ target 'Example-macOS' do
   # pod 'GTMAppAuth'
 
   pod 'AppAuth', '~> 1.5'
+  pod 'GTMSessionFetcher/Core', '~> 1.0'
 end
