@@ -17,7 +17,7 @@ class GTMKeychainTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    func testBridgingSuccess() throws {
+    func testSPMImportSuccess() throws {
         let issuer = NSURL(string:kIssuer)!
 
         OIDAuthorizationService.discoverConfiguration(forIssuer: issuer as URL) { configuration, error in
