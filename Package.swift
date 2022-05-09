@@ -44,12 +44,22 @@ let package = Package(
             ],
             path: "GTMAppAuth/Sources",
             publicHeadersPath: "Public",
-	    cSettings: [
+            cSettings: [
                 .headerSearchPath("../../"),
             ],
-	    linkerSettings: [
+            linkerSettings: [
                 .linkedFramework("Security"),
-	    ]
+            ]
+        ),
+        .testTarget(
+            name: "GTMAppAuth-UnitTests",
+            dependencies: [
+                "GTMAppAuth",
+            ],
+            path: "GTMAppAuth/UnitTests",
+            linkerSettings: [
+                .linkedFramework("Security"),
+            ]
         )
     ]
 )
