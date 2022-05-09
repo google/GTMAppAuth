@@ -17,7 +17,8 @@
  */
 #import "AppDelegate.h"
 
-#import <AppAuth/AppAuth.h>
+@import AppAuth;
+
 #import "GTMAppAuthExampleViewController.h"
 
 NS_ASSUME_NONNULL_BEGIN

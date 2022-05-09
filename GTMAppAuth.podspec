@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name         = "GTMAppAuth"
-  s.version      = "1.2.3"
+  s.version      = "1.3.0"
   s.summary      = "Authorize GTM Session Fetcher requests with AppAuth via GTMAppAuth"
 
   s.description  = <<-DESC
