@@ -29,6 +29,10 @@ let package = Package(
         .library(
             name: "GTMAppAuth",
             targets: ["GTMAppAuth"]
+        ),
+        .library(
+            name: "GTMAppAuthSwift",
+            targets: ["GTMAppAuthSwift"]
         )
     ],
     dependencies: [
@@ -50,6 +54,22 @@ let package = Package(
 	    linkerSettings: [
                 .linkedFramework("Security"),
 	    ]
+        ),
+        .target(
+            name: "GTMAppAuthSwift",
+            dependencies: [
+                "GTMSessionFetcherCore",
+                "AppAuthCore"
+            ],
+            path: "GTMAppAuthSwift/Sources",
+	    linkerSettings: [
+                .linkedFramework("Security"),
+	    ]
+        ),
+        .testTarget(
+            name: "GTMAppAuthSwiftTests",
+            dependencies: ["GTMAppAuthSwift"],
+            path: "GTMAppAuthSwift/Tests"
         )
     ]
 )
