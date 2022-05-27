@@ -18,58 +18,59 @@
 import PackageDescription
 
 let package = Package(
-    name: "GTMAppAuth",
-    platforms: [
-        .macOS(.v10_12),
-        .iOS(.v9),
-        .tvOS(.v9),
-        .watchOS(.v6)
-    ],
-    products: [
-        .library(
-            name: "GTMAppAuth",
-            targets: ["GTMAppAuth"]
-        ),
-        .library(
-            name: "GTMAppAuthSwift",
-            targets: ["GTMAppAuthSwift"]
-        )
-    ],
-    dependencies: [
-        .package(url: "https://github.com/google/gtm-session-fetcher.git", "1.5.0" ..< "3.0.0"),
-        .package(url: "https://github.com/openid/AppAuth-iOS.git", "1.6.0" ..< "2.0.0")
-    ],
-    targets: [
-        .target(
-            name: "GTMAppAuth",
-            dependencies: [
-                "GTMSessionFetcherCore",
-                "AppAuthCore"
-            ],
-            path: "GTMAppAuth/Sources",
-            publicHeadersPath: "Public",
-	    cSettings: [
-                .headerSearchPath("../../"),
-            ],
-	    linkerSettings: [
-                .linkedFramework("Security"),
-	    ]
-        ),
-        .target(
-            name: "GTMAppAuthSwift",
-            dependencies: [
-                "GTMSessionFetcherCore",
-                "AppAuthCore"
-            ],
-            path: "GTMAppAuthSwift/Sources",
-	    linkerSettings: [
-                .linkedFramework("Security"),
-	    ]
-        ),
-        .testTarget(
-            name: "GTMAppAuthSwiftTests",
-            dependencies: ["GTMAppAuthSwift"],
-            path: "GTMAppAuthSwift/Tests"
-        )
-    ]
+  name: "GTMAppAuth",
+  platforms: [
+    .macOS(.v10_12),
+    .iOS(.v9),
+    .tvOS(.v9),
+    .watchOS(.v6)
+  ],
+  products: [
+    .library(
+      name: "GTMAppAuth",
+      targets: ["GTMAppAuth"]
+    ),
+    .library(
+      name: "GTMAppAuthSwift",
+      targets: ["GTMAppAuthSwift"]
+    )
+  ],
+  dependencies: [
+    .package(url: "https://github.com/google/gtm-session-fetcher.git", "1.5.0" ..< "2.0.0"),
+    .package(url: "https://github.com/openid/AppAuth-iOS.git", "1.4.0" ..< "2.0.0")
+  ],
+  targets: [
+    .target(
+      name: "GTMAppAuth",
+      dependencies: [
+        "GTMSessionFetcherCore",
+        "AppAuthCore"
+      ],
+      path: "GTMAppAuth/Sources",
+      publicHeadersPath: "Public",
+      cSettings: [
+        .headerSearchPath("../../"),
+      ],
+      linkerSettings: [
+        .linkedFramework("Security"),
+      ]
+    ),
+    .target(
+      name: "GTMAppAuthSwift",
+      dependencies: [
+        "GTMSessionFetcherCore",
+        "AppAuthCore"
+      ],
+      path: "GTMAppAuthSwift/Sources",
+      linkerSettings: [
+        .linkedFramework("Security"),
+      ]
+    ),
+    .testTarget(
+      name: "GTMAppAuthSwiftTests",
+      dependencies: ["GTMAppAuthSwift"],
+      path: "GTMAppAuthSwift/Tests"
+    )
+  ]
+>>>>>>> b2dda8c (Update GTMKeychain to use Swift)
 )
