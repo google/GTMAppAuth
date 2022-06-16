@@ -162,10 +162,10 @@ NSString *const GTMAppAuthFetcherAuthorizationErrorRequestKey = @"request";
 }
 
 - (instancetype)initWithAuthState:(OIDAuthState *)authState
-                           serviceProvider:(nullable NSString *)serviceProvider
-                                    userID:(nullable NSString *)userID
-                                 userEmail:(nullable NSString *)userEmail
-                       userEmailIsVerified:(nullable NSString *)userEmailIsVerified {
+                  serviceProvider:(nullable NSString *)serviceProvider
+                           userID:(nullable NSString *)userID
+                        userEmail:(nullable NSString *)userEmail
+              userEmailIsVerified:(nullable NSString *)userEmailIsVerified {
   self = [super init];
   if (self) {
     _authState = authState;
