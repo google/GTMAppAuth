@@ -72,5 +72,4 @@ let package = Package(
       path: "GTMAppAuthSwift/Tests"
     )
   ]
->>>>>>> b2dda8c (Update GTMKeychain to use Swift)
 )
