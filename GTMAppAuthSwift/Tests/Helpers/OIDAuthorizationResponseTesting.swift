@@ -16,8 +16,8 @@
 
 import AppAuthCore
 
-/// Create a testing instance of `OIDAuthorizationResponse` taking arguments for
-/// additional parameters and an error description.
+/// Create a testing instance of `OIDAuthorizationResponse` taking arguments for additional
+/// parameters and an error description.
 protocol AuthorizationResponseTesting: Testing {
   static func testInstance(
     additionalParameters: [String: String]?,
