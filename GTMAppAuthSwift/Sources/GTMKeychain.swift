@@ -163,18 +163,18 @@ final class GTMKeychain {
   /// - Returns: The password `Data` if found.
   /// - Throws: An instance of `KeychainWrapper.Error`.
   @available(macOS 10.15, *)
-  func passwordData(forName name: String, useDataProtectionKeychain: Bool) throws -> Data {
+  func passwordData(forName name: String, usingDataProtectionKeychain: Bool) throws -> Data {
     try passwordDataFromKeychain(
       keychainItemName: name,
-      useDataProtectionKeychain: useDataProtectionKeychain
+      usingDataProtectionKeychain: usingDataProtectionKeychain
     )
   }
 
   private func passwordDataFromKeychain(
     keychainItemName: String,
-    useDataProtectionKeychain: Bool = false
+    usingDataProtectionKeychain: Bool = false
   ) throws -> Data {
-    keychainHelper.useDataProtectionKeychain = useDataProtectionKeychain
+    keychainHelper.useDataProtectionKeychain = usingDataProtectionKeychain
     return try keychainHelper.passwordData(service: keychainItemName)
   }
 

@@ -126,16 +126,15 @@ import GTMSessionFetcherCore
   }
 
   @objc public required init?(coder: NSCoder) {
-    guard let authState = coder
-      .decodeObject(forKey: authStateKey) as? OIDAuthState,
+    guard let authState = coder.decodeObject(of: OIDAuthState.self, forKey: authStateKey),
           let serviceProvider = coder
-      .decodeObject(forKey: serviceProviderKey) as? String,
+      .decodeObject(of: NSString.self, forKey: serviceProviderKey) as? String,
           let userID = coder
-      .decodeObject(forKey: userIDKey) as? String,
+      .decodeObject(of: NSString.self, forKey: userIDKey) as? String,
           let userEmail = coder
-      .decodeObject(forKey: userEmailKey) as? String,
+      .decodeObject(of: NSString.self, forKey: userEmailKey) as? String,
           let userEmailIsVerified = coder
-      .decodeObject(forKey: userEmailIsVerifiedKey) as? String
+      .decodeObject(of: NSString.self, forKey: userEmailIsVerifiedKey) as? String
     else {
       return nil
     }
