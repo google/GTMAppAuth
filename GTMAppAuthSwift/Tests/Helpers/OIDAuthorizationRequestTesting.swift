@@ -20,8 +20,8 @@ extension OIDAuthorizationRequest: Testing {
   static func testInstance() -> Self {
     return OIDAuthorizationRequest(
       configuration: OIDServiceConfiguration.testInstance(),
-      clientId: testingClientID,
-      scopes: [testingScope1, testingScope2],
+      clientId: testClientID,
+      scopes: [testScope1, testScope2],
       redirectURL: URL(string: "http://test.com")!,
       responseType: OIDResponseTypeCode,
       additionalParameters: nil
