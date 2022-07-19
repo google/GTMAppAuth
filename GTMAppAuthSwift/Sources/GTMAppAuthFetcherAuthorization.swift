@@ -18,6 +18,14 @@ import Foundation
 import AppAuthCore
 import GTMSessionFetcherCore
 
+// MARK: - Keys
+
+let authStateKey = "authState"
+let serviceProviderKey = "serviceProvider"
+let userIDKey = "userID"
+let userEmailKey = "userEmail"
+let userEmailIsVerifiedKey = "userEmailIsVerified"
+
 /// An implementation of the @c GTMFetcherAuthorizationProtocol protocol for the AppAuth library.
 ///
 /// Enables you to use AppAuth with the GTM Session Fetcher library.
@@ -46,7 +54,7 @@ import GTMSessionFetcherCore
   ///
   /// If the result is false, then the email address is listed with the account on the server, but
   /// the address has not been confirmed as belonging to the owner of the account.
-  private let _userEmailIsVerified: String?
+  let _userEmailIsVerified: String?
 
   /// Email verified status; not used for authentication.
   @objc public var userEmailIsVerified: Bool {
@@ -69,14 +77,6 @@ import GTMSessionFetcherCore
 
   private let serialAuthArgsQueue = DispatchQueue(label: "com.google.gtmappauth")
   private var authorizationArgs = [AuthorizationArguments]()
-
-  // MARK: - Keys
-
-  private let authStateKey = "authState"
-  private let serviceProviderKey = "serviceProvider"
-  private let userIDKey = "userID"
-  private let userEmailKey = "userEmail"
-  private let userEmailIsVerifiedKey = "userEmailIsVerified"
 
   /// Creates a new `GTMAppAuthFetcherAuthorization` using the given `OIDAuthState` from AppAuth.
   ///

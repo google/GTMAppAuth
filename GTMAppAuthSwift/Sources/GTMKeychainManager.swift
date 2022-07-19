@@ -200,7 +200,7 @@ import Foundation
 
 public extension GTMKeychainManager {
   /// Errors that may arise when saving, reading, or removing authorizations from the Keychain.
-  enum Error: Swift.Error, CustomNSError {
+  enum Error: Swift.Error, CustomNSError, Equatable {
     case failedToRetrieveAuthorizationFromKeychain
 
     public static var errorDomain: String {

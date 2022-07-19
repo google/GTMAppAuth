@@ -14,16 +14,11 @@
  * limitations under the License.
  */
 
-
 import XCTest
 import AppAuthCore
 @testable import GTMAppAuthSwift
 
 class GTMKeychainManagerTests: XCTestCase {
-  private let testServiceProvider = "fooProvider"
-  private let testUserID = "fooUser"
-  private let testEmail = "foo@foo.com"
-  private let testKeychainItemName = "testName"
   private let keychainHelper = KeychainHelperFake()
   private var keychainManager: GTMKeychainManager {
     GTMKeychainManager(keychainHelper: keychainHelper)
@@ -85,7 +80,7 @@ class GTMKeychainManagerTests: XCTestCase {
       guard let keychainError = error as? KeychainWrapper.Error else {
         return XCTFail("`error` should be of type `GTMKeychainManager.Error`")
       }
-      XCTAssertEqual(keychainError, KeychainWrapper.Error.failedToDeletePassword)
+      XCTAssertEqual(keychainError, .failedToDeletePasswordBecauseItemNotFound)
     }
   }
 

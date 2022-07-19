@@ -19,7 +19,6 @@ import AppAuthCore
 /// Protocol for creating a test instance of `OIDTokenResponse`.
 protocol TokenResponseTesting: Testing {
   static func testInstance(idToken: String) -> Self
-
   static func testInstance(
     idToken: String,
     accessToken: String?,
@@ -49,11 +48,11 @@ extension OIDTokenResponse: TokenResponseTesting {
     tokenRequest: OIDTokenRequest?
   ) -> Self {
     let parameters = [
-      "access_token": accessToken ?? kAccessToken,
+      "access_token": accessToken ?? testAccessToken,
       "expires_in": expires ?? accessTokenExpiresIn as NSNumber,
       "token_type": "example_token_type",
-      "refresh_token": kRefreshToken,
-      "scope": OIDScopeUtilities.scopes(with: [testingScope2]),
+      "refresh_token": testRefreshToken,
+      "scope": OIDScopeUtilities.scopes(with: [testScope2]),
       "server_code": serverAuthCode,
       "id_token": idToken
     ] as! [String : NSCopying & NSObjectProtocol]
