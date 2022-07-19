@@ -45,7 +45,7 @@ class KeychainHelperFake: KeychainHelper {
     guard !service.isEmpty else { throw KeychainWrapper.Error.noService }
 
     guard let _ = passwordStore.removeValue(forKey: service + accountName) else {
-      throw KeychainWrapper.Error.failedToDeletePassword
+      throw KeychainWrapper.Error.failedToDeletePasswordBecauseItemNotFound
     }
   }
 
@@ -54,6 +54,14 @@ class KeychainHelperFake: KeychainHelper {
     forService service: String,
     accessibility: CFTypeRef
   ) throws {
+    do {
+      try removePassword(service: service)
+    } catch KeychainWrapper.Error.failedToDeletePasswordBecauseItemNotFound {
+      // No need to throw this error since we are setting a new password
+    } catch {
+      throw error
+    }
+
     guard let passwordData = password.data(using: .utf8) else {
       throw KeychainWrapper.Error.unexpectedPasswordData
     }
