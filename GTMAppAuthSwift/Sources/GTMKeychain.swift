@@ -285,6 +285,7 @@ struct KeychainWrapper: KeychainHelper {
     let keychainQuery = keychainQuery(service: service)
     let status = SecItemDelete(keychainQuery as CFDictionary)
 
+    guard status != errSecParam else { throw Error.failedToDeletePasswordBecauseItemNotFound }
     guard status == noErr else { throw Error.failedToDeletePassword }
   }
 
@@ -299,7 +300,11 @@ struct KeychainWrapper: KeychainHelper {
 
   func setPassword(data: Data, forService service: String, accessibility: CFTypeRef?) throws {
     guard !service.isEmpty else { throw Error.noService }
-    try removePassword(service: service)
+    do {
+      try removePassword(service: service)
+    } catch {
+      // Catch Error.failedToDeletePasswordBecauseItemNotFound
+    }
     guard !data.isEmpty else { return }
     var keychainQuery = keychainQuery(service: service)
     keychainQuery[kSecValueData as String] = data
@@ -325,6 +330,7 @@ extension KeychainWrapper {
     case noService
     case unexpectedPasswordData
     case failedToDeletePassword
+    case failedToDeletePasswordBecauseItemNotFound
     case failedToAddPassword
   }
 }

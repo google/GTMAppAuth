@@ -361,7 +361,7 @@ class GTMAppAuthFetcherAuthorizationTest: XCTestCase {
       guard let keychainError = error as? KeychainWrapper.Error else {
         return XCTFail("`error` should be of type `GTMKeychainManager.Error`")
       }
-      XCTAssertEqual(keychainError, KeychainWrapper.Error.failedToDeletePassword)
+      XCTAssertEqual(keychainError, KeychainWrapper.Error.failedToDeletePasswordBecauseItemNotFound)
     }
   }
 

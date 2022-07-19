@@ -19,8 +19,6 @@ import XCTest
 
 class GTMKeychainTests: XCTestCase {
   private let keychainHelper = KeychainHelperFake()
-  private let testPassword = "foo"
-  private let testKeychainItemName = "testName"
   private lazy var keychain: GTMKeychain = {
     return GTMKeychain(keychainHelper: keychainHelper)
   }()
@@ -77,7 +75,10 @@ class GTMKeychainTests: XCTestCase {
     XCTAssertThrowsError(try keychain.removePasswordFromKeychain(
       forName: testKeychainItemName
     )) { thrownError in
-      XCTAssertEqual(thrownError as? KeychainWrapper.Error, .failedToDeletePassword)
+      XCTAssertEqual(
+        thrownError as? KeychainWrapper.Error,
+        .failedToDeletePasswordBecauseItemNotFound
+      )
     }
   }
 
