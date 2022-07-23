@@ -48,6 +48,7 @@ class GTMAppAuthFetcherAuthorizationTest: XCTestCase {
   }
 
   override func setUp() {
+    super.setUp()
     GTMAppAuthFetcherAuthorization.keychain = keychain
   }
 

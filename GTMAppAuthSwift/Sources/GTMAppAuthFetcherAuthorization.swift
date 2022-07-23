@@ -70,12 +70,6 @@ import GTMSessionFetcherCore
       forName: itemName,
       usingDataProtectionKeychain: usingDataProtectionKeychain
     )
-
-    // Don't need to check macOS here because method is only available for 10.15 and higher.
-    if #available(iOS 11, tvOS 11, *) {
-      return try modernUnarchiveAuthorization(with: passwordData, itemName: itemName)
-    }
-
     guard let passwordData = passwordData,
           let authorization = NSKeyedUnarchiver.unarchiveObject(with: passwordData)
             as? GTMAppAuthFetcherAuthorization  else {
@@ -116,7 +110,7 @@ import GTMSessionFetcherCore
 
   /// Removes the saved authorization for the supplied name.
   ///
-  /// - Parameters:()
+  /// - Parameters:
   ///   - itemName: The `String` name for the authorization saved in the keychain.
   ///   - usingDataProtectionKeychain: A `Bool` detailing whether or not to use the data protection
   ///     keychain.
@@ -147,7 +141,11 @@ import GTMSessionFetcherCore
   ) throws {
     let keychain = keychain ?? GTMKeychain()
     if #available(macOS 10.13, iOS 11, tvOS 11, *) {
-      try modernArchive(authorization: authorization, itemName: itemName)
+      let authorizationData = try NSKeyedArchiver.archivedData(
+        withRootObject: authorization,
+        requiringSecureCoding: true
+      )
+      try keychain.save(passwordData: authorizationData,forName: itemName)
     } else {
       let authorizationData = NSKeyedArchiver.archivedData(withRootObject: authorization)
       try keychain.save(passwordData: authorizationData, forName: itemName)
@@ -169,46 +167,13 @@ import GTMSessionFetcherCore
     usingDataProtectionKeychain: Bool
   ) throws {
     let keychain = keychain ?? GTMKeychain()
-    // Don't need to check macOS here because method is only available for 10.15 and higher.
-    if #available(iOS 11, tvOS 11, *) {
-      try modernArchive(
-        authorization: authorization,
-        itemName: itemName,
-        usingDataProtectionKeychain: usingDataProtectionKeychain
-      )
-    } else {
-      let authorizationData = NSKeyedArchiver.archivedData(withRootObject: authorization)
-      try keychain.save(
-        passwordData: authorizationData,
-        forName: itemName,
-        usingDataProtectionKeychain: usingDataProtectionKeychain
-      )
-    }
-  }
-
-  @available(macOS 10.13, iOS 11, tvOS 11, *)
-  private final class func modernArchive(
-    authorization: GTMAppAuthFetcherAuthorization,
-    itemName: String,
-    usingDataProtectionKeychain: Bool = false
-  ) throws {
-    let keychain = keychain ?? GTMKeychain()
-
-    let authorizationData = try NSKeyedArchiver.archivedData(
-      withRootObject: authorization,
-      requiringSecureCoding: true
+    let authorizationData = NSKeyedArchiver.archivedData(withRootObject: authorization)
+    try keychain.save(
+      passwordData: authorizationData,
+      forName: itemName,
+      usingDataProtectionKeychain: usingDataProtectionKeychain
     )
-    if #available(macOS 10.15, *), usingDataProtectionKeychain {
-      try keychain.save(
-        passwordData: authorizationData,
-        forName: itemName,
-        usingDataProtectionKeychain: usingDataProtectionKeychain
-      )
-    } else {
-      try keychain.save(passwordData: authorizationData,forName: itemName)
-    }
   }
-
 
   /// The AppAuth authentication state.
   @objc public let authState: OIDAuthState
