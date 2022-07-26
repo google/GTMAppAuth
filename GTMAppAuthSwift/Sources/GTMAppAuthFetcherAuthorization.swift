@@ -24,6 +24,157 @@ import GTMSessionFetcherCore
 @objc open class GTMAppAuthFetcherAuthorization: NSObject,
                                                  GTMFetcherAuthorizationProtocol,
                                                  NSSecureCoding {
+  // MARK: - Retrieving Authorizations
+
+  /// Internally scoped helper for used for setting the keychain to a fake in tests.
+  static var keychain: GTMKeychain?
+
+  /// Retrieves the saved authorization for the supplied name.
+  ///
+  /// - Parameter itemName: The `String` name for the save authorization.
+  /// - Throws: An instance of `GTMKeychainManager.Error` if retrieving the authorization failed.
+  @objc public final class func authorization(
+    for itemName: String
+  ) throws -> GTMAppAuthFetcherAuthorization {
+    let keychain = keychain ?? GTMKeychain()
+    let passwordData = try? keychain.passwordData(forName: itemName)
+
+    if #available(macOS 10.13, iOS 11, tvOS 11, *) {
+      return try modernUnarchiveAuthorization(with: passwordData, itemName: itemName)
+    }
+
+    guard let passwordData = passwordData,
+          let auth = NSKeyedUnarchiver.unarchiveObject(with: passwordData)
+            as? GTMAppAuthFetcherAuthorization else {
+      throw GTMAppAuthFetcherAuthorization
+        .Error
+        .failedToRetrieveAuthorizationFromKeychain(forItemName: itemName)
+    }
+    return auth
+  }
+
+  /// Retrieves the saved authorization for the supplied name.
+  ///
+  /// - Parameters:
+  ///   - itemName: The `String` name for the save authorization.
+  ///   - usingDataProtectionKeychain: A `Bool` detailing whether or not to use the data protection
+  ///     keychain.
+  /// - Throws: An instance of `KeychainWrapper.Error` if retrieving the authorization failed.
+  @available(macOS 10.15, *)
+  @objc public final class func authorization(
+    for itemName: String,
+    usingDataProtectionKeychain: Bool
+  ) throws -> GTMAppAuthFetcherAuthorization {
+    let keychain = keychain ?? GTMKeychain()
+    let passwordData = try? keychain.passwordData(
+      forName: itemName,
+      usingDataProtectionKeychain: usingDataProtectionKeychain
+    )
+    guard let passwordData = passwordData,
+          let authorization = NSKeyedUnarchiver.unarchiveObject(with: passwordData)
+            as? GTMAppAuthFetcherAuthorization  else {
+      throw GTMAppAuthFetcherAuthorization
+        .Error
+        .failedToRetrieveAuthorizationFromKeychain(forItemName: itemName)
+    }
+    return authorization
+  }
+
+  @available(macOS 10.13, iOS 11, tvOS 11, *)
+  private final class func modernUnarchiveAuthorization(
+    with passwordData: Data?,
+    itemName: String
+  ) throws -> GTMAppAuthFetcherAuthorization {
+    guard let passwordData = passwordData,
+          let authorization = try NSKeyedUnarchiver.unarchivedObject(
+            ofClass: GTMAppAuthFetcherAuthorization.self,
+            from: passwordData
+          ) else {
+      throw GTMAppAuthFetcherAuthorization
+        .Error
+        .failedToRetrieveAuthorizationFromKeychain(forItemName: itemName)
+    }
+    return authorization
+  }
+
+  // MARK: - Removing Authorizations
+
+  /// Removes the saved authorization for the supplied name.
+  ///
+  /// - Parameter itemName: The `String` name for the authorization saved in the keychain.
+  /// - Throws: Any error that may arise during removal, including `KeychainWrapper.Error`.
+  @objc public final class func removeAuthorization(for itemName: String) throws {
+    let keychain = keychain ?? GTMKeychain()
+    try keychain.removePasswordFromKeychain(forName: itemName)
+  }
+
+  /// Removes the saved authorization for the supplied name.
+  ///
+  /// - Parameters:
+  ///   - itemName: The `String` name for the authorization saved in the keychain.
+  ///   - usingDataProtectionKeychain: A `Bool` detailing whether or not to use the data protection
+  ///     keychain.
+  /// - Throws: Any error that may arise during removal, including `KeychainWrapper.Error`.
+  @available(macOS 10.15, *)
+  @objc public final class func removeAuthorization(
+    for itemName: String,
+    usingDataProtectionKeychain: Bool
+  ) throws {
+    let keychain = keychain ?? GTMKeychain()
+    try keychain.removePasswordFromKeychain(
+      forName: itemName,
+      usingDataProtectionKeychain: usingDataProtectionKeychain
+    )
+  }
+
+  // MARK: - Saving Authorizations
+
+  /// Saves the passed authorization with the provided name.
+  ///
+  /// - Parameters:
+  ///   - authorization: An instance of `GMTAppAuthFetcherAuthorization`.
+  ///   - itemName: The `String` name for the authorization to save in the Keychain.
+  /// - Throws: Any error that may arise during removal, including `KeychainWrapper.Error`.
+  @objc public final class func save(
+    authorization: GTMAppAuthFetcherAuthorization,
+    with itemName: String
+  ) throws {
+    let keychain = keychain ?? GTMKeychain()
+    if #available(macOS 10.13, iOS 11, tvOS 11, *) {
+      let authorizationData = try NSKeyedArchiver.archivedData(
+        withRootObject: authorization,
+        requiringSecureCoding: true
+      )
+      try keychain.save(passwordData: authorizationData,forName: itemName)
+    } else {
+      let authorizationData = NSKeyedArchiver.archivedData(withRootObject: authorization)
+      try keychain.save(passwordData: authorizationData, forName: itemName)
+    }
+  }
+
+  /// Saves the passed authorization with the provided name.
+  ///
+  /// - Parameters:
+  ///   - authorization: An instance of `GMTAppAuthFetcherAuthorization`.
+  ///   - itemName: The `String` name for the authorization to save in the Keychain.
+  ///   - usingDataProtectionKeychain: A `Bool` detailing whether or not to use the data protection
+  ///     keychain.
+  /// - Throws: Any error that may arise during removal, including `KeychainWrapper.Error`.
+  @available(macOS 10.15, *)
+  @objc public final class func save(
+    authorization: GTMAppAuthFetcherAuthorization,
+    with itemName: String,
+    usingDataProtectionKeychain: Bool
+  ) throws {
+    let keychain = keychain ?? GTMKeychain()
+    let authorizationData = NSKeyedArchiver.archivedData(withRootObject: authorization)
+    try keychain.save(
+      passwordData: authorizationData,
+      forName: itemName,
+      usingDataProtectionKeychain: usingDataProtectionKeychain
+    )
+  }
+
   /// The AppAuth authentication state.
   @objc public let authState: OIDAuthState
 
@@ -419,10 +570,13 @@ extension AuthorizationArguments {
 }
 
 public extension GTMAppAuthFetcherAuthorization {
-  /// Errors that may arise while authorizing a request.
+  // MARK: - Errors
+
+  /// Errors that may arise while authorizing a request or saving a request to the keychain.
   enum Error: Swift.Error, Equatable, CustomNSError {
     case cannotAuthorizeRequest(NSURLRequest)
     case accessTokenEmptyForRequest(NSURLRequest)
+    case failedToRetrieveAuthorizationFromKeychain(forItemName: String)
 
     public static var errorDomain: String {
       "GTMAppAuthFetcherAuthorizationErrorDomain"
@@ -434,6 +588,8 @@ public extension GTMAppAuthFetcherAuthorization {
         return ["request": request]
       case .accessTokenEmptyForRequest(let request):
         return ["request": request]
+      case .failedToRetrieveAuthorizationFromKeychain(forItemName: let name):
+        return ["itemName": name]
       }
     }
   }
