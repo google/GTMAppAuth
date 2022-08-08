@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
+import Foundation
+
 /// A protocol for creating a test instance of `Self`.
 protocol Testing {
   static func testInstance() -> Self
 }
 
-let kAccessToken = "access_token"
+let testAccessToken = "access_token"
 let accessTokenExpiresIn = 3600
-let kRefreshToken = "refresh_token"
+let testRefreshToken = "refresh_token"
 let serverAuthCode = "server_auth_code"
 
-// ID token constants
+// MARK: - ID token constants
 let alg = "RS256"
 let kid = "alkjdfas"
 let typ = "JWT"
@@ -45,7 +47,17 @@ let fatGivenName = "fake"
 let fatFamilyName = "username"
 let fatPictureURL = "fake_user_picture_url"
 
-let testingClientID = "87654321.googleusercontent.com"
-let testingScope1 = "email"
-let testingScope2 = "profile"
-let testingCodeVerifier = "codeVerifier"
+// MARK: - Test Values
+
+let testClientID = "87654321.googleusercontent.com"
+let testScope1 = "email"
+let testScope2 = "profile"
+let testCodeVerifier = "codeVerifier"
+let testPassword = "foo"
+let testKeychainItemName = "testName"
+let testServiceProvider = "fooProvider"
+let testUserID = "fooUser"
+let testEmail = "foo@foo.com"
+let testClientSecret = "fooSecret"
+let testTokenURL: URL = URL(string: "https://testTokenURL.com")!
+let testRedirectURI = "https://testRedirectURI.com"
