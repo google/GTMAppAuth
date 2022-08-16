@@ -21,7 +21,7 @@
 #import <QuartzCore/QuartzCore.h>
 
 @import AppAuth;
-@import GTMAppAuth;
+@import GTMAppAuthSwift;
 #if __has_include("GTMSessionFetcher/GTMSessionFetcher.h") // Cocoapods
 @import GTMSessionFetcher;
 #else // SPM
@@ -105,20 +105,30 @@ static NSString *const kExampleAuthorizerKey = @"authorization";
 /*! @brief Saves the @c GTMAppAuthFetcherAuthorization to @c NSUSerDefaults.
  */
 - (void)saveState {
+  NSError *error;
   if (_authorization.canAuthorize) {
     [GTMAppAuthFetcherAuthorization saveAuthorization:_authorization
-                                    toKeychainForName:kExampleAuthorizerKey];
+                                         withItemName:kExampleAuthorizerKey
+                                                error:&error];
   } else {
-    [GTMAppAuthFetcherAuthorization removeAuthorizationFromKeychainForName:kExampleAuthorizerKey];
+    [GTMAppAuthFetcherAuthorization removeAuthorizationForItemName:kExampleAuthorizerKey
+                                                             error:&error];
+  }
+  if (error) {
+    NSLog(@"Error saving state: %@", error);
   }
 }
 
 /*! @brief Loads the @c GTMAppAuthFetcherAuthorization from @c NSUSerDefaults.
  */
 - (void)loadState {
+  NSError *error;
   GTMAppAuthFetcherAuthorization* authorization =
-      [GTMAppAuthFetcherAuthorization authorizationFromKeychainForName:kExampleAuthorizerKey];
+      [GTMAppAuthFetcherAuthorization authorizationForItemName:kExampleAuthorizerKey error:&error];
   [self setAuthorization:authorization];
+  if (error) {
+    NSLog(@"Error loading state: %@", error);
+  }
 }
 
 /*! @brief Refreshes UI, typically called after the auth state changed.
@@ -197,7 +207,7 @@ static NSString *const kExampleAuthorizerKey = @"authorization";
                                        NSError *_Nullable error) {
       if (authState) {
         GTMAppAuthFetcherAuthorization *authorization =
-            [[GTMAppAuthFetcherAuthorization alloc] initWithAuthState:authState];
+          [[GTMAppAuthFetcherAuthorization alloc] initWithAuthState:authState];
         [self setAuthorization:authorization];
         [self logMessage:@"Got authorization tokens. Access token: %@",
                          authState.lastTokenResponse.accessToken];
