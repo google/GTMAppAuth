@@ -41,7 +41,8 @@ let userEmailIsVerifiedKey = "userEmailIsVerified"
   ///
   /// - Parameter itemName: The `String` name for the save authorization.
   /// - Throws: An instance of `GTMKeychainManager.Error` if retrieving the authorization failed.
-  @objc public final class func authorization(
+  @objc(authorizationForItemName:error:)
+  public final class func authorization(
     for itemName: String
   ) throws -> GTMAppAuthFetcherAuthorization {
     let keychain = keychain ?? GTMKeychain()
@@ -69,7 +70,8 @@ let userEmailIsVerifiedKey = "userEmailIsVerified"
   ///     keychain.
   /// - Throws: An instance of `KeychainWrapper.Error` if retrieving the authorization failed.
   @available(macOS 10.15, *)
-  @objc public final class func authorization(
+  @objc(authorizationForItemName:usingDataProtectionKeychain:error:)
+  public final class func authorization(
     for itemName: String,
     usingDataProtectionKeychain: Bool
   ) throws -> GTMAppAuthFetcherAuthorization {
@@ -111,7 +113,8 @@ let userEmailIsVerifiedKey = "userEmailIsVerified"
   ///
   /// - Parameter itemName: The `String` name for the authorization saved in the keychain.
   /// - Throws: Any error that may arise during removal, including `KeychainWrapper.Error`.
-  @objc public final class func removeAuthorization(for itemName: String) throws {
+  @objc(removeAuthorizationForItemName:error:)
+  public final class func removeAuthorization(for itemName: String) throws {
     let keychain = keychain ?? GTMKeychain()
     try keychain.removePasswordFromKeychain(forName: itemName)
   }
@@ -124,7 +127,8 @@ let userEmailIsVerifiedKey = "userEmailIsVerified"
   ///     keychain.
   /// - Throws: Any error that may arise during removal, including `KeychainWrapper.Error`.
   @available(macOS 10.15, *)
-  @objc public final class func removeAuthorization(
+  @objc(removeAuthorizationForItemName:usingDataProtectionKeychain:error:)
+  public final class func removeAuthorization(
     for itemName: String,
     usingDataProtectionKeychain: Bool
   ) throws {
@@ -143,7 +147,8 @@ let userEmailIsVerifiedKey = "userEmailIsVerified"
   ///   - authorization: An instance of `GMTAppAuthFetcherAuthorization`.
   ///   - itemName: The `String` name for the authorization to save in the Keychain.
   /// - Throws: Any error that may arise during removal, including `KeychainWrapper.Error`.
-  @objc public final class func save(
+  @objc(saveAuthorization:withItemName:error:)
+  public final class func save(
     authorization: GTMAppAuthFetcherAuthorization,
     with itemName: String
   ) throws {
@@ -169,7 +174,8 @@ let userEmailIsVerifiedKey = "userEmailIsVerified"
   ///     keychain.
   /// - Throws: Any error that may arise during removal, including `KeychainWrapper.Error`.
   @available(macOS 10.15, *)
-  @objc public final class func save(
+  @objc(saveAuthorization:withItemName:usingDataProtectionKeychain:error:)
+  public final class func save(
     authorization: GTMAppAuthFetcherAuthorization,
     with itemName: String,
     usingDataProtectionKeychain: Bool
@@ -228,6 +234,21 @@ let userEmailIsVerifiedKey = "userEmailIsVerified"
 
   private let serialAuthArgsQueue = DispatchQueue(label: "com.google.gtmappauth")
   private var authorizationArgs = [AuthorizationArguments]()
+
+  /// Creates a new `GTMAppAuthFetcherAuthorization` using the given `OIDAuthState` from AppAuth.
+  ///
+  /// - Parameters:
+  ///   - authState: The authorization state.
+  @objc(initWithAuthState:)
+  convenience public init(authState: OIDAuthState) {
+    self.init(
+      authState: authState,
+      serviceProvider: nil,
+      userID: nil,
+      userEmail: nil,
+      userEmailIsVerified: nil
+    )
+  }
 
   /// Creates a new `GTMAppAuthFetcherAuthorization` using the given `OIDAuthState` from AppAuth.
   ///
@@ -312,7 +333,8 @@ let userEmailIsVerifiedKey = "userEmailIsVerified"
   ///
   /// The completion handler is scheduled on the main thread, unless the `callbackQueue` property is
   /// set on the `fetcherService` in which case the handler is scheduled on that queue.
-  @objc public func authorizeRequest(
+  @objc(authorizeRequest:completionHandler:)
+  public func authorizeRequest(
     _ request: NSMutableURLRequest?,
     completionHandler handler: @escaping (Swift.Error?) -> Void
   ) {
@@ -331,7 +353,8 @@ let userEmailIsVerifiedKey = "userEmailIsVerified"
   ///   - request: The request to authorize.
   ///   - delegate: The delegate to receive the callback.
   ///   - sel: The `Selector` to call upon the provided `delegate`.
-  @objc public func authorizeRequest(
+  @objc(authorizeRequest:delegate:didFinishSelector:)
+  public func authorizeRequest(
     _ request: NSMutableURLRequest?,
     delegate: Any,
     didFinish sel: Selector

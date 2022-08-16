@@ -224,7 +224,8 @@ let oobString = "urn:ietf:wg:oauth:2.0:oob"
 ///   - clientSecret: The OAuth client secret.
 /// - Returns: A `GTMAppAuthFetcherAuthorization` object, or nil.
 /// - Throws: An instance of `GTMOAuth2KeychainCompatibility.Error` arising from the retrieval.
-  @objc public static func authForGoogleFromKeychain(
+  @objc(authForGoogleFromKeychainForName:clientID:clientSecret:error:)
+  public static func authForGoogleFromKeychain(
     for name: String,
     clientID: String,
     clientSecret: String
@@ -245,7 +246,8 @@ let oobString = "urn:ietf:wg:oauth:2.0:oob"
 ///   - name: The keychain name.
 /// - Throws: An instance of `GTMOAuth2KeychainCompatibility.Error` arising from the save.
   @available(*, deprecated, message: "Use GTMAppAuthFetcherAuthorization.save(authorization:with:)")
-  @objc public static func save(
+  @objc(saveAuthorization:forName:error:)
+  public static func save(
     authorization: GTMAppAuthFetcherAuthorization,
     for name: String
   ) throws {
@@ -262,7 +264,8 @@ let oobString = "urn:ietf:wg:oauth:2.0:oob"
 /// - Parameters:
 ///   - name: The keychain name.
 /// - Throws: An instance of `GTMOAuth2KeychainCompatibility.Error` arising from the removal.
-  @objc public static func removeAuthorizationFromKeychain(for name: String) throws {
+  @objc(removeAuthorizationFromKeychainForName:error:)
+  public static func removeAuthorizationFromKeychain(for name: String) throws {
     let keychain = keychain ?? GTMKeychain()
 
     try keychain.removePasswordFromKeychain(forName: name)
