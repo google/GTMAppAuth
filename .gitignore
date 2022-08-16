@@ -10,3 +10,9 @@ Package.pins
 Package.resolved
 .swiftpm
 .build
+
+# Xcode
+*.xcuserstate
+*.xcworkspace/
+project.xcworkspace/
+xcuserdata/
