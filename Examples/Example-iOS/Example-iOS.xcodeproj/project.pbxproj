@@ -14,8 +14,8 @@
 		346E91991C2A245000D3620B /* SafariServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 346E91981C2A245000D3620B /* SafariServices.framework */; };
 		34CB09BD1C42007600A54261 /* GTMAppAuthExampleViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 34CB09BB1C42007600A54261 /* GTMAppAuthExampleViewController.m */; };
 		34CB09BE1C42007600A54261 /* GTMAppAuthExampleViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 34CB09BC1C42007600A54261 /* GTMAppAuthExampleViewController.xib */; };
+		73FB611428B57EF000C6C3AD /* GTMAppAuthSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 73FB611328B57EF000C6C3AD /* GTMAppAuthSwift */; };
 		C1AF3AEB28187F71003BAEFF /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = C1AF3AE928187F71003BAEFF /* README.md */; };
-		C1B5D3572825968E0068D12B /* GTMAppAuth in Frameworks */ = {isa = PBXBuildFile; productRef = C1B5D3562825968E0068D12B /* GTMAppAuth */; };
 		C1B5D35A282596F00068D12B /* AppAuth in Frameworks */ = {isa = PBXBuildFile; productRef = C1B5D359282596F00068D12B /* AppAuth */; };
 		C1B5D3622825A4900068D12B /* GTMSessionFetcherCore in Frameworks */ = {isa = PBXBuildFile; productRef = C1B5D3612825A4900068D12B /* GTMSessionFetcherCore */; };
 /* End PBXBuildFile section */
@@ -32,8 +32,8 @@
 		34CB09BA1C42007600A54261 /* GTMAppAuthExampleViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMAppAuthExampleViewController.h; sourceTree = "<group>"; };
 		34CB09BB1C42007600A54261 /* GTMAppAuthExampleViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GTMAppAuthExampleViewController.m; sourceTree = "<group>"; };
 		34CB09BC1C42007600A54261 /* GTMAppAuthExampleViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = GTMAppAuthExampleViewController.xib; sourceTree = "<group>"; };
+		73FB611228B57EC500C6C3AD /* GTMAppAuth */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = GTMAppAuth; path = ../..; sourceTree = "<group>"; };
 		C1AF3AE928187F71003BAEFF /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		C1B5D35C282598A40068D12B /* GTMAppAuth */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = GTMAppAuth; path = ../..; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -43,7 +43,7 @@
 			files = (
 				C1B5D35A282596F00068D12B /* AppAuth in Frameworks */,
 				346E91991C2A245000D3620B /* SafariServices.framework in Frameworks */,
-				C1B5D3572825968E0068D12B /* GTMAppAuth in Frameworks */,
+				73FB611428B57EF000C6C3AD /* GTMAppAuthSwift in Frameworks */,
 				C1B5D3622825A4900068D12B /* GTMSessionFetcherCore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -62,7 +62,7 @@
 		346E91601C29D42800D3620B = {
 			isa = PBXGroup;
 			children = (
-				C1B5D35B282598A40068D12B /* Packages */,
+				73FB611128B57EC500C6C3AD /* Packages */,
 				C1AF3AE928187F71003BAEFF /* README.md */,
 				346E916B1C29D42800D3620B /* Source */,
 				341564001C487ABA00ECA3D9 /* Frameworks */,
@@ -94,10 +94,10 @@
 			path = Source;
 			sourceTree = "<group>";
 		};
-		C1B5D35B282598A40068D12B /* Packages */ = {
+		73FB611128B57EC500C6C3AD /* Packages */ = {
 			isa = PBXGroup;
 			children = (
-				C1B5D35C282598A40068D12B /* GTMAppAuth */,
+				73FB611228B57EC500C6C3AD /* GTMAppAuth */,
 			);
 			name = Packages;
 			sourceTree = "<group>";
@@ -119,9 +119,9 @@
 			);
 			name = "Example-iOS";
 			packageProductDependencies = (
-				C1B5D3562825968E0068D12B /* GTMAppAuth */,
 				C1B5D359282596F00068D12B /* AppAuth */,
 				C1B5D3612825A4900068D12B /* GTMSessionFetcherCore */,
+				73FB611328B57EF000C6C3AD /* GTMAppAuthSwift */,
 			);
 			productName = Example;
 			productReference = 346E91691C29D42800D3620B /* Example-iOS.app */;
@@ -386,10 +386,9 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		C1B5D3562825968E0068D12B /* GTMAppAuth */ = {
+		73FB611328B57EF000C6C3AD /* GTMAppAuthSwift */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = C1B5D3552825968E0068D12B /* XCRemoteSwiftPackageReference "GTMAppAuth" */;
-			productName = GTMAppAuth;
+			productName = GTMAppAuthSwift;
 		};
 		C1B5D359282596F00068D12B /* AppAuth */ = {
 			isa = XCSwiftPackageProductDependency;
