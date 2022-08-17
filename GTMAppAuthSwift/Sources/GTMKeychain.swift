@@ -285,7 +285,7 @@ struct KeychainWrapper: KeychainHelper {
     let keychainQuery = keychainQuery(service: service)
     let status = SecItemDelete(keychainQuery as CFDictionary)
 
-    guard status != errSecParam else { throw Error.failedToDeletePasswordBecauseItemNotFound }
+    guard status != errSecItemNotFound else { throw Error.failedToDeletePasswordBecauseItemNotFound }
     guard status == noErr else { throw Error.failedToDeletePassword }
   }
 
