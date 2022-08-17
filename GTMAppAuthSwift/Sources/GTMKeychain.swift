@@ -237,9 +237,9 @@ struct KeychainWrapper: KeychainHelper {
 
   func keychainQuery(service: String) -> [String: Any] {
     var query: [String: Any] = [
-      kSecClassGenericPassword as String: kSecClass,
-      accountName: kSecAttrAccount,
-      service: kSecAttrService
+      kSecClass as String: kSecClassGenericPassword,
+      kSecAttrAccount as String : accountName,
+      kSecAttrService as String: service,
     ]
 
     #if os(macOS) && isMaxMacOSVersionGreaterThanTenOneFive
