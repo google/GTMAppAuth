@@ -300,7 +300,14 @@ struct KeychainWrapper: KeychainHelper {
 
   func setPassword(data: Data, forService service: String, accessibility: CFTypeRef?) throws {
     guard !service.isEmpty else { throw Error.noService }
-    try removePassword(service: service)
+    do {
+      try removePassword(service: service)
+    } catch KeychainWrapper.Error.failedToDeletePasswordBecauseItemNotFound {
+      // Don't throw; password doesn't exist since the password is being saved for the first time
+    } catch {
+      // throw here since this is some other error
+      throw error
+    }
     guard !data.isEmpty else { return }
     var keychainQuery = keychainQuery(service: service)
     keychainQuery[kSecValueData as String] = data
