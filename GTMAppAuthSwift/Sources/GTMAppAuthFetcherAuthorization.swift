@@ -18,14 +18,6 @@ import Foundation
 import AppAuthCore
 import GTMSessionFetcherCore
 
-// MARK: - Keys
-
-let authStateKey = "authState"
-let serviceProviderKey = "serviceProvider"
-let userIDKey = "userID"
-let userEmailKey = "userEmail"
-let userEmailIsVerifiedKey = "userEmailIsVerified"
-
 /// An implementation of the `GTMFetcherAuthorizationProtocol` protocol for the AppAuth library.
 ///
 /// Enables you to use AppAuth with the GTM Session Fetcher library.
@@ -274,9 +266,9 @@ let userEmailIsVerifiedKey = "userEmailIsVerified"
        let claims = OIDIDToken(
         idTokenString: idToken
        )?.claims as? [String: Any] {
-      self.userID = claims["sub"] as? String
-      self.userEmail = claims["email"] as? String
-      self._userEmailIsVerified = claims["email_verified"] as? String
+      self.userID = claims["sub"] as? String ?? userID
+      self.userEmail = claims["email"] as? String ?? userEmail
+      self._userEmailIsVerified = claims["email_verified"] as? String ?? userEmailIsVerified
     } else {
       self.userID = userID
       self.userEmail = userEmail
@@ -290,23 +282,24 @@ let userEmailIsVerifiedKey = "userEmailIsVerified"
   @objc public static let supportsSecureCoding = true
 
   @objc public func encode(with coder: NSCoder) {
-    coder.encode(authState, forKey: authStateKey)
-    coder.encode(serviceProvider, forKey: serviceProviderKey)
-    coder.encode(userID, forKey: userIDKey)
-    coder.encode(userEmail, forKey: userEmailKey)
-    coder.encode(_userEmailIsVerified, forKey: userEmailIsVerifiedKey)
+    coder.encode(authState, forKey: GTMAppAuthFetcherAuthorization.authStateKey)
+    coder.encode(serviceProvider, forKey: GTMAppAuthFetcherAuthorization.serviceProviderKey)
+    coder.encode(userID, forKey: GTMAppAuthFetcherAuthorization.userIDKey)
+    coder.encode(userEmail, forKey: GTMAppAuthFetcherAuthorization.userEmailKey)
+    coder.encode(_userEmailIsVerified, forKey: GTMAppAuthFetcherAuthorization.userEmailIsVerifiedKey)
   }
 
   @objc public required init?(coder: NSCoder) {
-    guard let authState = coder.decodeObject(of: OIDAuthState.self, forKey: authStateKey),
+    guard let authState = coder
+      .decodeObject(of: OIDAuthState.self, forKey: GTMAppAuthFetcherAuthorization.authStateKey),
           let serviceProvider = coder
-      .decodeObject(of: NSString.self, forKey: serviceProviderKey) as? String,
+      .decodeObject(of: NSString.self, forKey: GTMAppAuthFetcherAuthorization.serviceProviderKey) as? String,
           let userID = coder
-      .decodeObject(of: NSString.self, forKey: userIDKey) as? String,
+      .decodeObject(of: NSString.self, forKey: GTMAppAuthFetcherAuthorization.userIDKey) as? String,
           let userEmail = coder
-      .decodeObject(of: NSString.self, forKey: userEmailKey) as? String,
+      .decodeObject(of: NSString.self, forKey: GTMAppAuthFetcherAuthorization.userEmailKey) as? String,
           let userEmailIsVerified = coder
-      .decodeObject(of: NSString.self, forKey: userEmailIsVerifiedKey) as? String
+      .decodeObject(of: NSString.self, forKey: GTMAppAuthFetcherAuthorization.userEmailIsVerifiedKey) as? String
     else {
       return nil
     }
@@ -593,6 +586,14 @@ extension AuthorizationArguments {
 }
 
 public extension GTMAppAuthFetcherAuthorization {
+  // MARK: - Keys
+
+  static var authStateKey: String { "authState" }
+  static var serviceProviderKey: String { "serviceProvider" }
+  static var userIDKey: String { "userID" }
+  static var userEmailKey: String { "userEmail" }
+  static var userEmailIsVerifiedKey: String { "userEmailIsVerified" }
+
   // MARK: - Errors
 
   /// Errors that may arise while authorizing a request or saving a request to the keychain.
