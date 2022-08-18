@@ -153,16 +153,16 @@ let userEmailIsVerifiedKey = "userEmailIsVerified"
     with itemName: String
   ) throws {
     let keychain = keychain ?? GTMKeychain()
-    if #available(macOS 10.13, iOS 11, tvOS 11, *) {
-      let authorizationData = try NSKeyedArchiver.archivedData(
-        withRootObject: authorization,
-        requiringSecureCoding: true
-      )
-      try keychain.save(passwordData: authorizationData,forName: itemName)
-    } else {
+//    if #available(macOS 10.13, iOS 11, tvOS 11, *) {
+//      let authorizationData = try NSKeyedArchiver.archivedData(
+//        withRootObject: authorization,
+//        requiringSecureCoding: true
+//      )
+//      try keychain.save(passwordData: authorizationData,forName: itemName)
+//    } else {
       let authorizationData = NSKeyedArchiver.archivedData(withRootObject: authorization)
       try keychain.save(passwordData: authorizationData, forName: itemName)
-    }
+//    }
   }
 
   /// Saves the passed authorization with the provided name.
