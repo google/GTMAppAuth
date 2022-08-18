@@ -290,24 +290,29 @@ import GTMSessionFetcherCore
   }
 
   @objc public required init?(coder: NSCoder) {
-    guard let authState = coder
-      .decodeObject(of: OIDAuthState.self, forKey: GTMAppAuthFetcherAuthorization.authStateKey),
-          let serviceProvider = coder
-      .decodeObject(of: NSString.self, forKey: GTMAppAuthFetcherAuthorization.serviceProviderKey) as? String,
-          let userID = coder
-      .decodeObject(of: NSString.self, forKey: GTMAppAuthFetcherAuthorization.userIDKey) as? String,
-          let userEmail = coder
-      .decodeObject(of: NSString.self, forKey: GTMAppAuthFetcherAuthorization.userEmailKey) as? String,
-          let userEmailIsVerified = coder
-      .decodeObject(of: NSString.self, forKey: GTMAppAuthFetcherAuthorization.userEmailIsVerifiedKey) as? String
-    else {
+    guard let authState = coder.decodeObject(
+      of: OIDAuthState.self,
+      forKey: GTMAppAuthFetcherAuthorization.authStateKey
+    ) else {
       return nil
     }
     self.authState = authState
-    self.serviceProvider = serviceProvider
-    self.userID = userID
-    self.userEmail = userEmail
-    self._userEmailIsVerified = userEmailIsVerified
+    self.serviceProvider = coder.decodeObject(
+      of: NSString.self,
+      forKey: GTMAppAuthFetcherAuthorization.serviceProviderKey
+    ) as? String
+    self.userID = coder.decodeObject(
+      of: NSString.self,
+      forKey: GTMAppAuthFetcherAuthorization.userIDKey
+    ) as? String
+    self.userEmail = coder.decodeObject(
+      of: NSString.self,
+      forKey: GTMAppAuthFetcherAuthorization.userEmailKey
+    ) as? String
+    self._userEmailIsVerified = coder.decodeObject(
+      of: NSString.self,
+      forKey: GTMAppAuthFetcherAuthorization.userEmailIsVerifiedKey
+    ) as? String
   }
 
   // MARK: - Authorizing Requests (GTMFetcherAuthorizationProtocol)
