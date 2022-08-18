@@ -21,43 +21,44 @@ protocol Testing {
   static func testInstance() -> Self
 }
 
-let testAccessToken = "access_token"
-let accessTokenExpiresIn = 3600
-let testRefreshToken = "refresh_token"
-let serverAuthCode = "server_auth_code"
+// MARK: - Constants
 
-// MARK: - ID token constants
-let alg = "RS256"
-let kid = "alkjdfas"
-let typ = "JWT"
-let userID = "12345679"
-let hostedDomain = "fakehosteddomain.com"
-let issuer = "https://test.com"
-let audience = "audience"
-let IDTokenExpires = 1000
-let issuedAt = 0
+struct Constants {
+  static let testAccessToken = "access_token"
+  static let accessTokenExpiresIn = 3600
+  static let testRefreshToken = "refresh_token"
+  static let serverAuthCode = "server_auth_code"
 
-let fatNameKey = "name";
-let fatGivenNameKey = "given_name"
-let fatFamilyNameKey = "family_name"
-let fatPictureURLKey = "picture"
+  static let alg = "RS256"
+  static let kid = "alkjdfas"
+  static let typ = "JWT"
+  static let userID = "123456789"
+  static let hostedDomain = "fakehosteddomain.com"
+  static let issuer = "https://test.com"
+  static let audience = "audience"
+  static let IDTokenExpires = 1000
+  static let issuedAt = 0
 
-let fatName = "fake username"
-let fatGivenName = "fake"
-let fatFamilyName = "username"
-let fatPictureURL = "fake_user_picture_url"
+  static let fatNameKey = "name";
+  static let fatGivenNameKey = "given_name"
+  static let fatFamilyNameKey = "family_name"
+  static let fatPictureURLKey = "picture"
 
-// MARK: - Test Values
+  static let fatName = "fake username"
+  static let fatGivenName = "fake"
+  static let fatFamilyName = "username"
+  static let fatPictureURL = "fake_user_picture_url"
 
-let testClientID = "87654321.googleusercontent.com"
-let testScope1 = "email"
-let testScope2 = "profile"
-let testCodeVerifier = "codeVerifier"
-let testPassword = "foo"
-let testKeychainItemName = "testName"
-let testServiceProvider = "fooProvider"
-let testUserID = "fooUser"
-let testEmail = "foo@foo.com"
-let testClientSecret = "fooSecret"
-let testTokenURL: URL = URL(string: "https://testTokenURL.com")!
-let testRedirectURI = "https://testRedirectURI.com"
+  static let testClientID = "87654321.googleusercontent.com"
+  static let testScope1 = "email"
+  static let testScope2 = "profile"
+  static let testCodeVerifier = "codeVerifier"
+  static let testPassword = "foo"
+  static let testKeychainItemName = "testName"
+  static let testServiceProvider = "fooProvider"
+  static let testUserID = "123456789"
+  static let testEmail = "foo@foo.com"
+  static let testClientSecret = "fooSecret"
+  static let testTokenURL: URL = URL(string: "https://testTokenURL.com")!
+  static let testRedirectURI = "https://testRedirectURI.com"
+}
