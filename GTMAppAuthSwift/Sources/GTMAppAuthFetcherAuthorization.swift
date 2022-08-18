@@ -48,9 +48,9 @@ let userEmailIsVerifiedKey = "userEmailIsVerified"
     let keychain = keychain ?? GTMKeychain()
     let passwordData = try? keychain.passwordData(forName: itemName)
 
-    if #available(macOS 10.13, iOS 11, tvOS 11, *) {
-      return try modernUnarchiveAuthorization(with: passwordData, itemName: itemName)
-    }
+//    if #available(macOS 10.13, iOS 11, tvOS 11, *) {
+//      return try modernUnarchiveAuthorization(with: passwordData, itemName: itemName)
+//    }
 
     guard let passwordData = passwordData,
           let auth = NSKeyedUnarchiver.unarchiveObject(with: passwordData)
