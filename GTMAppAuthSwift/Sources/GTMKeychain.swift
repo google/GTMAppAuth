@@ -262,7 +262,7 @@ struct KeychainWrapper: KeychainHelper {
   func passwordData(service: String) throws -> Data {
     guard !service.isEmpty else { throw Error.noService }
 
-    var passwordItem: CFTypeRef?
+    var passwordItem: AnyObject?
     var keychainQuery = keychainQuery(service: service)
     keychainQuery[kSecReturnData as String] = true
     keychainQuery[kSecMatchLimit as String] = kSecMatchLimitOne
