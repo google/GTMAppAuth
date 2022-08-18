@@ -272,12 +272,11 @@ struct KeychainWrapper: KeychainHelper {
 
     guard status == errSecSuccess else { throw Error.unhandled(status: status) }
 
-    guard let result = passwordItem as? [String: Any],
-            let passwordData = result[kSecValueData as String] as? Data else {
+    guard let result = passwordItem as? Data else {
       throw Error.unexpectedPasswordData
     }
 
-    return passwordData
+    return result
   }
 
   func removePassword(service: String) throws {
