@@ -60,10 +60,10 @@ let oobString = "urn:ietf:wg:oauth:2.0:oob"
     let dict = [
       oauth2RefreshTokenKey: refreshToken,
       oauth2AccessTokenKey: accessToken,
-      serviceProviderKey: authorization.serviceProvider,
-      userIDKey: authorization.userID,
-      userEmailKey: authorization.userEmail,
-      userEmailIsVerifiedKey: authorization._userEmailIsVerified,
+      GTMAppAuthFetcherAuthorization.serviceProviderKey: authorization.serviceProvider,
+      GTMAppAuthFetcherAuthorization.userIDKey: authorization.userID,
+      GTMAppAuthFetcherAuthorization.userEmailKey: authorization.userEmail,
+      GTMAppAuthFetcherAuthorization.userEmailIsVerifiedKey: authorization._userEmailIsVerified,
       oauth2ScopeKey: authorization.authState.scope
     ]
 
@@ -206,10 +206,10 @@ let oobString = "urn:ietf:wg:oauth:2.0:oob"
 
     let authorization = GTMAppAuthFetcherAuthorization(
       authState: authState,
-      serviceProvider: persistenceDictionary[serviceProviderKey],
-      userID: persistenceDictionary[userIDKey],
-      userEmail: persistenceDictionary[userEmailKey],
-      userEmailIsVerified: persistenceDictionary[userEmailIsVerifiedKey]
+      serviceProvider: persistenceDictionary[GTMAppAuthFetcherAuthorization.serviceProviderKey],
+      userID: persistenceDictionary[GTMAppAuthFetcherAuthorization.userIDKey],
+      userEmail: persistenceDictionary[GTMAppAuthFetcherAuthorization.userEmailKey],
+      userEmailIsVerified: persistenceDictionary[GTMAppAuthFetcherAuthorization.userEmailIsVerifiedKey]
     )
     return authorization
   }

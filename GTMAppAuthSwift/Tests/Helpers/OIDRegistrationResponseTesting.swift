@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 import AppAuthCore
 
 /// Protocol for creating a test instance of `OIDRegistrationResponse` with a request and

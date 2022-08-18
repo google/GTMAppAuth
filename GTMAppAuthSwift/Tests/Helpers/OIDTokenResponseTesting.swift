@@ -48,12 +48,12 @@ extension OIDTokenResponse: TokenResponseTesting {
     tokenRequest: OIDTokenRequest?
   ) -> Self {
     let parameters = [
-      "access_token": accessToken ?? testAccessToken,
-      "expires_in": expires ?? accessTokenExpiresIn as NSNumber,
+      "access_token": accessToken ?? Constants.testAccessToken,
+      "expires_in": expires ?? Constants.accessTokenExpiresIn as NSNumber,
       "token_type": "example_token_type",
-      "refresh_token": testRefreshToken,
-      "scope": OIDScopeUtilities.scopes(with: [testScope2]),
-      "server_code": serverAuthCode,
+      "refresh_token": Constants.testRefreshToken,
+      "scope": OIDScopeUtilities.scopes(with: [Constants.testScope2]),
+      "server_code": Constants.serverAuthCode,
       "id_token": idToken
     ] as! [String : NSCopying & NSObjectProtocol]
 
@@ -64,14 +64,14 @@ extension OIDTokenResponse: TokenResponseTesting {
   }
 
   static var idToken: String {
-    return idToken(sub: userID, exp: IDTokenExpires, fat: false)
+    return idToken(sub: Constants.userID, exp: Constants.IDTokenExpires, fat: false)
   }
 
   static func idToken(sub: String, exp: Int, fat: Bool) -> String {
     let headerContents = [
-      "alg": alg,
-      "kid": kid,
-      "typ": typ,
+      "alg": Constants.alg,
+      "kid": Constants.kid,
+      "typ": Constants.typ,
     ]
 
     // `try!` is fine here since failing is okay in the test
@@ -82,18 +82,18 @@ extension OIDTokenResponse: TokenResponseTesting {
 
     var payloadContents = [
       "sub": sub,
-      "hd": hostedDomain,
-      "iss": issuer,
-      "aud": audience,
+      "hd": Constants.hostedDomain,
+      "iss": Constants.issuer,
+      "aud": Constants.audience,
       "exp": exp,
-      "iat": issuedAt
+      "iat": Constants.issuedAt
     ] as [String : Any]
 
     if fat {
-      payloadContents[fatNameKey] = fatName
-      payloadContents[fatGivenNameKey] = fatGivenName
-      payloadContents[fatFamilyNameKey] = fatFamilyName
-      payloadContents[fatPictureURLKey] = fatPictureURL
+      payloadContents[Constants.fatNameKey] = Constants.fatName
+      payloadContents[Constants.fatGivenNameKey] = Constants.fatGivenName
+      payloadContents[Constants.fatFamilyNameKey] = Constants.fatFamilyName
+      payloadContents[Constants.fatPictureURLKey] = Constants.fatPictureURL
     }
 
     let payloadData = try! JSONSerialization.data(

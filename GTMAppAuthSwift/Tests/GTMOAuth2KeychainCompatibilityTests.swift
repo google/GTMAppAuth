@@ -20,7 +20,7 @@ import AppAuthCore
 
 class GTMOAuth2KeychainCompatibilityTests: XCTestCase {
   private lazy var testPersistenceString: String = {
-    return "access_token=\(testAccessToken)&refresh_token=\(testRefreshToken)&scope=\(testScope2)&serviceProvider=\(testServiceProvider)&userEmail=foo%40foo.com&userEmailIsVerified=y&userID=\(testUserID)"
+    return "access_token=\(Constants.testAccessToken)&refresh_token=\(Constants.testRefreshToken)&scope=\(Constants.testScope2)&serviceProvider=\(Constants.testServiceProvider)&userEmail=foo%40foo.com&userEmailIsVerified=y&userID=\(Constants.testUserID)"
   }()
   private let keychainHelper = KeychainHelperFake()
   private lazy var keychain: GTMKeychain = {
@@ -29,9 +29,9 @@ class GTMOAuth2KeychainCompatibilityTests: XCTestCase {
   private var expectedAuthorization: GTMAppAuthFetcherAuthorization {
     GTMAppAuthFetcherAuthorization(
       authState: OIDAuthState.testInstance(),
-      serviceProvider: testServiceProvider,
-      userID: testUserID,
-      userEmail: testEmail,
+      serviceProvider: Constants.testServiceProvider,
+      userID: Constants.testUserID,
+      userEmail: Constants.testEmail,
       userEmailIsVerified: "y"
     )
   }
@@ -61,16 +61,16 @@ class GTMOAuth2KeychainCompatibilityTests: XCTestCase {
   func testSaveOAuth2Authorization() throws {
     try GTMOAuth2KeychainCompatibility.save(
       authorization: expectedAuthorization,
-      for: testKeychainItemName
+      for: Constants.testKeychainItemName
     )
   }
 
   func testRemoveOAuth2Authorization() throws {
     try GTMOAuth2KeychainCompatibility.save(
       authorization: expectedAuthorization,
-      for: testKeychainItemName
+      for: Constants.testKeychainItemName
     )
-    try GTMOAuth2KeychainCompatibility.removeAuthorizationFromKeychain(for: testKeychainItemName)
+    try GTMOAuth2KeychainCompatibility.removeAuthorizationFromKeychain(for: Constants.testKeychainItemName)
   }
 
   func testRemoveOAuth2AuthorizationThrowsError() {
@@ -87,14 +87,14 @@ class GTMOAuth2KeychainCompatibilityTests: XCTestCase {
   func testAuthorizeFromKeychainForName() throws {
     try GTMOAuth2KeychainCompatibility.save(
       authorization: expectedAuthorization,
-      for: testKeychainItemName
+      for: Constants.testKeychainItemName
     )
     let testAuth = try GTMOAuth2KeychainCompatibility.authorizeFromKeychain(
-      forName: testKeychainItemName,
-      tokenURL: testTokenURL,
-      redirectURI: testRedirectURI,
-      clientID: testClientID,
-      clientSecret: testClientSecret
+      forName: Constants.testKeychainItemName,
+      tokenURL: Constants.testTokenURL,
+      redirectURI: Constants.testRedirectURI,
+      clientID: Constants.testClientID,
+      clientSecret: Constants.testClientSecret
     )
 
     XCTAssertEqual(testAuth.authState.scope, expectedAuthorization.authState.scope)
@@ -117,10 +117,10 @@ class GTMOAuth2KeychainCompatibilityTests: XCTestCase {
     XCTAssertThrowsError(
       try GTMOAuth2KeychainCompatibility.authorizeFromKeychain(
         forPersistenceString: testPersistenceString,
-        tokenURL: testTokenURL,
+        tokenURL: Constants.testTokenURL,
         redirectURI: badURI,
-        clientID: testClientID,
-        clientSecret: testClientSecret
+        clientID: Constants.testClientID,
+        clientSecret: Constants.testClientSecret
       )
     ) { thrownError in
       XCTAssertEqual(
@@ -133,15 +133,15 @@ class GTMOAuth2KeychainCompatibilityTests: XCTestCase {
   func testAuthorizeFromKeychainForPersistenceString() throws {
     try GTMOAuth2KeychainCompatibility.save(
       authorization: expectedAuthorization,
-      for: testKeychainItemName
+      for: Constants.testKeychainItemName
     )
 
     let testPersistAuth = try GTMOAuth2KeychainCompatibility.authorizeFromKeychain(
       forPersistenceString: testPersistenceString,
-      tokenURL: testTokenURL,
-      redirectURI: testRedirectURI,
-      clientID: testClientID,
-      clientSecret: testClientSecret
+      tokenURL: Constants.testTokenURL,
+      redirectURI: Constants.testRedirectURI,
+      clientID: Constants.testClientID,
+      clientSecret: Constants.testClientSecret
     )
 
     XCTAssertEqual(testPersistAuth.authState.scope, expectedAuthorization.authState.scope)
@@ -161,22 +161,22 @@ class GTMOAuth2KeychainCompatibilityTests: XCTestCase {
   func testAuthorizeFromKeychainMatchesForNameAndPersistenceString() throws {
     let expectedPersistAuth = try GTMOAuth2KeychainCompatibility.authorizeFromKeychain(
       forPersistenceString: testPersistenceString,
-      tokenURL: testTokenURL,
-      redirectURI: testRedirectURI,
-      clientID: testClientID,
-      clientSecret: testClientSecret
+      tokenURL: Constants.testTokenURL,
+      redirectURI: Constants.testRedirectURI,
+      clientID: Constants.testClientID,
+      clientSecret: Constants.testClientSecret
     )
     try GTMOAuth2KeychainCompatibility.save(
       authorization: expectedPersistAuth,
-      for: testKeychainItemName
+      for: Constants.testKeychainItemName
     )
 
     let testPersistAuth = try GTMOAuth2KeychainCompatibility.authorizeFromKeychain(
-      forName: testKeychainItemName,
-      tokenURL: testTokenURL,
-      redirectURI: testRedirectURI,
-      clientID: testClientID,
-      clientSecret: testClientSecret
+      forName: Constants.testKeychainItemName,
+      tokenURL: Constants.testTokenURL,
+      redirectURI: Constants.testRedirectURI,
+      clientID: Constants.testClientID,
+      clientSecret: Constants.testClientSecret
     )
 
     XCTAssertEqual(testPersistAuth.authState.scope, expectedPersistAuth.authState.scope)
@@ -196,20 +196,20 @@ class GTMOAuth2KeychainCompatibilityTests: XCTestCase {
   func testAuthorizeFromKeychainUsingGoogleOAuthProviderInformation() throws {
     let expectedPersistAuth = try GTMOAuth2KeychainCompatibility.authorizeFromKeychain(
       forPersistenceString: testPersistenceString,
-      tokenURL: testTokenURL,
-      redirectURI: testRedirectURI,
-      clientID: testClientID,
-      clientSecret: testClientSecret
+      tokenURL: Constants.testTokenURL,
+      redirectURI: Constants.testRedirectURI,
+      clientID: Constants.testClientID,
+      clientSecret: Constants.testClientSecret
     )
     try GTMOAuth2KeychainCompatibility.save(
       authorization: expectedPersistAuth,
-      for: testKeychainItemName
+      for: Constants.testKeychainItemName
     )
 
     let testAuthorization = try GTMOAuth2KeychainCompatibility.authForGoogleFromKeychain(
-      for: testKeychainItemName,
-      clientID: testClientID,
-      clientSecret: testClientSecret
+      for: Constants.testKeychainItemName,
+      clientID: Constants.testClientID,
+      clientSecret: Constants.testClientSecret
     )
 
     XCTAssertEqual(testAuthorization.authState.scope, expectedPersistAuth.authState.scope)
