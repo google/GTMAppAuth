@@ -273,10 +273,10 @@ let userEmailIsVerifiedKey = "userEmailIsVerified"
         authState.lastAuthorizationResponse.idToken,
        let claims = OIDIDToken(
         idTokenString: idToken
-       )?.claims as? [String: String] {
-      self.userID = claims["sub"]
-      self.userEmail = claims["email"]
-      self._userEmailIsVerified = claims["email_verified"]
+       )?.claims as? [String: Any] {
+      self.userID = claims["sub"] as? String
+      self.userEmail = claims["email"] as? String
+      self._userEmailIsVerified = claims["email_verified"] as? String
     } else {
       self.userID = userID
       self.userEmail = userEmail
