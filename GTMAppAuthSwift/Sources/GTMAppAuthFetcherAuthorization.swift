@@ -381,13 +381,15 @@ import GTMSessionFetcherCore
 
     let authStateAction = {
       (accessToken: String?, idToken: String?, error: Swift.Error?) in
-      self.serialAuthArgsQueue.async { [weak self] in
-        guard let self = self else { return }
+      objc_sync_enter(self.serialAuthArgsQueue)
+//      self.serialAuthArgsQueue.sync { [weak self] in
+//        guard let self = self else { return }
         for queuedArgs in self.authorizationArgs {
           self.authorizeRequestImmediately(args: queuedArgs, accessToken: accessToken)
         }
         self.authorizationArgs.removeAll()
-      }
+      objc_sync_exit(self.serialAuthArgsQueue)
+//      }
     }
     authState.performAction(
       freshTokens: authStateAction,
