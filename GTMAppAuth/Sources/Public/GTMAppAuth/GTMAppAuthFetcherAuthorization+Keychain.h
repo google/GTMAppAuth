@@ -33,11 +33,35 @@ NS_ASSUME_NONNULL_BEGIN
 + (nullable GTMAppAuthFetcherAuthorization *)
     authorizationFromKeychainForName:(NSString *)keychainItemName;
 
+/*! @brief Attempts to create a @c GTMAppAuthFetcherAuthorization from data stored in the keychain
+        in GTMAppAuth format.  Note that if you choose to start using the data protection keychain on
+        macOS, any items previously created will not be accessible without migration.
+    @param keychainItemName The keychain name.
+    @param useDataProtectionKeychain A Boolean value that indicates whether to use the data
+        protection keychain on macOS 10.15+.
+    @return A @c GTMAppAuthFetcherAuthorization object, or nil.
+ */
++ (nullable GTMAppAuthFetcherAuthorization *)
+    authorizationFromKeychainForName:(NSString *)keychainItemName
+           useDataProtectionKeychain:(BOOL)useDataProtectionKeychain API_AVAILABLE(macosx(10.15));
+
 /*! @brief Removes a stored authorization state.
     @param keychainItemName The keychain name.
-    @return YES the tokens were removed successfully (or didn't exist).
+    @return YES if the tokens were removed successfully (or didn't exist).
  */
 + (BOOL)removeAuthorizationFromKeychainForName:(NSString *)keychainItemName;
+
+/*! @brief Removes a stored authorization state.  Note that if you choose to start using the data
+        protection keychain on macOS, any items previously created will not be accessible without
+        migration.
+    @param keychainItemName The keychain name.
+    @param useDataProtectionKeychain A Boolean value that indicates whether to use the data
+        protection keychain on macOS 10.15+.
+    @return YES if the tokens were removed successfully (or didn't exist).
+ */
++ (BOOL)removeAuthorizationFromKeychainForName:(NSString *)keychainItemName
+                     useDataProtectionKeychain:(BOOL)useDataProtectionKeychain
+    API_AVAILABLE(macosx(10.15));
 
 /*! @brief Saves the authorization state to the keychain, in GTMAppAuth format.
     @param auth The authorization to save.
@@ -46,6 +70,19 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (BOOL)saveAuthorization:(GTMAppAuthFetcherAuthorization *)auth
         toKeychainForName:(NSString *)keychainItemName;
+
+/*! @brief Saves the authorization state to the keychain, in GTMAppAuth format.  Note that if you
+        choose to start using the data protection keychain on macOS, any items previously created
+        will not be accessible without migration.
+    @param auth The authorization to save.
+    @param keychainItemName The keychain name.
+    @param useDataProtectionKeychain A Boolean value that indicates whether to use the data
+        protection keychain on macOS 10.15+.
+    @return YES when the state was saved successfully.
+ */
++ (BOOL)saveAuthorization:(GTMAppAuthFetcherAuthorization *)auth
+             toKeychainForName:(NSString *)keychainItemName
+     useDataProtectionKeychain:(BOOL)useDataProtectionKeychain API_AVAILABLE(macosx(10.15));
 
 @end
 

@@ -1,24 +1,37 @@
-# Example Project
+# macOS Example
 
-## CocoaPods Dependencies
+## Getting Started
+
+Choose which package manager you'd like to use.
+
+### Swift Package Manager
+
+In the Example-macOS folder, run the following command to open the Swift Pacakage Manager
+project:
+
+```
+open Example-macOS.xcodeproj
+```
+
+### CocoaPods
 
 1. In the Example-macOS folder, run the following command to install the required
-library pods.
+library pods:
 
 ```
 $ pod install
 ```
 
-2. Open the workspace:
+2. Open the generated workspace for the CocoaPods project:
 
 ```
-$ open Example-macOS.xcworkspace
+$ open Example-macOSForPod.xcworkspace
 ```
 
 ## Configuration
 
-The example doesn't work out of the box, you need to configure your own
-client ID.
+The example doesn't work out of the box, you need to configure your own client
+ID.
 
 ### Creating a Google OAuth Client
 
@@ -28,15 +41,15 @@ new project. Then tap "Create credentials" and select "OAuth client ID".
 Follow the instructions to configure the consent screen (just the Product Name
 is needed).
 
-Then, complete the OAuth client creation by selecting "Other" as the Application
+Then, complete the OAuth client creation by selecting "iOS" as the Application
 type.
 
 Copy the client ID to the clipboard.
 
 ### Configure the Example
 
-In `GTMAppAuthExampleViewController.m` update `kClientID` and `kClientSecret` with
-your new client ID and client secret.
+In `GTMAppAuthExampleViewController.m` update `kClientID` with your new client
+ID.
 
 In the same file, update `kRedirectURI` with the *reverse DNS notation* form
 of the client ID. For example, if the client ID is
