@@ -355,9 +355,12 @@ NSString *const GTMAppAuthFetcherAuthorizationErrorRequestKey = @"request";
                        request:(NSMutableURLRequest *)request
              finishedWithError:(NSError *)error;
  */
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-implementations"
 - (void)authorizeRequest:(NSMutableURLRequest *)request
                 delegate:(id)delegate
        didFinishSelector:(SEL)sel {
+#pragma clang diagnostic pop
   GTMOAuth2AssertValidSelector(delegate, sel,
                                @encode(GTMAppAuthFetcherAuthorization *),
                                @encode(NSMutableURLRequest *),
