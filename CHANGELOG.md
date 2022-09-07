@@ -1,5 +1,9 @@
 # GTMAppAuth Changelog
 
+## 1.3.1 (2022-09-07)
+
+* Updated the GTMSessionFetcher dependency to allow 2.x versions. ([#155](https://github.com/google/GTMAppAuth/pull/155), [#175](https://github.com/google/GTMAppAuth/pull/175))
+
 ## 1.3.0 (2022-05-06)
 
 * Added the option to use the data protection keychain on macOS. ([#151](https://github.com/google/GTMAppAuth/pull/151))
