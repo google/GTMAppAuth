@@ -15,8 +15,15 @@
  */
 
 import Foundation
+// Ensure that we import the correct dependency for both SPM and CocoaPods since
+// the latter doesn't define separate Clang modules for subspecs
+#if SWIFT_PACKAGE
 import AppAuthCore
 import GTMSessionFetcherCore
+#else
+import AppAuth
+import GTMSessionFetcher
+#endif
 
 /// An implementation of the `GTMFetcherAuthorizationProtocol` protocol for the AppAuth library.
 ///
@@ -40,6 +47,7 @@ import GTMSessionFetcherCore
     let keychain = keychain ?? GTMKeychain()
     let passwordData = try? keychain.passwordData(forName: itemName)
 
+    // FIXME: (mdmathias) https://github.com/google/GTMAppAuth/issues/173
 //    if #available(macOS 10.13, iOS 11, tvOS 11, *) {
 //      return try modernUnarchiveAuthorization(with: passwordData, itemName: itemName)
 //    }
@@ -145,6 +153,7 @@ import GTMSessionFetcherCore
     with itemName: String
   ) throws {
     let keychain = keychain ?? GTMKeychain()
+    // FIXME: (mdmathias) https://github.com/google/GTMAppAuth/issues/173
 //    if #available(macOS 10.13, iOS 11, tvOS 11, *) {
 //      let authorizationData = try NSKeyedArchiver.archivedData(
 //        withRootObject: authorization,
@@ -222,7 +231,7 @@ import GTMSessionFetcherCore
   @objc public weak var tokenRefreshDelegate: GTMAppAuthFetcherAuthorizationTokenRefreshDelegate?
 
   /// The fetcher service.
-  @objc public var fetcherService: GTMSessionFetcherServiceProtocol? = nil
+  @objc public weak var fetcherService: GTMSessionFetcherServiceProtocol? = nil
 
   private let serialAuthArgsQueue = DispatchQueue(label: "com.google.gtmappauth")
   private var authorizationArgs = [AuthorizationArguments]()
