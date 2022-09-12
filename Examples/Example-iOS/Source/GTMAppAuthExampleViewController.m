@@ -18,13 +18,20 @@
 
 #import "GTMAppAuthExampleViewController.h"
 
-#import <AppAuth/AppAuth.h>
-#import <GTMAppAuth/GTMAppAuth.h>
 #import <QuartzCore/QuartzCore.h>
 
+@import AppAuth;
+@import GTMAppAuth;
+// CocoaPods || SPM && GTMSessionFetcher >= 2.0
+#if __has_include("GTMSessionFetcher/GTMSessionFetcher.h")
+#import <GTMSessionFetcher/GTMSessionFetcher.h>
+#import <GTMSessionFetcher/GTMSessionFetcherService.h>
+// SPM && GTMSessionFetcher < 2.0
+#else
+@import GTMSessionFetcherCore;
+#endif
+
 #import "AppDelegate.h"
-#import "GTMSessionFetcher.h"
-#import "GTMSessionFetcherService.h"
 
 /*! @brief The OIDC issuer from which the configuration will be discovered.
  */

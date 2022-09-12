@@ -71,8 +71,11 @@ typedef void (^GTMAppAuthFetcherAuthorizationCompletion)(NSError *_Nullable erro
         library.
     @discussion Enables you to use AppAuth with the GTM Session Fetcher library.
  */
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 @interface GTMAppAuthFetcherAuthorization : NSObject <GTMFetcherAuthorizationProtocol,
                                                       NSSecureCoding>
+#pragma clang diagnostic pop
 
 /*! @brief The AppAuth authentication state.
  */
