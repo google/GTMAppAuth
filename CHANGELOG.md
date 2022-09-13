@@ -1,7 +1,7 @@
 # 1.3.1 (2022-09-13)
 
 * Updated the GTMSessionFetcher dependency to allow 2.x versions. ([#155](https://github.com/google/GTMAppAuth/pull/155), [#175](https://github.com/google/GTMAppAuth/pull/175))
-* Use secure coding with `NSKeyedArchiver` when available. ([#151](https://github.com/google/GTMAppAuth/pull/145))
+* Use secure coding with `NSKeyedArchiver` when available. ([#145](https://github.com/google/GTMAppAuth/pull/145))
 
 # 1.3.0 (2022-05-06)
 
