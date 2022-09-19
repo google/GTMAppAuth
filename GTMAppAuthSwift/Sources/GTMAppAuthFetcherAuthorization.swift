@@ -619,6 +619,8 @@ public extension GTMAppAuthFetcherAuthorization {
     case cannotAuthorizeRequest(NSURLRequest)
     case accessTokenEmptyForRequest(NSURLRequest)
     case failedToRetrieveAuthorizationFromKeychain(forItemName: String)
+    case failedToRemoveAuthorizationFromKeychain(forItemName: String)
+    case failedToSaveAuthorizationFromKeychain(forItemName: String)
 
     public static var errorDomain: String {
       "GTMAppAuthFetcherAuthorizationErrorDomain"
@@ -631,6 +633,10 @@ public extension GTMAppAuthFetcherAuthorization {
       case .accessTokenEmptyForRequest(let request):
         return ["request": request]
       case .failedToRetrieveAuthorizationFromKeychain(forItemName: let name):
+        return ["itemName": name]
+      case .failedToRemoveAuthorizationFromKeychain(forItemName: let name):
+        return ["itemName": name]
+      case .failedToSaveAuthorizationFromKeychain(forItemName: let name):
         return ["itemName": name]
       }
     }
