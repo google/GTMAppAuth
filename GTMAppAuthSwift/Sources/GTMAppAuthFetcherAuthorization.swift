@@ -116,7 +116,14 @@ import GTMSessionFetcher
   @objc(removeAuthorizationForItemName:error:)
   public final class func removeAuthorization(for itemName: String) throws {
     let keychain = keychain ?? GTMKeychain()
-    try keychain.removePasswordFromKeychain(forName: itemName)
+    do {
+      try keychain.removePasswordFromKeychain(forName: itemName)
+    } catch KeychainWrapper.Error.failedToDeletePasswordBecauseItemNotFound {
+      // This isn't a failing error from a caller's perspective
+      return
+    } catch {
+      throw Error.failedToRemoveAuthorizationFromKeychain(forItemName: itemName)
+    }
   }
 
   /// Removes the saved authorization for the supplied name.
@@ -133,10 +140,17 @@ import GTMSessionFetcher
     usingDataProtectionKeychain: Bool
   ) throws {
     let keychain = keychain ?? GTMKeychain()
-    try keychain.removePasswordFromKeychain(
-      forName: itemName,
-      usingDataProtectionKeychain: usingDataProtectionKeychain
-    )
+    do {
+      try keychain.removePasswordFromKeychain(
+        forName: itemName,
+        usingDataProtectionKeychain: usingDataProtectionKeychain
+      )
+    } catch KeychainWrapper.Error.failedToDeletePasswordBecauseItemNotFound {
+      // This isn't a failing error from a caller's perspective
+      return
+    } catch {
+      throw Error.failedToRemoveAuthorizationFromKeychain(forItemName: itemName)
+    }
   }
 
   // MARK: - Saving Authorizations
@@ -161,8 +175,12 @@ import GTMSessionFetcher
 //      )
 //      try keychain.save(passwordData: authorizationData,forName: itemName)
 //    } else {
-      let authorizationData = NSKeyedArchiver.archivedData(withRootObject: authorization)
+    let authorizationData = NSKeyedArchiver.archivedData(withRootObject: authorization)
+    do {
       try keychain.save(passwordData: authorizationData, forName: itemName)
+    } catch {
+      throw Error.failedToSaveAuthorizationFromKeychain(forItemName: itemName)
+    }
 //    }
   }
 
@@ -183,11 +201,15 @@ import GTMSessionFetcher
   ) throws {
     let keychain = keychain ?? GTMKeychain()
     let authorizationData = NSKeyedArchiver.archivedData(withRootObject: authorization)
-    try keychain.save(
-      passwordData: authorizationData,
-      forName: itemName,
-      usingDataProtectionKeychain: usingDataProtectionKeychain
-    )
+    do {
+      try keychain.save(
+        passwordData: authorizationData,
+        forName: itemName,
+        usingDataProtectionKeychain: usingDataProtectionKeychain
+      )
+    } catch {
+      throw Error.failedToSaveAuthorizationFromKeychain(forItemName: itemName)
+    }
   }
 
   /// The AppAuth authentication state.
