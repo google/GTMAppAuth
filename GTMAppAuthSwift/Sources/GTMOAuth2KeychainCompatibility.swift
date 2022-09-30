@@ -221,7 +221,6 @@ let oobString = "urn:ietf:wg:oauth:2.0:oob"
     return authorization
   }
 
-
 /// Attempts to create a `GTMAppAuthFetcherAuthorization` from data stored in the keychain in
 /// GTMOAuth2 format, at the supplied keychain identifier. Uses Google OAuth provider information.
 ///
