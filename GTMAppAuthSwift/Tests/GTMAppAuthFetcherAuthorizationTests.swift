@@ -358,10 +358,12 @@ class GTMAppAuthFetcherAuthorizationTest: XCTestCase {
       try GTMAppAuthFetcherAuthorization.removeAuthorization(for: testKeychainItemName)
       XCTAssertFalse(keychainHelper.useDataProtectionKeychain)
     } catch {
-      guard let keychainError = error as? KeychainWrapper.Error else {
-        return XCTFail("`error` should be of type `GTMKeychainManager.Error`")
+      guard let keychainError = error as? GTMAppAuthFetcherAuthorization.Error else {
+        return XCTFail("`error` should be of type `GTMAppAuthFetcherAuthorization.Error`")
       }
-      XCTAssertEqual(keychainError, KeychainWrapper.Error.failedToDeletePasswordBecauseItemNotFound)
+      XCTAssertEqual(
+        keychainError,
+        GTMAppAuthFetcherAuthorization.Error.failedToRemoveAuthorizationFromKeychainBecauseItemNotFound(itemName: testKeychainItemName))
     }
   }
 

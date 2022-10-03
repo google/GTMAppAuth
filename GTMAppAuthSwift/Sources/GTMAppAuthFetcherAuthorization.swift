@@ -119,8 +119,8 @@ import GTMSessionFetcher
     do {
       try keychain.removePasswordFromKeychain(forName: itemName)
     } catch KeychainWrapper.Error.failedToDeletePasswordBecauseItemNotFound {
-      // This isn't a failing error from a caller's perspective
-      return
+      // This may not be a failing error from a caller's perspective, but we'll throw anyway
+      throw Error.failedToRemoveAuthorizationFromKeychainBecauseItemNotFound(itemName: itemName)
     } catch {
       throw Error.failedToRemoveAuthorizationFromKeychain(forItemName: itemName)
     }
@@ -146,8 +146,8 @@ import GTMSessionFetcher
         usingDataProtectionKeychain: usingDataProtectionKeychain
       )
     } catch KeychainWrapper.Error.failedToDeletePasswordBecauseItemNotFound {
-      // This isn't a failing error from a caller's perspective
-      return
+      // This may not be a failing error from a caller's perspective, but we'll throw anyway
+      throw Error.failedToRemoveAuthorizationFromKeychainBecauseItemNotFound(itemName: itemName)
     } catch {
       throw Error.failedToRemoveAuthorizationFromKeychain(forItemName: itemName)
     }
@@ -642,6 +642,7 @@ public extension GTMAppAuthFetcherAuthorization {
     case accessTokenEmptyForRequest(NSURLRequest)
     case failedToRetrieveAuthorizationFromKeychain(forItemName: String)
     case failedToRemoveAuthorizationFromKeychain(forItemName: String)
+    case failedToRemoveAuthorizationFromKeychainBecauseItemNotFound(itemName: String)
     case failedToSaveAuthorizationFromKeychain(forItemName: String)
 
     public static var errorDomain: String {
@@ -657,6 +658,8 @@ public extension GTMAppAuthFetcherAuthorization {
       case .failedToRetrieveAuthorizationFromKeychain(forItemName: let name):
         return ["itemName": name]
       case .failedToRemoveAuthorizationFromKeychain(forItemName: let name):
+        return ["itemName": name]
+      case .failedToRemoveAuthorizationFromKeychainBecauseItemNotFound(itemName: let name):
         return ["itemName": name]
       case .failedToSaveAuthorizationFromKeychain(forItemName: let name):
         return ["itemName": name]
