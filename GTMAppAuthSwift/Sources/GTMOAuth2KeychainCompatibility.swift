@@ -284,6 +284,8 @@ let oobString = "urn:ietf:wg:oauth:2.0:oob"
 
     do {
       try keychain.removePasswordFromKeychain(forName: name)
+    } catch KeychainWrapper.Error.failedToDeletePasswordBecauseItemNotFound {
+      throw Error.failedToDeletePasswordBecauseItemNotFound(itemName: name)
     } catch {
       throw Error.failedToRemoveAuthorizationFromKeychain(forItemName: name)
     }
@@ -335,6 +337,7 @@ public extension GTMOAuth2KeychainCompatibility {
     case failedToConvertRedirectURItoURL(String)
     case failedToCreateResponseStringFromAuthorization(GTMAppAuthFetcherAuthorization)
     case failedToRetrieveAuthorizationFromKeychain(forItemName: String)
+    case failedToDeletePasswordBecauseItemNotFound(itemName: String)
     case failedToRemoveAuthorizationFromKeychain(forItemName: String)
     case failedToSaveAuthorizationFromKeychain(forItemName: String)
 
@@ -349,6 +352,8 @@ public extension GTMOAuth2KeychainCompatibility {
       case .failedToCreateResponseStringFromAuthorization(let authorization):
         return ["authorization": authorization]
       case .failedToRetrieveAuthorizationFromKeychain(forItemName: let name):
+        return ["itemName": name]
+      case .failedToDeletePasswordBecauseItemNotFound(itemName: let name):
         return ["itemName": name]
       case .failedToRemoveAuthorizationFromKeychain(forItemName: let name):
         return ["itemName": name]
