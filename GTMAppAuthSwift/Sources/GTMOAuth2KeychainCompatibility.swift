@@ -128,7 +128,9 @@ let oobString = "urn:ietf:wg:oauth:2.0:oob"
   ) throws -> GTMAppAuthFetcherAuthorization {
     let keychain = keychain ?? GTMKeychain()
 
-    let password = try keychain.password(forName: name)
+    guard let password = try? keychain.password(forName: name) else {
+      throw Error.failedToRetrieveAuthorizationFromKeychain(forItemName: name)
+    }
     let authorization = try authorizeFromKeychain(
       forPersistenceString: password,
       tokenURL: tokenURL,
@@ -264,7 +266,11 @@ let oobString = "urn:ietf:wg:oauth:2.0:oob"
     }
 
     let keychain = keychain ?? GTMKeychain()
-    try keychain.save(password: password, forName: name)
+    do {
+      try keychain.save(password: password, forName: name)
+    } catch  {
+      throw Error.failedToSaveAuthorizationFromKeychain(forItemName: name)
+    }
   }
 
 /// Removes stored tokens, such as when the user signs out.
@@ -276,7 +282,11 @@ let oobString = "urn:ietf:wg:oauth:2.0:oob"
   public static func removeAuthorizationFromKeychain(for name: String) throws {
     let keychain = keychain ?? GTMKeychain()
 
-    try keychain.removePasswordFromKeychain(forName: name)
+    do {
+      try keychain.removePasswordFromKeychain(forName: name)
+    } catch {
+      throw Error.failedToRemoveAuthorizationFromKeychain(forItemName: name)
+    }
   }
 
   // MARK: - OAuth2 Utilities
@@ -324,9 +334,27 @@ public extension GTMOAuth2KeychainCompatibility {
   enum Error: Swift.Error, CustomNSError, Equatable {
     case failedToConvertRedirectURItoURL(String)
     case failedToCreateResponseStringFromAuthorization(GTMAppAuthFetcherAuthorization)
+    case failedToRetrieveAuthorizationFromKeychain(forItemName: String)
+    case failedToRemoveAuthorizationFromKeychain(forItemName: String)
+    case failedToSaveAuthorizationFromKeychain(forItemName: String)
 
     public static var errorDomain: String {
       "GTMOauth2KeychainCompatibilityErrorDomain"
+    }
+
+    public var errorUserInfo: [String : Any] {
+      switch self {
+      case .failedToConvertRedirectURItoURL(let uri):
+        return ["uri": uri]
+      case .failedToCreateResponseStringFromAuthorization(let authorization):
+        return ["authorization": authorization]
+      case .failedToRetrieveAuthorizationFromKeychain(forItemName: let name):
+        return ["itemName": name]
+      case .failedToRemoveAuthorizationFromKeychain(forItemName: let name):
+        return ["itemName": name]
+      case .failedToSaveAuthorizationFromKeychain(forItemName: let name):
+        return ["itemName": name]
+      }
     }
   }
 }
