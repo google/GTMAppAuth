@@ -10,6 +10,6 @@ target 'Example-iOSForPod' do
   # In production, you would use:
   # pod 'GTMAppAuth'
 
-  pod 'AppAuth', '~> 1.0'
+  pod 'AppAuth', '~> 1.6'
   pod 'GTMSessionFetcher/Core', '~> 1.0'
 end

@@ -39,7 +39,8 @@ import GTMSessionFetcher
   /// Retrieves the saved authorization for the supplied name.
   ///
   /// - Parameter itemName: The `String` name for the save authorization.
-  /// - Throws: An instance of `GTMKeychainManager.Error` if retrieving the authorization failed.
+  /// - Throws: `Error.failedToRetrieveAuthorizationFromKeychain` if retrieving the authorization
+  ///   failed.
   @objc(authorizationForItemName:error:)
   public final class func authorization(
     for itemName: String
@@ -47,10 +48,9 @@ import GTMSessionFetcher
     let keychain = keychain ?? GTMKeychain()
     let passwordData = try? keychain.passwordData(forName: itemName)
 
-    // FIXME: (mdmathias) https://github.com/google/GTMAppAuth/issues/173
-//    if #available(macOS 10.13, iOS 11, tvOS 11, *) {
-//      return try modernUnarchiveAuthorization(with: passwordData, itemName: itemName)
-//    }
+    if #available(macOS 10.13, iOS 11, tvOS 11, *) {
+      return try modernUnarchiveAuthorization(with: passwordData, itemName: itemName)
+    }
 
     guard let passwordData = passwordData,
           let auth = NSKeyedUnarchiver.unarchiveObject(with: passwordData)
@@ -112,7 +112,8 @@ import GTMSessionFetcher
   /// Removes the saved authorization for the supplied name.
   ///
   /// - Parameter itemName: The `String` name for the authorization saved in the keychain.
-  /// - Throws: Any error that may arise during removal.
+  /// - Throws: `Error.failedToRemoveAuthorizationFromKeychainBecauseItemNotFound` if the item is
+  ///   not found, `Error.failedToRemoveAuthorizationFromKeychain` if some other error occurred.
   @objc(removeAuthorizationForItemName:error:)
   public final class func removeAuthorization(for itemName: String) throws {
     let keychain = keychain ?? GTMKeychain()
@@ -132,7 +133,8 @@ import GTMSessionFetcher
   ///   - itemName: The `String` name for the authorization saved in the keychain.
   ///   - usingDataProtectionKeychain: A `Bool` detailing whether or not to use the data protection
   ///     keychain.
-  /// - Throws: Any error that may arise during removal.
+  /// - Throws: `Error.failedToRemoveAuthorizationFromKeychainBecauseItemNotFound` if the item is
+  ///   not found, `Error.failedToRemoveAuthorizationFromKeychain` if some other error occurred.
   @available(macOS 10.15, *)
   @objc(removeAuthorizationForItemName:usingDataProtectionKeychain:error:)
   public final class func removeAuthorization(
@@ -160,28 +162,27 @@ import GTMSessionFetcher
   /// - Parameters:
   ///   - authorization: An instance of `GMTAppAuthFetcherAuthorization`.
   ///   - itemName: The `String` name for the authorization to save in the Keychain.
-  /// - Throws: Any error that may arise during removal.
+  /// - Throws: An instance of `Error.failedToSaveAuthorizationToKeychain` if the save failed.
   @objc(saveAuthorization:withItemName:error:)
   public final class func save(
     authorization: GTMAppAuthFetcherAuthorization,
     with itemName: String
   ) throws {
     let keychain = keychain ?? GTMKeychain()
-    // FIXME: (mdmathias) https://github.com/google/GTMAppAuth/issues/173
-//    if #available(macOS 10.13, iOS 11, tvOS 11, *) {
-//      let authorizationData = try NSKeyedArchiver.archivedData(
-//        withRootObject: authorization,
-//        requiringSecureCoding: true
-//      )
-//      try keychain.save(passwordData: authorizationData,forName: itemName)
-//    } else {
-    let authorizationData = NSKeyedArchiver.archivedData(withRootObject: authorization)
-    do {
-      try keychain.save(passwordData: authorizationData, forName: itemName)
-    } catch {
-      throw Error.failedToSaveAuthorizationFromKeychain(forItemName: itemName)
+    if #available(macOS 10.13, iOS 11, tvOS 11, *) {
+      let authorizationData = try NSKeyedArchiver.archivedData(
+        withRootObject: authorization,
+        requiringSecureCoding: true
+      )
+      try keychain.save(passwordData: authorizationData,forName: itemName)
+    } else {
+      let authorizationData = NSKeyedArchiver.archivedData(withRootObject: authorization)
+      do {
+        try keychain.save(passwordData: authorizationData, forName: itemName)
+      } catch {
+        throw Error.failedToSaveAuthorizationToKeychain(forItemName: itemName)
+      }
     }
-//    }
   }
 
   /// Saves the passed authorization with the provided name.
@@ -208,7 +209,7 @@ import GTMSessionFetcher
         usingDataProtectionKeychain: usingDataProtectionKeychain
       )
     } catch {
-      throw Error.failedToSaveAuthorizationFromKeychain(forItemName: itemName)
+      throw Error.failedToSaveAuthorizationToKeychain(forItemName: itemName)
     }
   }
 
@@ -643,7 +644,7 @@ public extension GTMAppAuthFetcherAuthorization {
     case failedToRetrieveAuthorizationFromKeychain(forItemName: String)
     case failedToRemoveAuthorizationFromKeychain(forItemName: String)
     case failedToRemoveAuthorizationFromKeychainBecauseItemNotFound(itemName: String)
-    case failedToSaveAuthorizationFromKeychain(forItemName: String)
+    case failedToSaveAuthorizationToKeychain(forItemName: String)
 
     public static var errorDomain: String {
       "GTMAppAuthFetcherAuthorizationErrorDomain"
@@ -661,7 +662,7 @@ public extension GTMAppAuthFetcherAuthorization {
         return ["itemName": name]
       case .failedToRemoveAuthorizationFromKeychainBecauseItemNotFound(itemName: let name):
         return ["itemName": name]
-      case .failedToSaveAuthorizationFromKeychain(forItemName: let name):
+      case .failedToSaveAuthorizationToKeychain(forItemName: let name):
         return ["itemName": name]
       }
     }
