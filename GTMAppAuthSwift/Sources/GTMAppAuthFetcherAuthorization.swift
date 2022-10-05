@@ -169,19 +169,19 @@ import GTMSessionFetcher
     with itemName: String
   ) throws {
     let keychain = keychain ?? GTMKeychain()
-    if #available(macOS 10.13, iOS 11, tvOS 11, *) {
-      let authorizationData = try NSKeyedArchiver.archivedData(
-        withRootObject: authorization,
-        requiringSecureCoding: true
-      )
-      try keychain.save(passwordData: authorizationData,forName: itemName)
-    } else {
-      let authorizationData = NSKeyedArchiver.archivedData(withRootObject: authorization)
-      do {
+    do {
+      if #available(macOS 10.13, iOS 11, tvOS 11, *) {
+        let authorizationData = try NSKeyedArchiver.archivedData(
+          withRootObject: authorization,
+          requiringSecureCoding: true
+        )
         try keychain.save(passwordData: authorizationData, forName: itemName)
-      } catch {
-        throw Error.failedToSaveAuthorizationToKeychain(forItemName: itemName)
+      } else {
+        let authorizationData = NSKeyedArchiver.archivedData(withRootObject: authorization)
+        try keychain.save(passwordData: authorizationData, forName: itemName)
       }
+    } catch {
+      throw Error.failedToSaveAuthorizationToKeychain(forItemName: itemName)
     }
   }
 

@@ -331,6 +331,19 @@ class GTMAppAuthFetcherAuthorizationTest: XCTestCase {
     XCTAssertTrue(keychainHelper.useDataProtectionKeychain)
   }
 
+  func testSaveAuthorizationThrows() {
+    let emptyItemName = ""
+    let expectedError = GTMAppAuthFetcherAuthorization
+      .Error
+      .failedToSaveAuthorizationToKeychain(forItemName: emptyItemName)
+    XCTAssertThrowsError(try GTMAppAuthFetcherAuthorization.save(
+      authorization: authorization,
+      with: emptyItemName
+    )) { error in
+      XCTAssertEqual(error as? GTMAppAuthFetcherAuthorization.Error, expectedError)
+    }
+  }
+
   func testRemoveAuthorization() throws {
     try GTMAppAuthFetcherAuthorization.save(
       authorization: authorization,
