@@ -326,8 +326,6 @@ extension KeychainWrapper {
   /// Errors that may arise while saving, reading, and removing passwords from the Keychain.
   enum Error: Swift.Error, Equatable {
     case unhandled(status: OSStatus)
-    case badArguments
-    case noPassword
     case passwordNotFound
     case noService
     case unexpectedPasswordData
