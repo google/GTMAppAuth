@@ -31,7 +31,7 @@ requests with AppAuth.
 
   s.framework = "Security"
   s.dependency "GTMSessionFetcher/Core", "~> 1.5"
-  s.dependency "AppAuth/Core", "~> 1.4"
+  s.dependency "AppAuth/Core", "~> 1.6"
 
   s.test_spec 'unit' do |unit_tests|
     unit_tests.platform = {
