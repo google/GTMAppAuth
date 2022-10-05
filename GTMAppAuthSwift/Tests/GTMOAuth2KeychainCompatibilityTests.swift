@@ -74,12 +74,13 @@ class GTMOAuth2KeychainCompatibilityTests: XCTestCase {
   }
 
   func testRemoveOAuth2AuthorizationThrowsError() {
+    let unsavedItemName = "unsavedItemName"
     XCTAssertThrowsError(
-      try GTMOAuth2KeychainCompatibility.removeAuthorizationFromKeychain(for: "unsavedName")
+      try GTMOAuth2KeychainCompatibility.removeAuthorizationFromKeychain(for: unsavedItemName)
     ) { thrownError in
       XCTAssertEqual(
-        thrownError as? KeychainWrapper.Error,
-        .failedToDeletePasswordBecauseItemNotFound
+        thrownError as? GTMOAuth2KeychainCompatibility.Error,
+        .failedToDeletePasswordBecauseItemNotFound(itemName: unsavedItemName)
       )
     }
   }

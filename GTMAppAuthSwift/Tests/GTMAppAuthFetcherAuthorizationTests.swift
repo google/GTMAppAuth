@@ -331,6 +331,19 @@ class GTMAppAuthFetcherAuthorizationTest: XCTestCase {
     XCTAssertTrue(keychainHelper.useDataProtectionKeychain)
   }
 
+  func testSaveAuthorizationThrows() {
+    let emptyItemName = ""
+    let expectedError = GTMAppAuthFetcherAuthorization
+      .Error
+      .failedToSaveAuthorizationToKeychain(forItemName: emptyItemName)
+    XCTAssertThrowsError(try GTMAppAuthFetcherAuthorization.save(
+      authorization: authorization,
+      with: emptyItemName
+    )) { error in
+      XCTAssertEqual(error as? GTMAppAuthFetcherAuthorization.Error, expectedError)
+    }
+  }
+
   func testRemoveAuthorization() throws {
     try GTMAppAuthFetcherAuthorization.save(
       authorization: authorization,
@@ -358,10 +371,12 @@ class GTMAppAuthFetcherAuthorizationTest: XCTestCase {
       try GTMAppAuthFetcherAuthorization.removeAuthorization(for: testKeychainItemName)
       XCTAssertFalse(keychainHelper.useDataProtectionKeychain)
     } catch {
-      guard let keychainError = error as? KeychainWrapper.Error else {
-        return XCTFail("`error` should be of type `GTMKeychainManager.Error`")
+      guard let keychainError = error as? GTMAppAuthFetcherAuthorization.Error else {
+        return XCTFail("`error` should be of type `GTMAppAuthFetcherAuthorization.Error`")
       }
-      XCTAssertEqual(keychainError, KeychainWrapper.Error.failedToDeletePasswordBecauseItemNotFound)
+      XCTAssertEqual(
+        keychainError,
+        GTMAppAuthFetcherAuthorization.Error.failedToRemoveAuthorizationFromKeychainBecauseItemNotFound(itemName: testKeychainItemName))
     }
   }
 
