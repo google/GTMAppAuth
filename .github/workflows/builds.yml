@@ -1,0 +1,40 @@
+name: Build GTMAppAuth for Valid Architectures
+
+on:
+  schedule:
+    - cron: '0 8 * * *' # Cron uses UTC; run at nightly at midnight PST
+
+jobs:
+  cron:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-11, macos-12]
+  
+    steps:
+    - uses: actions/checkout@v2
+    - name: Archive for iOS
+      run: |
+        xcodebuild \
+          archive \
+          -scheme GTMAppAuth \
+          -destination "generic/platform=iOS"
+    - name: Archive for macOS
+      run: |
+        xcodebuild \
+          archive \
+          -scheme GTMAppAuth \
+          -destination "platform=OS X"
+    - name: Archive for watchOS
+      run: |
+        xcodebuild \
+          archive \
+          -scheme GTMAppAuth \
+          -destination "generic/platform=watchOS"
+    - name: Archive for tvOS
+      run: |
+        xcodebuild \
+          archive \
+          -scheme GTMAppAuth \
+          -destination "generic/platform=tvOS"
