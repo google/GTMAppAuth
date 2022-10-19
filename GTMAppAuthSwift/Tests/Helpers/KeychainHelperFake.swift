@@ -23,29 +23,29 @@ class KeychainHelperFake: KeychainHelper {
   let accountName = "OauthTest"
 
   func password(service: String) throws -> String {
-    guard !service.isEmpty else { throw KeychainWrapper.Error.noService }
+    guard !service.isEmpty else { throw GTMKeychainError.noService }
 
     let passwordData = try passwordData(service: service)
     guard let password = String(data: passwordData, encoding: .utf8) else {
-      throw KeychainWrapper.Error.passwordNotFound
+      throw GTMKeychainError.passwordNotFound(forItemName: service)
     }
     return password
   }
 
   func passwordData(service: String) throws -> Data {
-    guard !service.isEmpty else { throw KeychainWrapper.Error.noService }
+    guard !service.isEmpty else { throw GTMKeychainError.noService }
 
     guard let passwordData = passwordStore[service + accountName] else {
-      throw KeychainWrapper.Error.passwordNotFound
+      throw GTMKeychainError.passwordNotFound(forItemName: service)
     }
     return passwordData
   }
 
   func removePassword(service: String) throws {
-    guard !service.isEmpty else { throw KeychainWrapper.Error.noService }
+    guard !service.isEmpty else { throw GTMKeychainError.noService }
 
     guard let _ = passwordStore.removeValue(forKey: service + accountName) else {
-      throw KeychainWrapper.Error.failedToDeletePasswordBecauseItemNotFound
+      throw GTMKeychainError.failedToDeletePasswordBecauseItemNotFound(itemName: service)
     }
   }
 
@@ -56,20 +56,20 @@ class KeychainHelperFake: KeychainHelper {
   ) throws {
     do {
       try removePassword(service: service)
-    } catch KeychainWrapper.Error.failedToDeletePasswordBecauseItemNotFound {
+    } catch GTMKeychainError.failedToDeletePasswordBecauseItemNotFound {
       // No need to throw this error since we are setting a new password
     } catch {
       throw error
     }
 
     guard let passwordData = password.data(using: .utf8) else {
-      throw KeychainWrapper.Error.unexpectedPasswordData
+      throw GTMKeychainError.unexpectedPasswordData(forItemName: service)
     }
     try setPassword(data: passwordData, forService: service, accessibility: nil)
   }
 
   func setPassword(data: Data, forService service: String, accessibility: CFTypeRef?) throws {
-    guard !service.isEmpty else { throw KeychainWrapper.Error.noService }
+    guard !service.isEmpty else { throw GTMKeychainError.noService }
     passwordStore.updateValue(data, forKey: service + accountName)
   }
 }

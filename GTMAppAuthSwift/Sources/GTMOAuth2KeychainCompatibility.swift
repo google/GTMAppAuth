@@ -51,16 +51,17 @@ let oobString = "urn:ietf:wg:oauth:2.0:oob"
 @objc public final class GTMOAuth2KeychainCompatibility: NSObject {
   static var keychain: GTMKeychain?
 
-/// Encodes the given `GTMAppAuthFetcherAuthorization` in a GTMOAuth2 compatible persistence
-/// string using URL param key/value encoding.
-///
-/// - Parameters:
-///   - authorization: The `GTMAppAuthFetcherAuthorization` to serialize in GTMOAuth2 format.
-/// - Returns: A `String?` representing the GTMOAuth2 persistence representation of the
-///   authorization object.
+  /// Encodes the given `GTMAppAuthFetcherAuthorization` in a GTMOAuth2 compatible persistence
+  /// string using URL param key/value encoding.
+  ///
+  /// - Parameters:
+  ///   - authorization: The `GTMAppAuthFetcherAuthorization` to serialize in GTMOAuth2 format.
+  /// - Returns: A `String?` representing the GTMOAuth2 persistence representation of the
+  ///   authorization object.
   @objc public static func persistenceResponseStringForAuthorization(
     _ authorization: GTMAppAuthFetcherAuthorization
   ) -> String? {
+    // TODO: (mdmathias) Write a test for this method that ensures nil is returned.
     let refreshToken = authorization.authState.refreshToken
     let accessToken = authorization.authState.lastTokenResponse?.accessToken
 
@@ -74,26 +75,19 @@ let oobString = "urn:ietf:wg:oauth:2.0:oob"
       oauth2ScopeKey: authorization.authState.scope
     ]
 
-    var result = ""
-    var joiner = ""
-    dict
+    let responseString = dict
       .sorted { $0.key < $1.key }
-      .compactMap { key, value in
-        if let val = dict[key] as? String {
-          return (key, val)
-        } else {
+      .compactMap { (key, _) -> String? in
+        guard let val = dict[key] as? String,
+              let encodedKey = encodedOAuthValue(originalString: key),
+              let encodedValue = encodedOAuthValue(originalString: val) else {
           return nil
         }
+        return String(format: "%@=%@", arguments: [encodedKey, encodedValue])
       }
-      .forEach { (keyValue: (key: String, value: String)) in
-        if let encodedKey = encodedOAuthValue(originalString: keyValue.key),
-           let encodedValue = encodedOAuthValue(originalString: keyValue.value) {
-          result = result.appendingFormat("%@%@=%@", joiner, encodedKey, encodedValue)
-        }
-        joiner = "&"
-      }
+      .joined(separator: "&")
 
-    return !result.isEmpty ? result : nil
+    return responseString.isEmpty ? nil : responseString
   }
 
   // MARK: - Encoded OAuth Value
@@ -128,9 +122,7 @@ let oobString = "urn:ietf:wg:oauth:2.0:oob"
   ) throws -> GTMAppAuthFetcherAuthorization {
     let keychain = keychain ?? GTMKeychain()
 
-    guard let password = try? keychain.password(forName: name) else {
-      throw Error.failedToRetrieveAuthorizationFromKeychain(forItemName: name)
-    }
+    let password = try keychain.password(forName: name)
     let authorization = try authorizeFromKeychain(
       forPersistenceString: password,
       tokenURL: tokenURL,
@@ -261,16 +253,13 @@ let oobString = "urn:ietf:wg:oauth:2.0:oob"
     authorization: GTMAppAuthFetcherAuthorization,
     for name: String
   ) throws {
+    // TODO: (mdmathias) Write a test ensuring this error is thrown.
     guard let password = persistenceResponseStringForAuthorization(authorization) else {
       throw Error.failedToCreateResponseStringFromAuthorization(authorization)
     }
 
     let keychain = keychain ?? GTMKeychain()
-    do {
-      try keychain.save(password: password, forName: name)
-    } catch  {
-      throw Error.failedToSaveAuthorizationFromKeychain(forItemName: name)
-    }
+    try keychain.save(password: password, forName: name)
   }
 
 /// Removes stored tokens, such as when the user signs out.
@@ -281,14 +270,7 @@ let oobString = "urn:ietf:wg:oauth:2.0:oob"
   @objc(removeAuthorizationFromKeychainForName:error:)
   public static func removeAuthorizationFromKeychain(for name: String) throws {
     let keychain = keychain ?? GTMKeychain()
-
-    do {
-      try keychain.removePasswordFromKeychain(forName: name)
-    } catch KeychainWrapper.Error.failedToDeletePasswordBecauseItemNotFound {
-      throw Error.failedToDeletePasswordBecauseItemNotFound(itemName: name)
-    } catch {
-      throw Error.failedToRemoveAuthorizationFromKeychain(forItemName: name)
-    }
+    try keychain.removePasswordFromKeychain(forName: name)
   }
 
   // MARK: - OAuth2 Utilities
@@ -336,10 +318,6 @@ public extension GTMOAuth2KeychainCompatibility {
   enum Error: Swift.Error, CustomNSError, Equatable {
     case failedToConvertRedirectURItoURL(String)
     case failedToCreateResponseStringFromAuthorization(GTMAppAuthFetcherAuthorization)
-    case failedToRetrieveAuthorizationFromKeychain(forItemName: String)
-    case failedToDeletePasswordBecauseItemNotFound(itemName: String)
-    case failedToRemoveAuthorizationFromKeychain(forItemName: String)
-    case failedToSaveAuthorizationFromKeychain(forItemName: String)
 
     public static var errorDomain: String {
       "GTMOauth2KeychainCompatibilityErrorDomain"
@@ -351,14 +329,6 @@ public extension GTMOAuth2KeychainCompatibility {
         return ["uri": uri]
       case .failedToCreateResponseStringFromAuthorization(let authorization):
         return ["authorization": authorization]
-      case .failedToRetrieveAuthorizationFromKeychain(forItemName: let name):
-        return ["itemName": name]
-      case .failedToDeletePasswordBecauseItemNotFound(itemName: let name):
-        return ["itemName": name]
-      case .failedToRemoveAuthorizationFromKeychain(forItemName: let name):
-        return ["itemName": name]
-      case .failedToSaveAuthorizationFromKeychain(forItemName: let name):
-        return ["itemName": name]
       }
     }
   }

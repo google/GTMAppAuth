@@ -254,13 +254,13 @@ struct KeychainWrapper: KeychainHelper {
   func password(service: String) throws -> String {
     let passwordData = try passwordData(service: service)
     guard let result = String(data: passwordData, encoding: .utf8) else {
-      throw Error.unexpectedPasswordData
+      throw GTMKeychainError.unexpectedPasswordData(forItemName: service)
     }
     return result
   }
 
   func passwordData(service: String) throws -> Data {
-    guard !service.isEmpty else { throw Error.noService }
+    guard !service.isEmpty else { throw GTMKeychainError.noService }
 
     var passwordItem: AnyObject?
     var keychainQuery = keychainQuery(service: service)
@@ -268,24 +268,28 @@ struct KeychainWrapper: KeychainHelper {
     keychainQuery[kSecMatchLimit as String] = kSecMatchLimitOne
     let status = SecItemCopyMatching(keychainQuery as CFDictionary, &passwordItem)
 
-    guard status != errSecItemNotFound else { throw Error.passwordNotFound }
+    guard status != errSecItemNotFound else {
+      throw GTMKeychainError.passwordNotFound(forItemName: service)
+    }
 
-    guard status == errSecSuccess else { throw Error.unhandled(status: status) }
+    guard status == errSecSuccess else { throw GTMKeychainError.unhandled(status: status) }
 
     guard let result = passwordItem as? Data else {
-      throw Error.unexpectedPasswordData
+      throw GTMKeychainError.unexpectedPasswordData(forItemName: service)
     }
 
     return result
   }
 
   func removePassword(service: String) throws {
-    guard !service.isEmpty else { throw Error.noService }
+    guard !service.isEmpty else { throw GTMKeychainError.noService }
     let keychainQuery = keychainQuery(service: service)
     let status = SecItemDelete(keychainQuery as CFDictionary)
 
-    guard status != errSecItemNotFound else { throw Error.failedToDeletePasswordBecauseItemNotFound }
-    guard status == noErr else { throw Error.failedToDeletePassword }
+    guard status != errSecItemNotFound else {
+      throw GTMKeychainError.failedToDeletePasswordBecauseItemNotFound(itemName: service)
+    }
+    guard status == noErr else { throw GTMKeychainError.failedToDeletePassword(forItemName: service) }
   }
 
   func setPassword(
@@ -298,10 +302,10 @@ struct KeychainWrapper: KeychainHelper {
   }
 
   func setPassword(data: Data, forService service: String, accessibility: CFTypeRef?) throws {
-    guard !service.isEmpty else { throw Error.noService }
+    guard !service.isEmpty else { throw GTMKeychainError.noService }
     do {
       try removePassword(service: service)
-    } catch KeychainWrapper.Error.failedToDeletePasswordBecauseItemNotFound {
+    } catch GTMKeychainError.failedToDeletePasswordBecauseItemNotFound {
       // Don't throw; password doesn't exist since the password is being saved for the first time
     } catch {
       // throw here since this is some other error
@@ -316,21 +320,43 @@ struct KeychainWrapper: KeychainHelper {
     }
 
     let status = SecItemAdd(keychainQuery as CFDictionary, nil)
-    guard status == noErr else { throw Error.failedToAddPassword }
+    guard status == noErr else { throw GTMKeychainError.failedToSetPassword(forItemName: service) }
   }
 }
 
 // MARK: - Keychain Errors
 
-extension KeychainWrapper {
-  /// Errors that may arise while saving, reading, and removing passwords from the Keychain.
-  enum Error: Swift.Error, Equatable {
-    case unhandled(status: OSStatus)
-    case passwordNotFound
-    case noService
-    case unexpectedPasswordData
-    case failedToDeletePassword
-    case failedToDeletePasswordBecauseItemNotFound
-    case failedToAddPassword
+/// Errors that may arise while saving, reading, and removing passwords from the Keychain.
+public enum GTMKeychainError: Error, Equatable, CustomNSError {
+  case unhandled(status: OSStatus)
+  case passwordNotFound(forItemName: String)
+  /// Error thrown when there is no name for the item in the keychain.
+  case noService
+  case unexpectedPasswordData(forItemName: String)
+  case failedToDeletePassword(forItemName: String)
+  case failedToDeletePasswordBecauseItemNotFound(itemName: String)
+  case failedToSetPassword(forItemName: String)
+
+  public static var errorDomain: String {
+    "GTMAppAuthKeychainErrorDomain"
+  }
+
+  public var errorUserInfo: [String : Any] {
+    switch self {
+    case .unhandled(status: let status):
+      return ["status": status]
+    case .passwordNotFound(let itemName):
+      return ["itemName": itemName]
+    case .noService:
+      return [:]
+    case .unexpectedPasswordData(let itemName):
+      return ["itemName": itemName]
+    case .failedToDeletePassword(let itemName):
+      return ["itemName": itemName]
+    case .failedToDeletePasswordBecauseItemNotFound(itemName: let itemName):
+      return ["itemName": itemName]
+    case .failedToSetPassword(forItemName: let itemName):
+      return ["itemName": itemName]
+    }
   }
 }
