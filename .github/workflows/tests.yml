@@ -14,7 +14,7 @@ jobs:
   pod-lib-lint:
     runs-on: macOS-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Update Bundler
       run: bundle update --bundler
     - name: Install Ruby gems with Bundler
