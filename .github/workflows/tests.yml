@@ -12,7 +12,7 @@ on:
 jobs:
 
   pod-lib-lint:
-    runs-on: macOS-latest
+    runs-on: macOS-11
     steps:
     - uses: actions/checkout@v2
     - name: Update Bundler
@@ -23,7 +23,7 @@ jobs:
       run: pod lib lint --verbose
 
   spm-build-test:
-    runs-on: macOS-latest
+    runs-on: macOS-11
     steps:
     - uses: actions/checkout@v2
     - name: Build package
