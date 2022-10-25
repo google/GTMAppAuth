@@ -14,7 +14,7 @@ jobs:
   pod-lib-lint:
     runs-on: macOS-11
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Update Bundler
       run: bundle update --bundler
     - name: Install Ruby gems with Bundler
@@ -25,6 +25,6 @@ jobs:
   spm-build-test:
     runs-on: macOS-11
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Build package
       run: swift build
