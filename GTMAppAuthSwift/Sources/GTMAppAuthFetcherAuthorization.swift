@@ -41,6 +41,8 @@ import GTMSessionFetcher
   /// - Parameter itemName: The `String` name for the save authorization.
   /// - Throws: `Error.failedToConvertKeychainDataToAuthorization` if converting the authorization
   ///   from `Data` failed.
+  /// - Note: See `GTMKeychain.swift` for ``GTMAppAuthSwift/GTMKeychainError``s indirectly thrown by
+  ///   calls to this method.
   @objc(authorizationForItemName:error:)
   public final class func authorization(
     for itemName: String
@@ -69,6 +71,8 @@ import GTMSessionFetcher
   ///     keychain.
   /// - Throws: `Error.failedToConvertKeychainDataToAuthorization` if converting the authorization
   ///   from `Data` failed.
+  /// - Note: See `GTMKeychain.swift` for ``GTMAppAuthSwift/GTMKeychainError``s indirectly thrown by
+  ///   calls to this method.
   @available(macOS 10.15, *)
   @objc(authorizationForItemName:usingDataProtectionKeychain:error:)
   public final class func authorization(
@@ -112,6 +116,8 @@ import GTMSessionFetcher
   /// - Parameter itemName: The `String` name for the authorization saved in the keychain.
   /// - Throws: `Error.failedToRemoveAuthorizationFromKeychainBecauseItemNotFound` if the item is
   ///   not found, `Error.failedToRemoveAuthorizationFromKeychain` if some other error occurred.
+  /// - Note: See `GTMKeychain.swift` for ``GTMAppAuthSwift/GTMKeychainError``s indirectly thrown by
+  ///   calls to this method.
   @objc(removeAuthorizationForItemName:error:)
   public final class func removeAuthorization(for itemName: String) throws {
     let keychain = keychain ?? GTMKeychain()
@@ -126,6 +132,8 @@ import GTMSessionFetcher
   ///     keychain.
   /// - Throws: `Error.failedToRemoveAuthorizationFromKeychainBecauseItemNotFound` if the item is
   ///   not found, `Error.failedToRemoveAuthorizationFromKeychain` if some other error occurred.
+  /// - Note: See `GTMKeychain.swift` for ``GTMAppAuthSwift/GTMKeychainError``s indirectly thrown by
+  ///   calls to this method.
   @available(macOS 10.15, *)
   @objc(removeAuthorizationForItemName:usingDataProtectionKeychain:error:)
   public final class func removeAuthorization(
@@ -147,6 +155,8 @@ import GTMSessionFetcher
   ///   - authorization: An instance of `GMTAppAuthFetcherAuthorization`.
   ///   - itemName: The `String` name for the authorization to save in the Keychain.
   /// - Throws: An instance of `Error.failedToSaveAuthorizationToKeychain` if the save failed.
+  /// - Note: See `GTMKeychain.swift` for ``GTMAppAuthSwift/GTMKeychainError``s indirectly thrown by
+  ///   calls to this method.
   @objc(saveAuthorization:withItemName:error:)
   public final class func save(
     authorization: GTMAppAuthFetcherAuthorization,
@@ -173,6 +183,8 @@ import GTMSessionFetcher
   ///   - usingDataProtectionKeychain: A `Bool` detailing whether or not to use the data protection
   ///     keychain.
   /// - Throws: Any error that may arise during removal.
+  /// - Note: See `GTMKeychain.swift` for ``GTMAppAuthSwift/GTMKeychainError``s indirectly thrown by
+  ///   calls to this method.
   @available(macOS 10.15, *)
   @objc(saveAuthorization:withItemName:usingDataProtectionKeychain:error:)
   public final class func save(
