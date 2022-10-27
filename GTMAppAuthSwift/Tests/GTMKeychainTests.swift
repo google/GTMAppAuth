@@ -68,7 +68,7 @@ class GTMKeychainTests: XCTestCase {
   func testRemovePasswordNoService() throws {
     try keychain.save(password: Constants.testPassword, forName: Constants.testKeychainItemName)
 
-    XCTAssertThrowsError(try keychain.removePasswordFromKeychain(forName: "")) { thrownError in
+    XCTAssertThrowsError(try keychain.removePasswordFromKeychain(forName: "")) { thrownError in=
       XCTAssertEqual(thrownError as? GTMKeychainError, .noService)
     }
   }
