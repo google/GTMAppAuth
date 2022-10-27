@@ -50,7 +50,7 @@ import GTMSessionFetcher
     let keychain = keychain ?? GTMKeychain()
     let passwordData = try keychain.passwordData(forName: itemName)
 
-    if #available(macOS 10.13, iOS 11, tvOS 11, *) {
+    if #available(macOS 10.13, iOS 11, tvOS 11, watchOS 4, *) {
       return try modernUnarchiveAuthorization(with: passwordData, itemName: itemName)
     }
 
@@ -93,7 +93,7 @@ import GTMSessionFetcher
     return authorization
   }
 
-  @available(macOS 10.13, iOS 11, tvOS 11, *)
+  @available(macOS 10.13, iOS 11, tvOS 11, watchOS 4, *)
   private final class func modernUnarchiveAuthorization(
     with passwordData: Data,
     itemName: String
@@ -319,19 +319,19 @@ import GTMSessionFetcher
     let serviceProvider = coder.decodeObject(
       of: NSString.self,
       forKey: GTMAppAuthFetcherAuthorization.serviceProviderKey
-    ) as? String
+    ) as String?
     let userID = coder.decodeObject(
       of: NSString.self,
       forKey: GTMAppAuthFetcherAuthorization.userIDKey
-    ) as? String
+    ) as String?
     let userEmail = coder.decodeObject(
       of: NSString.self,
       forKey: GTMAppAuthFetcherAuthorization.userEmailKey
-    ) as? String
+    ) as String?
     let _userEmailIsVerified = coder.decodeObject(
       of: NSString.self,
       forKey: GTMAppAuthFetcherAuthorization.userEmailIsVerifiedKey
-    ) as? String
+    ) as String?
 
     self.init(
       authState: authState,
@@ -499,7 +499,7 @@ Request (\(request)) is not https, a local file, or nil. It may be insecure.
       selector,
       authorization,
       request,
-      error as? NSError
+      error as NSError?
     )
   }
 
