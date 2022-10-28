@@ -73,7 +73,7 @@ import GTMSessionFetcher
   ///   from `Data` failed.
   /// - Note: See `GTMKeychain.swift` for ``GTMAppAuthSwift/GTMKeychainError``s indirectly thrown by
   ///   calls to this method.
-  @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+  @available(macOS 10.15, *)
   @objc(authorizationForItemName:usingDataProtectionKeychain:error:)
   public final class func authorization(
     for itemName: String,
@@ -84,15 +84,25 @@ import GTMSessionFetcher
       forName: itemName,
       usingDataProtectionKeychain: usingDataProtectionKeychain
     )
-    guard let authorization = try NSKeyedUnarchiver.unarchivedObject(
-            ofClass: GTMAppAuthFetcherAuthorization.self,
-            from: passwordData
-          ) else {
-      throw GTMAppAuthFetcherAuthorization
-        .Error
-        .failedToConvertKeychainDataToAuthorization(forItemName: itemName)
+    if #available(iOS 11, tvOS 11, watchOS 4, *) {
+      guard let authorization = try NSKeyedUnarchiver.unarchivedObject(
+        ofClass: GTMAppAuthFetcherAuthorization.self,
+        from: passwordData
+      ) else {
+        throw GTMAppAuthFetcherAuthorization
+          .Error
+          .failedToConvertKeychainDataToAuthorization(forItemName: itemName)
+      }
+      return authorization
+    } else {
+      guard let authorization = NSKeyedUnarchiver.unarchiveObject(with: passwordData)
+              as? GTMAppAuthFetcherAuthorization else {
+        throw GTMAppAuthFetcherAuthorization
+          .Error
+          .failedToConvertKeychainDataToAuthorization(forItemName: itemName)
+      }
+      return authorization
     }
-    return authorization
   }
 
   @available(macOS 10.13, iOS 11, tvOS 11, watchOS 4, *)
@@ -136,7 +146,7 @@ import GTMSessionFetcher
   ///   not found, `Error.failedToRemoveAuthorizationFromKeychain` if some other error occurred.
   /// - Note: See `GTMKeychain.swift` for ``GTMAppAuthSwift/GTMKeychainError``s indirectly thrown by
   ///   calls to this method.
-  @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+  @available(macOS 10.15, *)
   @objc(removeAuthorizationForItemName:usingDataProtectionKeychain:error:)
   public final class func removeAuthorization(
     for itemName: String,
@@ -187,18 +197,23 @@ import GTMSessionFetcher
   /// - Throws: Any error that may arise during removal.
   /// - Note: See `GTMKeychain.swift` for ``GTMAppAuthSwift/GTMKeychainError``s indirectly thrown by
   ///   calls to this method.
-  @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+  @available(macOS 10.15, *)
   @objc(saveAuthorization:withItemName:usingDataProtectionKeychain:error:)
   public final class func save(
     authorization: GTMAppAuthFetcherAuthorization,
     with itemName: String,
     usingDataProtectionKeychain: Bool
   ) throws {
+    let authorizationData: Data
     let keychain = keychain ?? GTMKeychain()
-    let authorizationData = try NSKeyedArchiver.archivedData(
-      withRootObject: authorization,
-      requiringSecureCoding: true
-    )
+    if #available(iOS 11, tvOS 11, watchOS 4, *) {
+      authorizationData = try NSKeyedArchiver.archivedData(
+        withRootObject: authorization,
+        requiringSecureCoding: true
+      )
+    } else {
+      authorizationData = NSKeyedArchiver.archivedData(withRootObject: authorization)
+    }
     try keychain.save(
       passwordData: authorizationData,
       forName: itemName,
