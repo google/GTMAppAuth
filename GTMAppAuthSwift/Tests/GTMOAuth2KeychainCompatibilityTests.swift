@@ -65,6 +65,21 @@ class GTMOAuth2KeychainCompatibilityTests: XCTestCase {
     )
   }
 
+  func testSaveOAuth2AuthorizationThrowsError() {
+    let emptyItemName = ""
+    XCTAssertThrowsError(
+      try GTMOAuth2KeychainCompatibility.save(
+        authorization: expectedAuthorization,
+        for: emptyItemName
+      )
+    ) { thrownError in
+      XCTAssertEqual(
+        thrownError as? GTMKeychainError,
+        GTMKeychainError.noService
+      )
+    }
+  }
+
   func testRemoveOAuth2Authorization() throws {
     try GTMOAuth2KeychainCompatibility.save(
       authorization: expectedAuthorization,
@@ -79,7 +94,7 @@ class GTMOAuth2KeychainCompatibilityTests: XCTestCase {
       try GTMOAuth2KeychainCompatibility.removeAuthorizationFromKeychain(for: unsavedItemName)
     ) { thrownError in
       XCTAssertEqual(
-        thrownError as? GTMOAuth2KeychainCompatibility.Error,
+        thrownError as? GTMKeychainError,
         .failedToDeletePasswordBecauseItemNotFound(itemName: unsavedItemName)
       )
     }
@@ -110,6 +125,28 @@ class GTMOAuth2KeychainCompatibilityTests: XCTestCase {
     XCTAssertEqual(testAuth.userEmail, expectedAuthorization.userEmail)
     XCTAssertEqual(testAuth.userEmailIsVerified, expectedAuthorization.userEmailIsVerified)
     XCTAssertEqual(testAuth.canAuthorize, expectedAuthorization.canAuthorize)
+  }
+
+  func testAuthorizeFromKeychainForNameThrowsError() throws {
+    try GTMOAuth2KeychainCompatibility.save(
+      authorization: expectedAuthorization,
+      for: Constants.testKeychainItemName
+    )
+    let badRedirectURI = ""
+    XCTAssertThrowsError(
+      _ = try GTMOAuth2KeychainCompatibility.authorizeFromKeychain(
+        forName: Constants.testKeychainItemName,
+        tokenURL: Constants.testTokenURL,
+        redirectURI: badRedirectURI,
+        clientID: Constants.testClientID,
+        clientSecret: Constants.testClientSecret
+      )
+    ) { thrownError in
+      XCTAssertEqual(
+        thrownError as? GTMOAuth2KeychainCompatibility.Error,
+        .failedToConvertRedirectURItoURL(badRedirectURI)
+      )
+    }
   }
 
   func testAuthorizeFromKeychainForPersistenceStringFailedWithBadURI() {

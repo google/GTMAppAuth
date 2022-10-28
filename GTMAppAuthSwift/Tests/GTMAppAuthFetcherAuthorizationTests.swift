@@ -333,14 +333,12 @@ class GTMAppAuthFetcherAuthorizationTest: XCTestCase {
 
   func testSaveAuthorizationThrows() {
     let emptyItemName = ""
-    let expectedError = GTMAppAuthFetcherAuthorization
-      .Error
-      .failedToSaveAuthorizationToKeychain(forItemName: emptyItemName)
+    let expectedError = GTMKeychainError.noService
     XCTAssertThrowsError(try GTMAppAuthFetcherAuthorization.save(
       authorization: authorization,
       with: emptyItemName
     )) { error in
-      XCTAssertEqual(error as? GTMAppAuthFetcherAuthorization.Error, expectedError)
+      XCTAssertEqual(error as? GTMKeychainError, expectedError)
     }
   }
 
@@ -371,12 +369,15 @@ class GTMAppAuthFetcherAuthorizationTest: XCTestCase {
       try GTMAppAuthFetcherAuthorization.removeAuthorization(for: testKeychainItemName)
       XCTAssertFalse(keychainHelper.useDataProtectionKeychain)
     } catch {
-      guard let keychainError = error as? GTMAppAuthFetcherAuthorization.Error else {
+      guard let keychainError = error as? GTMKeychainError else {
         return XCTFail("`error` should be of type `GTMAppAuthFetcherAuthorization.Error`")
       }
       XCTAssertEqual(
         keychainError,
-        GTMAppAuthFetcherAuthorization.Error.failedToRemoveAuthorizationFromKeychainBecauseItemNotFound(itemName: testKeychainItemName))
+        GTMKeychainError.failedToDeletePasswordBecauseItemNotFound(
+          itemName: Constants.testKeychainItemName
+        )
+      )
     }
   }
 
@@ -418,7 +419,7 @@ class GTMAppAuthFetcherAuthorizationTest: XCTestCase {
       _ = try GTMAppAuthFetcherAuthorization.authorization(for: missingItemName)
     } catch {
       guard case
-        .failedToRetrieveAuthorizationFromKeychain(forItemName: let itemName) = error as? GTMAppAuthFetcherAuthorization.Error else {
+        .passwordNotFound(forItemName: let itemName) = error as? GTMKeychainError else {
         return XCTFail(
           "`error` should be `GTMAppAuthFetcherAuthorization.Error.failedToRetrieveAuthorizationFromKeychain"
         )

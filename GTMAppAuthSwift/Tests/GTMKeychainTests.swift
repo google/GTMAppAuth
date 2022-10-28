@@ -53,7 +53,7 @@ class GTMKeychainTests: XCTestCase {
     XCTAssertThrowsError(
       try keychain.save(password: Constants.testPassword, forName: "")
     ) { thrownError in
-      XCTAssertEqual(thrownError as? KeychainWrapper.Error, .noService)
+      XCTAssertEqual(thrownError as? GTMKeychainError, .noService)
     }
   }
 
@@ -61,7 +61,7 @@ class GTMKeychainTests: XCTestCase {
     try keychain.save(password: Constants.testPassword, forName: Constants.testKeychainItemName)
 
     XCTAssertThrowsError(try keychain.password(forName: "")) { thrownError in
-      XCTAssertEqual(thrownError as? KeychainWrapper.Error, .noService)
+      XCTAssertEqual(thrownError as? GTMKeychainError, .noService)
     }
   }
 
@@ -69,7 +69,7 @@ class GTMKeychainTests: XCTestCase {
     try keychain.save(password: Constants.testPassword, forName: Constants.testKeychainItemName)
 
     XCTAssertThrowsError(try keychain.removePasswordFromKeychain(forName: "")) { thrownError in
-      XCTAssertEqual(thrownError as? KeychainWrapper.Error, .noService)
+      XCTAssertEqual(thrownError as? GTMKeychainError, .noService)
     }
   }
 
@@ -78,8 +78,8 @@ class GTMKeychainTests: XCTestCase {
       forName: Constants.testKeychainItemName
     )) { thrownError in
       XCTAssertEqual(
-        thrownError as? KeychainWrapper.Error,
-        .failedToDeletePasswordBecauseItemNotFound
+        thrownError as? GTMKeychainError,
+        .failedToDeletePasswordBecauseItemNotFound(itemName: Constants.testKeychainItemName)
       )
     }
   }
@@ -88,7 +88,10 @@ class GTMKeychainTests: XCTestCase {
     XCTAssertThrowsError(
       try keychain.password(forName: Constants.testKeychainItemName)
     ) { thrownError in
-      XCTAssertEqual(thrownError as? KeychainWrapper.Error, .passwordNotFound)
+      XCTAssertEqual(
+        thrownError as? GTMKeychainError,
+        .passwordNotFound(forItemName: Constants.testKeychainItemName)
+      )
     }
   }
 }
