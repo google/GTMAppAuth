@@ -4,11 +4,9 @@ on:
   push:
     branches:
       - master
-      - swift-translation
   pull_request:
     branches:
       - master
-      - swift-translation
   workflow_dispatch:
 
 jobs:

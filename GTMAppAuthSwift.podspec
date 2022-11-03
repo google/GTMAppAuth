@@ -30,7 +30,7 @@ requests with AppAuth.
   s.watchos.deployment_target = "6.0"
 
   s.framework = "Security"
-  s.dependency "GTMSessionFetcher/Core", "~> 1.5"
+  s.dependency 'GTMSessionFetcher/Core', '>= 1.5', '< 3.0'
   s.dependency "AppAuth/Core", "~> 1.6"
 
   s.test_spec 'unit' do |unit_tests|
