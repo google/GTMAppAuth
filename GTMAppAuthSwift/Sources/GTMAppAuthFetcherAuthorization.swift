@@ -45,13 +45,13 @@ import GTMSessionFetcher
   ///   calls to this method.
   @objc(authorizationForItemName:error:)
   public final class func authorization(
-    for itemName: String
+    forItemName itemName: String
   ) throws -> GTMAppAuthFetcherAuthorization {
     let keychain = keychain ?? GTMKeychain()
-    let passwordData = try keychain.passwordData(forName: itemName)
+    let passwordData = try keychain.passwordData(forItemName: itemName)
 
     if #available(macOS 10.13, iOS 11, tvOS 11, watchOS 4, *) {
-      return try modernUnarchiveAuthorization(with: passwordData, itemName: itemName)
+      return try modernUnarchiveAuthorization(withPasswordData: passwordData, itemName: itemName)
     } else {
       guard let auth = NSKeyedUnarchiver.unarchiveObject(with: passwordData)
               as? GTMAppAuthFetcherAuthorization else {
@@ -76,24 +76,19 @@ import GTMSessionFetcher
   @available(macOS 10.15, *)
   @objc(authorizationForItemName:usingDataProtectionKeychain:error:)
   public final class func authorization(
-    for itemName: String,
+    forItemName itemName: String,
     usingDataProtectionKeychain: Bool
   ) throws -> GTMAppAuthFetcherAuthorization {
     let keychain = keychain ?? GTMKeychain()
     let passwordData = try keychain.passwordData(
-      forName: itemName,
+      forItemName: itemName,
       usingDataProtectionKeychain: usingDataProtectionKeychain
     )
     if #available(iOS 11, tvOS 11, watchOS 4, *) {
-      guard let authorization = try NSKeyedUnarchiver.unarchivedObject(
-        ofClass: GTMAppAuthFetcherAuthorization.self,
-        from: passwordData
-      ) else {
-        throw GTMAppAuthFetcherAuthorization
-          .Error
-          .failedToConvertKeychainDataToAuthorization(forItemName: itemName)
-      }
-      return authorization
+      return try modernUnarchiveAuthorization(
+        withPasswordData: passwordData,
+        itemName: itemName
+      )
     } else {
       guard let authorization = NSKeyedUnarchiver.unarchiveObject(with: passwordData)
               as? GTMAppAuthFetcherAuthorization else {
@@ -107,7 +102,7 @@ import GTMSessionFetcher
 
   @available(macOS 10.13, iOS 11, tvOS 11, watchOS 4, *)
   private final class func modernUnarchiveAuthorization(
-    with passwordData: Data,
+    withPasswordData passwordData: Data,
     itemName: String
   ) throws -> GTMAppAuthFetcherAuthorization {
     guard let authorization = try NSKeyedUnarchiver.unarchivedObject(
@@ -131,9 +126,9 @@ import GTMSessionFetcher
   /// - Note: See `GTMKeychain.swift` for ``GTMAppAuthSwift/GTMKeychainError``s indirectly thrown by
   ///   calls to this method.
   @objc(removeAuthorizationForItemName:error:)
-  public final class func removeAuthorization(for itemName: String) throws {
+  public final class func removeAuthorization(forItemName itemName: String) throws {
     let keychain = keychain ?? GTMKeychain()
-    try keychain.removePasswordFromKeychain(forName: itemName)
+    try keychain.removePasswordFromKeychain(withItemName: itemName)
   }
 
   /// Removes the saved authorization for the supplied name.
@@ -149,7 +144,7 @@ import GTMSessionFetcher
   @available(macOS 10.15, *)
   @objc(removeAuthorizationForItemName:usingDataProtectionKeychain:error:)
   public final class func removeAuthorization(
-    for itemName: String,
+    forItemName itemName: String,
     usingDataProtectionKeychain: Bool
   ) throws {
     let keychain = keychain ?? GTMKeychain()
@@ -172,7 +167,7 @@ import GTMSessionFetcher
   @objc(saveAuthorization:withItemName:error:)
   public final class func save(
     authorization: GTMAppAuthFetcherAuthorization,
-    with itemName: String
+    withItemName itemName: String
   ) throws {
     let keychain = keychain ?? GTMKeychain()
     if #available(macOS 10.13, iOS 11, tvOS 11, watchOS 4, *) {
@@ -180,10 +175,10 @@ import GTMSessionFetcher
         withRootObject: authorization,
         requiringSecureCoding: true
       )
-      try keychain.save(passwordData: authorizationData, forName: itemName)
+      try keychain.save(passwordData: authorizationData, forItemName: itemName)
     } else {
       let authorizationData = NSKeyedArchiver.archivedData(withRootObject: authorization)
-      try keychain.save(passwordData: authorizationData, forName: itemName)
+      try keychain.save(passwordData: authorizationData, forItemName: itemName)
     }
   }
 
@@ -201,7 +196,7 @@ import GTMSessionFetcher
   @objc(saveAuthorization:withItemName:usingDataProtectionKeychain:error:)
   public final class func save(
     authorization: GTMAppAuthFetcherAuthorization,
-    with itemName: String,
+    withItemName itemName: String,
     usingDataProtectionKeychain: Bool
   ) throws {
     let authorizationData: Data
@@ -216,7 +211,7 @@ import GTMSessionFetcher
     }
     try keychain.save(
       passwordData: authorizationData,
-      forName: itemName,
+      forItemName: itemName,
       usingDataProtectionKeychain: usingDataProtectionKeychain
     )
   }
@@ -239,7 +234,7 @@ import GTMSessionFetcher
   /// The user email.
   @objc public let userEmail: String?
 
-  /// The verified string.
+  /// The verified string used in the `userEmailIsVerified` computed property.
   ///
   /// If the result is false, then the email address is listed with the account on the server, but
   /// the address has not been confirmed as belonging to the owner of the account.
@@ -247,10 +242,10 @@ import GTMSessionFetcher
 
   /// Email verified status; not used for authentication.
   @objc public var userEmailIsVerified: Bool {
-    guard let verification = _userEmailIsVerified else {
+    guard let isVerified = _userEmailIsVerified else {
       return false
     }
-    return (verification as NSString).boolValue
+    return (isVerified as NSString).boolValue
   }
 
   /// For development only, allow authorization of non-SSL requests, allowing transmission of the
@@ -402,12 +397,12 @@ import GTMSessionFetcher
   public func authorizeRequest(
     _ request: NSMutableURLRequest?,
     delegate: Any,
-    didFinish sel: Selector
+    didFinish selector: Selector
   ) {
     guard let request = request else { return }
     let arguments = AuthorizationArguments(
       request: request,
-      callbackStyle: .delegate(delegate, sel)
+      callbackStyle: .delegate(delegate, selector)
     )
     authorizeRequest(withArguments: arguments)
   }
@@ -481,8 +476,8 @@ Request (\(request)) is not https, a local file, or nil. It may be insecure.
       case .completion(let callback):
         self.invokeCompletionCallback(with: callback, error: args.error)
       case .delegate(let delegate, let selector):
-        self.invokeDelegateCallback(
-          delegate: delegate,
+        self.invokeCallback(
+          withDelegate: delegate,
           selector: selector,
           request: request,
           error: args.error
@@ -491,8 +486,8 @@ Request (\(request)) is not https, a local file, or nil. It may be insecure.
     }
   }
 
-  private func invokeDelegateCallback(
-    delegate: Any,
+  private func invokeCallback(
+    withDelegate delegate: Any,
     selector: Selector,
     request: NSMutableURLRequest,
     error: Swift.Error?
@@ -542,8 +537,8 @@ Request (\(request)) is not https, a local file, or nil. It may be insecure.
   /// Stops authorization for the provided `URLRequest` if it is queued for authorization.
   @objc public func stopAuthorization(for request: URLRequest) {
     serialAuthArgsQueue.sync {
-      guard let index = authorizationArgs.firstIndex(where: {
-        $0.request as URLRequest == request
+      guard let index = authorizationArgs.firstIndex(where: { (authorizationArg: AuthorizationArguments) in
+        authorizationArg.request as URLRequest == request
       }) else {
         return
       }
@@ -637,11 +632,11 @@ extension AuthorizationArguments {
 public extension GTMAppAuthFetcherAuthorization {
   // MARK: - Keys
 
-  static var authStateKey: String { "authState" }
-  static var serviceProviderKey: String { "serviceProvider" }
-  static var userIDKey: String { "userID" }
-  static var userEmailKey: String { "userEmail" }
-  static var userEmailIsVerifiedKey: String { "userEmailIsVerified" }
+  static let authStateKey = "authState"
+  static let serviceProviderKey = "serviceProvider"
+  static let userIDKey = "userID"
+  static let userEmailKey = "userEmail"
+  static let userEmailIsVerifiedKey = "userEmailIsVerified"
 
   // MARK: - Errors
 
@@ -651,9 +646,7 @@ public extension GTMAppAuthFetcherAuthorization {
     case accessTokenEmptyForRequest(NSURLRequest)
     case failedToConvertKeychainDataToAuthorization(forItemName: String)
 
-    public static var errorDomain: String {
-      "GTMAppAuthFetcherAuthorizationErrorDomain"
-    }
+    public static let errorDomain: String = "GTMAppAuthFetcherAuthorizationErrorDomain"
 
     public var errorUserInfo: [String : Any] {
       switch self {

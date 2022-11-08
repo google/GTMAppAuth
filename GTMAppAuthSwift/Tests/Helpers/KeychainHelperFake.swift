@@ -22,17 +22,17 @@ class KeychainHelperFake: KeychainHelper {
   var passwordStore = [String: Data]()
   let accountName = "OauthTest"
 
-  func password(service: String) throws -> String {
+  func password(forService service: String) throws -> String {
     guard !service.isEmpty else { throw GTMKeychainError.noService }
 
-    let passwordData = try passwordData(service: service)
+    let passwordData = try passwordData(forService: service)
     guard let password = String(data: passwordData, encoding: .utf8) else {
       throw GTMKeychainError.passwordNotFound(forItemName: service)
     }
     return password
   }
 
-  func passwordData(service: String) throws -> Data {
+  func passwordData(forService service: String) throws -> Data {
     guard !service.isEmpty else { throw GTMKeychainError.noService }
 
     guard let passwordData = passwordStore[service + accountName] else {
@@ -41,7 +41,7 @@ class KeychainHelperFake: KeychainHelper {
     return passwordData
   }
 
-  func removePassword(service: String) throws {
+  func removePassword(forService service: String) throws {
     guard !service.isEmpty else { throw GTMKeychainError.noService }
 
     guard let _ = passwordStore.removeValue(forKey: service + accountName) else {
@@ -55,7 +55,7 @@ class KeychainHelperFake: KeychainHelper {
     accessibility: CFTypeRef
   ) throws {
     do {
-      try removePassword(service: service)
+      try removePassword(forService: service)
     } catch GTMKeychainError.failedToDeletePasswordBecauseItemNotFound {
       // No need to throw this error since we are setting a new password
     } catch {

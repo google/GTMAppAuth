@@ -79,8 +79,8 @@ let oobString = "urn:ietf:wg:oauth:2.0:oob"
       .sorted { $0.key < $1.key }
       .compactMap { (key, _) -> String? in
         guard let val = dict[key] as? String,
-              let encodedKey = encodedOAuthValue(originalString: key),
-              let encodedValue = encodedOAuthValue(originalString: val) else {
+              let encodedKey = encodedOAuthValue(forOriginalString: key),
+              let encodedValue = encodedOAuthValue(forOriginalString: val) else {
           return nil
         }
         return String(format: "%@=%@", arguments: [encodedKey, encodedValue])
@@ -92,7 +92,9 @@ let oobString = "urn:ietf:wg:oauth:2.0:oob"
 
   // MARK: - Encoded OAuth Value
 
-  private static func encodedOAuthValue(originalString: String) -> String? {
+  private static func encodedOAuthValue(
+    forOriginalString originalString: String
+  ) -> String? {
     // For parameters, we'll explicitly leave spaces unescaped now, and replace them with +'s
     let forceEscape = "!*'();:@&=+$,/?%#[]"
     let escapeCharacters = CharacterSet(charactersIn: forceEscape)
@@ -106,7 +108,7 @@ let oobString = "urn:ietf:wg:oauth:2.0:oob"
   /// GTMOAuth2 format, at the supplied keychain identifier.
   ///
   /// - Parameters:
-  ///   - name: The keychain name.
+  ///   - itemName: The keychain name.
   ///   - tokenURL: The OAuth token endpoint URL.
   ///   - redirectURI: The OAuth redirect URI used when obtaining the original authorization.
   ///   - clientID: The OAuth client ID.
@@ -114,7 +116,7 @@ let oobString = "urn:ietf:wg:oauth:2.0:oob"
   /// - Returns: A `GTMAppAuthFetcherAuthorization` object, or nil.
   /// - Throws: An instance of `GTMOAuth2KeychainCompatibility.Error` arising from the retrieval.
   @objc public static func authorizeFromKeychain(
-    forName name: String,
+    forItemName itemName: String,
     tokenURL: URL,
     redirectURI: String,
     clientID: String,
@@ -122,7 +124,7 @@ let oobString = "urn:ietf:wg:oauth:2.0:oob"
   ) throws -> GTMAppAuthFetcherAuthorization {
     let keychain = keychain ?? GTMKeychain()
 
-    let password = try keychain.password(forName: name)
+    let password = try keychain.password(forItemName: itemName)
     let authorization = try authorizeFromKeychain(
       forPersistenceString: password,
       tokenURL: tokenURL,
@@ -151,7 +153,7 @@ let oobString = "urn:ietf:wg:oauth:2.0:oob"
     clientID: String,
     clientSecret: String?
   ) throws -> GTMAppAuthFetcherAuthorization {
-    let persistenceDictionary = dictionary(from: persistenceString)
+    let persistenceDictionary = dictionary(fromKeychainPassword: persistenceString)
     guard let redirectURL = URL(string: redirectURI) else {
       throw Error.failedToConvertRedirectURItoURL(redirectURI)
     }
@@ -221,19 +223,19 @@ let oobString = "urn:ietf:wg:oauth:2.0:oob"
   /// Uses Google OAuth provider information.
   ///
   /// - Parameters:
-  ///   - name: The keychain name.
+  ///   - itemName: The keychain name.
   ///   - clientID: The OAuth client id.
   ///   - clientSecret: The OAuth client secret.
   /// - Returns: A `GTMAppAuthFetcherAuthorization` object, or nil.
   /// - Throws: An instance of `GTMOAuth2KeychainCompatibility.Error` arising from the retrieval.
   @objc(authForGoogleFromKeychainForName:clientID:clientSecret:error:)
   public static func authForGoogleFromKeychain(
-    for name: String,
+    forKeychainItemName itemName: String,
     clientID: String,
     clientSecret: String
   ) throws -> GTMAppAuthFetcherAuthorization {
     return try authorizeFromKeychain(
-      forName: name,
+      forItemName: itemName,
       tokenURL: googleTokenURL,
       redirectURI: nativeClientRedirectURI,
       clientID: clientID,
@@ -245,13 +247,13 @@ let oobString = "urn:ietf:wg:oauth:2.0:oob"
   ///
   /// - Parameters:
   ///   - authorization: The `GTMAppAuthFetcherAuthorization` to save to the keychain.
-  ///   - name: The keychain name.
+  ///   - itemName: The keychain name.
   /// - Throws: An instance of `GTMOAuth2KeychainCompatibility.Error` arising from the save.
   @available(*, deprecated, message: "Use GTMAppAuthFetcherAuthorization.save(authorization:with:)")
   @objc(saveAuthorization:forName:error:)
   public static func save(
     authorization: GTMAppAuthFetcherAuthorization,
-    for name: String
+    forKeychainItemName itemName: String
   ) throws {
     // TODO: (mdmathias) Write a test ensuring this error is thrown.
     guard let password = persistenceResponseStringForAuthorization(authorization) else {
@@ -259,18 +261,18 @@ let oobString = "urn:ietf:wg:oauth:2.0:oob"
     }
 
     let keychain = keychain ?? GTMKeychain()
-    try keychain.save(password: password, forName: name)
+    try keychain.save(password: password, forItemName: itemName)
   }
 
   /// Removes stored tokens, such as when the user signs out.
   ///
   /// - Parameters:
-  ///   - name: The keychain name.
+  ///   - itemName: The keychain name.
   /// - Throws: An instance of `GTMOAuth2KeychainCompatibility.Error` arising from the removal.
   @objc(removeAuthorizationFromKeychainForName:error:)
-  public static func removeAuthorizationFromKeychain(for name: String) throws {
+  public static func removeAuthorizationFromKeychain(forItemName itemName: String) throws {
     let keychain = keychain ?? GTMKeychain()
-    try keychain.removePasswordFromKeychain(forName: name)
+    try keychain.removePasswordFromKeychain(withItemName: itemName)
   }
 
   // MARK: - OAuth2 Utilities
@@ -295,7 +297,9 @@ let oobString = "urn:ietf:wg:oauth:2.0:oob"
     return oobString
   }
 
-  private static func dictionary(from keychainPassword: String) -> [String: String] {
+  private static func dictionary(
+    fromKeychainPassword keychainPassword: String
+  ) -> [String: String] {
     let keyValueTuples: [(String, String)] = keychainPassword
       .components(separatedBy: "&")
       .compactMap {

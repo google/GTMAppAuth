@@ -317,7 +317,7 @@ class GTMAppAuthFetcherAuthorizationTest: XCTestCase {
   func testSaveAuthorization() throws {
     try GTMAppAuthFetcherAuthorization.save(
       authorization: authorization,
-      with: testKeychainItemName
+      withItemName: testKeychainItemName
     )
     XCTAssertFalse(keychainHelper.useDataProtectionKeychain)
   }
@@ -325,7 +325,7 @@ class GTMAppAuthFetcherAuthorizationTest: XCTestCase {
   func testSaveAuthorizationUsingDataProtectionKeychain() throws {
     try GTMAppAuthFetcherAuthorization.save(
       authorization: authorization,
-      with: testKeychainItemName,
+      withItemName: testKeychainItemName,
       usingDataProtectionKeychain: true
     )
     XCTAssertTrue(keychainHelper.useDataProtectionKeychain)
@@ -336,7 +336,7 @@ class GTMAppAuthFetcherAuthorizationTest: XCTestCase {
     let expectedError = GTMKeychainError.noService
     XCTAssertThrowsError(try GTMAppAuthFetcherAuthorization.save(
       authorization: authorization,
-      with: emptyItemName
+      withItemName: emptyItemName
     )) { error in
       XCTAssertEqual(error as? GTMKeychainError, expectedError)
     }
@@ -345,20 +345,20 @@ class GTMAppAuthFetcherAuthorizationTest: XCTestCase {
   func testRemoveAuthorization() throws {
     try GTMAppAuthFetcherAuthorization.save(
       authorization: authorization,
-      with: testKeychainItemName
+      withItemName: testKeychainItemName
     )
-    try GTMAppAuthFetcherAuthorization.removeAuthorization(for: testKeychainItemName)
+    try GTMAppAuthFetcherAuthorization.removeAuthorization(forItemName: testKeychainItemName)
     XCTAssertFalse(keychainHelper.useDataProtectionKeychain)
   }
 
   func testRemoveAuthorizationUsingDataProtectionKeychain() throws {
     try GTMAppAuthFetcherAuthorization.save(
       authorization: authorization,
-      with: testKeychainItemName,
+      withItemName: testKeychainItemName,
       usingDataProtectionKeychain: true
     )
     try GTMAppAuthFetcherAuthorization.removeAuthorization(
-      for: testKeychainItemName,
+      forItemName: testKeychainItemName,
       usingDataProtectionKeychain: true
     )
     XCTAssertTrue(keychainHelper.useDataProtectionKeychain)
@@ -366,7 +366,7 @@ class GTMAppAuthFetcherAuthorizationTest: XCTestCase {
 
   func testRemoveAuthorizationThrows() {
     do {
-      try GTMAppAuthFetcherAuthorization.removeAuthorization(for: testKeychainItemName)
+      try GTMAppAuthFetcherAuthorization.removeAuthorization(forItemName: testKeychainItemName)
       XCTAssertFalse(keychainHelper.useDataProtectionKeychain)
     } catch {
       guard let keychainError = error as? GTMKeychainError else {
@@ -384,9 +384,9 @@ class GTMAppAuthFetcherAuthorizationTest: XCTestCase {
   func testReadAuthorization() throws {
     try GTMAppAuthFetcherAuthorization.save(
       authorization: authorization,
-      with: testKeychainItemName
+      withItemName: testKeychainItemName
     )
-    let savedAuth = try GTMAppAuthFetcherAuthorization.authorization(for: testKeychainItemName)
+    let savedAuth = try GTMAppAuthFetcherAuthorization.authorization(forItemName: testKeychainItemName)
     XCTAssertEqual(savedAuth.authState.isAuthorized, authorization.authState.isAuthorized)
     XCTAssertEqual(savedAuth.serviceProvider, authorization.serviceProvider)
     XCTAssertEqual(savedAuth.userID, authorization.userID)
@@ -398,11 +398,11 @@ class GTMAppAuthFetcherAuthorizationTest: XCTestCase {
   func testReadAuthorizationUsingDataProtectionKeychain() throws {
     try GTMAppAuthFetcherAuthorization.save(
       authorization: authorization,
-      with: testKeychainItemName,
+      withItemName: testKeychainItemName,
       usingDataProtectionKeychain: true
     )
     let savedAuth = try GTMAppAuthFetcherAuthorization.authorization(
-      for: testKeychainItemName,
+      forItemName: testKeychainItemName,
       usingDataProtectionKeychain: true
     )
     XCTAssertEqual(savedAuth.authState.isAuthorized, authorization.authState.isAuthorized)
@@ -416,7 +416,7 @@ class GTMAppAuthFetcherAuthorizationTest: XCTestCase {
   func testReadAuthorizationThrowsError() {
     let missingItemName = "missingItemName"
     do {
-      _ = try GTMAppAuthFetcherAuthorization.authorization(for: missingItemName)
+      _ = try GTMAppAuthFetcherAuthorization.authorization(forItemName: missingItemName)
     } catch {
       guard case
         .passwordNotFound(forItemName: let itemName) = error as? GTMKeychainError else {

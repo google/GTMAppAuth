@@ -36,32 +36,36 @@ final class GTMKeychain {
   ///
   /// - Parameters:
   ///   - password: The `String` password.
-  ///   - name: The name for the Keychain item.
+  ///   - itemName: The name for the Keychain item.
   /// - Throws: An instance of `KeychainWrapper.Error`.
-  func save(password: String, forName name: String) throws {
-    try savePasswordToKeychain(password: password, name: name)
+  func save(password: String, forItemName itemName: String) throws {
+    try savePasswordToKeychain(password, forItemName: itemName)
   }
 
   /// Saves the password `String` to the keychain with the given identifier.
   ///
   /// - Parameters:
   ///   - password: The `String` password.
-  ///   - name: The name for the Keychain item.
+  ///   - itemName: The name for the Keychain item.
   ///   - usingDataProtectionKeychain: A `Bool` indicating whether to use the data
   ///     protection keychain on macOS 10.15.
   /// - Throws: An instance of `KeychainWrapper.Error`.
   @available(macOS 10.15, *)
-  func save(password: String, forName name: String, usingDataProtectionKeychain: Bool) throws {
+  func save(
+    password: String,
+    forItemName itemName: String,
+    usingDataProtectionKeychain: Bool
+  ) throws {
     try savePasswordToKeychain(
-      password: password,
-      name: name,
+      password,
+      forItemName: itemName,
       usingDataProtectionKeychain: usingDataProtectionKeychain
     )
   }
 
   private func savePasswordToKeychain(
-    password: String,
-    name: String,
+    _ password: String,
+    forItemName name: String,
     usingDataProtectionKeychain: Bool = false
   ) throws {
     keychainHelper.useDataProtectionKeychain = usingDataProtectionKeychain
@@ -74,116 +78,123 @@ final class GTMKeychain {
 
   /// Retrieves the `String` password for the given `String` identifier.
   ///
-  /// - Parameter name: A `String` identifier for the Keychain item.
+  /// - Parameter itemName: A `String` identifier for the Keychain item.
   /// - Returns: A `String` password if found.
   /// - Throws: An instance of `KeychainWrapper.Error`.
-  func password(forName name: String) throws -> String {
-    try passwordFromKeychain(keychainItemName: name)
+  func password(forItemName itemName: String) throws -> String {
+    try passwordFromKeychain(withKeychainItemName: itemName)
   }
 
   /// Retrieves the `String` password for the given `String` identifier.
   ///
   /// - Parameters:
-  ///   - name: A `String` identifier for the Keychain item.
+  ///   - itemName: A `String` identifier for the Keychain item.
   ///   - usingDataProtectionKeychain: A `Bool` indicating whether to use the data protection
   ///     keychain on macOS 10.15.
   /// - Returns: A `String` password if found.
   /// - Throws: An instance of `KeychainWrapper.Error`.
   @available(macOS 10.15, *)
-  func password(forName name: String, usingDataProtectionKeychain: Bool) throws -> String {
+  func password(forItemName itemName: String, usingDataProtectionKeychain: Bool) throws -> String {
     try passwordFromKeychain(
-      keychainItemName: name,
+      withKeychainItemName: itemName,
       usingDataProtectionKeychain: usingDataProtectionKeychain
     )
   }
 
   private func passwordFromKeychain(
-    keychainItemName: String,
+    withKeychainItemName itemName: String,
     usingDataProtectionKeychain: Bool = false
   ) throws -> String {
     keychainHelper.useDataProtectionKeychain = usingDataProtectionKeychain
-    return try keychainHelper.password(service: keychainItemName)
+    return try keychainHelper.password(forService: itemName)
   }
 
   /// Saves the password `Data` to the keychain with the given identifier.
   ///
   /// - Parameters:
   ///   - passwordData: The password `Data`.
-  ///   - name: The name for the Keychain item.
+  ///   - itemName: The name for the Keychain item.
   /// - Throws: An instance of `KeychainWrapper.Error`.
-  func save(passwordData: Data, forName name: String) throws {
-    try savePasswordDataToKeychain(passwordData: passwordData, name: name)
+  func save(passwordData: Data, forItemName itemName: String) throws {
+    try savePasswordDataToKeychain(passwordData, forItemName: itemName)
   }
 
   /// Saves the password `Data` to the keychain with the given identifier.
   ///
   /// - Parameters:
   ///   - password: The password `Data`.
-  ///   - name: The name for the Keychain item.
+  ///   - itemName: The name for the Keychain item.
   ///   - usingDataProtectionKeychain: A `Bool` indicating whether to use the data protection
   ///     keychain on macOS 10.15.
   /// - Throws: An instance of `KeychainWrapper.Error`.
   @available(macOS 10.15, *)
-  func save(passwordData: Data, forName name: String, usingDataProtectionKeychain: Bool) throws {
+  func save(
+    passwordData: Data,
+    forItemName itemName: String,
+    usingDataProtectionKeychain: Bool
+  ) throws {
     try savePasswordDataToKeychain(
-      passwordData: passwordData,
-      name: name,
+      passwordData,
+      forItemName: itemName,
       usingDataProtectionKeychain: usingDataProtectionKeychain
     )
   }
 
   private func savePasswordDataToKeychain(
-    passwordData: Data,
-    name: String,
+    _ passwordData: Data,
+    forItemName itemName: String,
     usingDataProtectionKeychain: Bool = false
   ) throws {
     keychainHelper.useDataProtectionKeychain = usingDataProtectionKeychain
     try keychainHelper.setPassword(
       data: passwordData,
-      forService: name,
+      forService: itemName,
       accessibility: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
     )
   }
 
   /// Retrieves the password `Data` for the given `String` identifier.
   ///
-  /// - Parameter name: A `String` identifier for the Keychain item.
+  /// - Parameter itemName: A `String` identifier for the Keychain item.
   /// - Returns: The password `Data` if found.
   /// - Throws: An instance of `KeychainWrapper.Error`.
-  func passwordData(forName name: String) throws -> Data {
-    try passwordDataFromKeychain(keychainItemName: name)
+  func passwordData(forItemName itemName: String) throws -> Data {
+    try passwordDataFromKeychain(withItemName: itemName)
   }
 
   /// Retrieves the password `Data` for the given `String` identifier.
   ///
   /// - Parameters:
-  ///   - name: A `String` identifier for the Keychain item.
+  ///   - itemName: A `String` identifier for the Keychain item.
   ///   - usingDataProtectionKeychain: A `Bool` indicating whether to use the data protection
   ///     keychain on macOS 10.15.
   /// - Returns: The password `Data` if found.
   /// - Throws: An instance of `KeychainWrapper.Error`.
   @available(macOS 10.15, *)
-  func passwordData(forName name: String, usingDataProtectionKeychain: Bool) throws -> Data {
+  func passwordData(
+    forItemName itemName: String,
+    usingDataProtectionKeychain: Bool
+  ) throws -> Data {
     try passwordDataFromKeychain(
-      keychainItemName: name,
+      withItemName: itemName,
       usingDataProtectionKeychain: usingDataProtectionKeychain
     )
   }
 
   private func passwordDataFromKeychain(
-    keychainItemName: String,
+    withItemName itemName: String,
     usingDataProtectionKeychain: Bool = false
   ) throws -> Data {
     keychainHelper.useDataProtectionKeychain = usingDataProtectionKeychain
-    return try keychainHelper.passwordData(service: keychainItemName)
+    return try keychainHelper.passwordData(forService: itemName)
   }
 
   /// Removes stored password string, such as when the user signs out.
   ///
-  /// - Parameter name: The Keychain name for the item.
+  /// - Parameter itemName: The Keychain name for the item.
   /// - Throws: An instance of `KeychainWrapper.Error`.
-  func removePasswordFromKeychain(forName name: String) throws {
-    try removePasswordFromKeychain(keychainItemName: name)
+  func removePasswordFromKeychain(withItemName itemName: String) throws {
+    try removePasswordFromKeychain(keychainItemName: itemName)
   }
 
   /// Removes stored password string, such as when the user signs out. Note that if you choose to
@@ -191,7 +202,7 @@ final class GTMKeychain {
   /// accessible without migration.
   ///
   /// - Parameters:
-  ///   - name: The Keychain name for the item.
+  ///   - itemName: The Keychain name for the item.
   ///   - usingDataProtectionKeychain: A Boolean value that indicates whether to use the data
   ///     protection keychain on macOS 10.15+.
   /// - Throws: An instance of `KeychainWrapper.Error`.
@@ -208,7 +219,7 @@ final class GTMKeychain {
     usingDataProtectionKeychain: Bool = false
   ) throws {
     keychainHelper.useDataProtectionKeychain = usingDataProtectionKeychain
-    try keychainHelper.removePassword(service: keychainItemName)
+    try keychainHelper.removePassword(forService: keychainItemName)
   }
 }
 
@@ -218,15 +229,15 @@ final class GTMKeychain {
 protocol KeychainHelper {
   var accountName: String { get }
   var useDataProtectionKeychain: Bool { get set }
-  func password(service: String) throws -> String
-  func passwordData(service: String) throws -> Data
-  func removePassword(service: String) throws
+  func password(forService service: String) throws -> String
+  func passwordData(forService service: String) throws -> Data
+  func removePassword(forService service: String) throws
   func setPassword(_ password: String, forService service: String, accessibility: CFTypeRef) throws
   func setPassword(data: Data, forService service: String, accessibility: CFTypeRef?) throws
 }
 
 /// An internally scoped keychain helper.
-struct KeychainWrapper: KeychainHelper {
+private struct KeychainWrapper: KeychainHelper {
   let accountName = "OAuth"
   var useDataProtectionKeychain = false
   @available(macOS 10.15, *)
@@ -235,7 +246,7 @@ struct KeychainWrapper: KeychainHelper {
     return ProcessInfo().isOperatingSystemAtLeast(tenOneFive)
   }
 
-  func keychainQuery(service: String) -> [String: Any] {
+  func keychainQuery(forService service: String) -> [String: Any] {
     var query: [String: Any] = [
       kSecClass as String: kSecClassGenericPassword,
       kSecAttrAccount as String : accountName,
@@ -251,19 +262,19 @@ struct KeychainWrapper: KeychainHelper {
     return query
   }
 
-  func password(service: String) throws -> String {
-    let passwordData = try passwordData(service: service)
+  func password(forService service: String) throws -> String {
+    let passwordData = try passwordData(forService: service)
     guard let result = String(data: passwordData, encoding: .utf8) else {
       throw GTMKeychainError.unexpectedPasswordData(forItemName: service)
     }
     return result
   }
 
-  func passwordData(service: String) throws -> Data {
+  func passwordData(forService service: String) throws -> Data {
     guard !service.isEmpty else { throw GTMKeychainError.noService }
 
     var passwordItem: AnyObject?
-    var keychainQuery = keychainQuery(service: service)
+    var keychainQuery = keychainQuery(forService: service)
     keychainQuery[kSecReturnData as String] = true
     keychainQuery[kSecMatchLimit as String] = kSecMatchLimitOne
     let status = SecItemCopyMatching(keychainQuery as CFDictionary, &passwordItem)
@@ -281,9 +292,9 @@ struct KeychainWrapper: KeychainHelper {
     return result
   }
 
-  func removePassword(service: String) throws {
+  func removePassword(forService service: String) throws {
     guard !service.isEmpty else { throw GTMKeychainError.noService }
-    let keychainQuery = keychainQuery(service: service)
+    let keychainQuery = keychainQuery(forService: service)
     let status = SecItemDelete(keychainQuery as CFDictionary)
 
     guard status != errSecItemNotFound else {
@@ -304,7 +315,7 @@ struct KeychainWrapper: KeychainHelper {
   func setPassword(data: Data, forService service: String, accessibility: CFTypeRef?) throws {
     guard !service.isEmpty else { throw GTMKeychainError.noService }
     do {
-      try removePassword(service: service)
+      try removePassword(forService: service)
     } catch GTMKeychainError.failedToDeletePasswordBecauseItemNotFound {
       // Don't throw; password doesn't exist since the password is being saved for the first time
     } catch {
@@ -312,7 +323,7 @@ struct KeychainWrapper: KeychainHelper {
       throw error
     }
     guard !data.isEmpty else { return }
-    var keychainQuery = keychainQuery(service: service)
+    var keychainQuery = keychainQuery(forService: service)
     keychainQuery[kSecValueData as String] = data
 
     if let accessibility = accessibility {

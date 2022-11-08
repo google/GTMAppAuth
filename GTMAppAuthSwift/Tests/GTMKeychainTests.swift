@@ -33,49 +33,49 @@ class GTMKeychainTests: XCTestCase {
   }
 
   func testStringPassword() throws {
-    try keychain.save(password: Constants.testPassword, forName: Constants.testKeychainItemName)
-    let expectedPassword = try keychain.password(forName: Constants.testKeychainItemName)
+    try keychain.save(password: Constants.testPassword, forItemName: Constants.testKeychainItemName)
+    let expectedPassword = try keychain.password(forItemName: Constants.testKeychainItemName)
     XCTAssertEqual(expectedPassword, Constants.testPassword)
-    try keychain.removePasswordFromKeychain(forName: Constants.testKeychainItemName)
+    try keychain.removePasswordFromKeychain(withItemName: Constants.testKeychainItemName)
   }
 
   func testDataPassword() throws {
     guard let passwordData = Constants.testPassword.data(using: .utf8) else {
       return XCTFail("Could not convert `testPassword` into `Data`.")
     }
-    try keychain.save(passwordData: passwordData, forName: Constants.testKeychainItemName)
-    let expectedPasswordData = try keychain.passwordData(forName: Constants.testKeychainItemName)
+    try keychain.save(passwordData: passwordData, forItemName: Constants.testKeychainItemName)
+    let expectedPasswordData = try keychain.passwordData(forItemName: Constants.testKeychainItemName)
     XCTAssertEqual(expectedPasswordData, Constants.testPassword.data(using: .utf8)!)
-    try keychain.removePasswordFromKeychain(forName: Constants.testKeychainItemName)
+    try keychain.removePasswordFromKeychain(withItemName: Constants.testKeychainItemName)
   }
 
   func testSetPasswordNoService() {
     XCTAssertThrowsError(
-      try keychain.save(password: Constants.testPassword, forName: "")
+      try keychain.save(password: Constants.testPassword, forItemName: "")
     ) { thrownError in
       XCTAssertEqual(thrownError as? GTMKeychainError, .noService)
     }
   }
 
   func testReadPasswordNoService() throws {
-    try keychain.save(password: Constants.testPassword, forName: Constants.testKeychainItemName)
+    try keychain.save(password: Constants.testPassword, forItemName: Constants.testKeychainItemName)
 
-    XCTAssertThrowsError(try keychain.password(forName: "")) { thrownError in
+    XCTAssertThrowsError(try keychain.password(forItemName: "")) { thrownError in
       XCTAssertEqual(thrownError as? GTMKeychainError, .noService)
     }
   }
 
   func testRemovePasswordNoService() throws {
-    try keychain.save(password: Constants.testPassword, forName: Constants.testKeychainItemName)
+    try keychain.save(password: Constants.testPassword, forItemName: Constants.testKeychainItemName)
 
-    XCTAssertThrowsError(try keychain.removePasswordFromKeychain(forName: "")) { thrownError in
+    XCTAssertThrowsError(try keychain.removePasswordFromKeychain(withItemName: "")) { thrownError in
       XCTAssertEqual(thrownError as? GTMKeychainError, .noService)
     }
   }
 
   func testFailedToDeletePasswordError() {
     XCTAssertThrowsError(try keychain.removePasswordFromKeychain(
-      forName: Constants.testKeychainItemName
+      withItemName: Constants.testKeychainItemName
     )) { thrownError in
       XCTAssertEqual(
         thrownError as? GTMKeychainError,
@@ -86,7 +86,7 @@ class GTMKeychainTests: XCTestCase {
 
   func testPasswordNotFoundError() {
     XCTAssertThrowsError(
-      try keychain.password(forName: Constants.testKeychainItemName)
+      try keychain.password(forItemName: Constants.testKeychainItemName)
     ) { thrownError in
       XCTAssertEqual(
         thrownError as? GTMKeychainError,
