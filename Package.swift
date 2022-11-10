@@ -21,8 +21,8 @@ let package = Package(
     name: "GTMAppAuth",
     platforms: [
         .macOS(.v10_12),
-        .iOS(.v9),
-        .tvOS(.v9),
+        .iOS(.v10),
+        .tvOS(.v10),
         .watchOS(.v6)
     ],
     products: [
