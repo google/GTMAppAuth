@@ -33,6 +33,6 @@ requests with AppAuth.
   }
 
   s.framework = 'Security'
-  s.dependency 'GTMSessionFetcher/Core', '>= 1.5', '< 3.0'
+  s.dependency 'GTMSessionFetcher/Core', '>= 1.5', '< 4.0'
   s.dependency 'AppAuth/Core', '~> 1.6'
 end
