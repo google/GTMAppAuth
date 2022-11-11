@@ -19,8 +19,11 @@ jobs:
       run: bundle update --bundler
     - name: Install Ruby gems with Bundler
       run: bundle install
-    - name: Lint podspec using local source
-      run: pod lib lint --verbose
+    - name: Lint GTMAppAuth.podspec using local source
+      run: pod lib lint GTMAppAuth.podspec --verbose
+      # Allow warnings until we transition to GTMSessionFetcherAuthorizer
+    - name: Lint GTMAppAuthSwift.podspec using local source
+      run: pod lib lint GTMAppAuthSwift.podspec --allow-warnings --verbose
 
   spm-build-test:
     runs-on: macOS-11

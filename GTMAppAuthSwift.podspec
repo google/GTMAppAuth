@@ -22,15 +22,15 @@ requests with AppAuth.
   s.prefix_header_file = false
   s.source_files = "GTMAppAuthSwift/Sources/*.swift"
 
-  ios_deployment_target = "9.0"
+  ios_deployment_target = "10.0"
   osx_deployment_target = "10.12"
   s.ios.deployment_target = ios_deployment_target
   s.osx.deployment_target = osx_deployment_target
-  s.tvos.deployment_target = "9.0"
+  s.tvos.deployment_target = "10.0"
   s.watchos.deployment_target = "6.0"
 
   s.framework = "Security"
-  s.dependency 'GTMSessionFetcher/Core', '>= 1.5', '< 3.0'
+  s.dependency 'GTMSessionFetcher/Core', '>= 1.5', '< 4.0'
   s.dependency "AppAuth/Core", "~> 1.6"
 
   s.test_spec 'unit' do |unit_tests|
