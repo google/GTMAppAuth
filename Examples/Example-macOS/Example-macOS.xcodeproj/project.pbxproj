@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		73ED8D0328AFFD720032BC62 /* GTMAppAuthSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 73ED8D0228AFFD720032BC62 /* GTMAppAuthSwift */; };
-		C1AF3AE72818785B003BAEFF /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = C1AF3AE52818785B003BAEFF /* Podfile */; };
 		C1AF3AE82818785B003BAEFF /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = C1AF3AE62818785B003BAEFF /* README.md */; };
 		C1B5D3682825B0A00068D12B /* AppAuth in Frameworks */ = {isa = PBXBuildFile; productRef = C1B5D3672825B0A00068D12B /* AppAuth */; };
 		C1B5D36B2825B0C30068D12B /* GTMSessionFetcherCore in Frameworks */ = {isa = PBXBuildFile; productRef = C1B5D36A2825B0C30068D12B /* GTMSessionFetcherCore */; };
@@ -22,7 +21,6 @@
 
 /* Begin PBXFileReference section */
 		7355833228AFFC0B00AC24DC /* GTMAppAuth */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = GTMAppAuth; path = ../..; sourceTree = "<group>"; };
-		C1AF3AE52818785B003BAEFF /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; };
 		C1AF3AE62818785B003BAEFF /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		F6016E701D2AC11F003497D7 /* Example-macOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Example-macOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F6016E8B1D2BD988003497D7 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = Source/AppDelegate.m; sourceTree = "<group>"; };
@@ -69,7 +67,6 @@
 			isa = PBXGroup;
 			children = (
 				7355833128AFFC0B00AC24DC /* Packages */,
-				C1AF3AE52818785B003BAEFF /* Podfile */,
 				C1AF3AE62818785B003BAEFF /* README.md */,
 				F6016E8A1D2BD973003497D7 /* Source */,
 				F6016E711D2AC11F003497D7 /* Products */,
@@ -171,7 +168,6 @@
 				F6016E981D2BD988003497D7 /* GTMAppAuthExampleViewController.xib in Resources */,
 				F6016E9C1D2BD9C0003497D7 /* Assets.xcassets in Resources */,
 				C1AF3AE82818785B003BAEFF /* README.md in Resources */,
-				C1AF3AE72818785B003BAEFF /* Podfile in Resources */,
 				F6016E991D2BD988003497D7 /* MainMenu.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -248,7 +244,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
@@ -286,7 +282,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
 			};
@@ -359,7 +355,7 @@
 			repositoryURL = "https://github.com/google/gtm-session-fetcher.git";
 			requirement = {
 				kind = versionRange;
-				maximumVersion = 3.0.0;
+				maximumVersion = 4.0.0;
 				minimumVersion = 1.0.0;
 			};
 		};
