@@ -27,20 +27,21 @@ class AuthStateTests: XCTestCase {
     string: "https://accounts.google.com/o/oauth2/v2/auth"
   )!
   private let tokenEndpoint = URL(string: "https://www.googleapis.com/oauth2/v4/token")!
+  private let testServiceProvider = "fooProvider"
+  private let testUserID = "fooUser"
+  private let testEmail = "foo@foo.com"
   private let alternativeTestKeychainItemName = "alternativeItemName"
+  private let testKeychainItemName = "testName"
   private let keychainHelper = KeychainHelperFake()
-  private var keychainStore: KeychainStore {
-    KeychainStore(
-      itemName: Constants.testKeychainItemName,
-      keychainHelper: keychainHelper
-    )
+  private var keychain: GTMKeychain {
+    GTMKeychain(credentialItemName: Constants.testKeychainItemName, keychainHelper: keychainHelper)
   }
-  private var authState: AuthState {
-    AuthState(
+  private var authorization: GTMAppAuthFetcherAuthorization {
+    GTMAppAuthFetcherAuthorization(
       authState: OIDAuthState.testInstance(),
-      serviceProvider: Constants.testServiceProvider,
-      userID: Constants.testUserID,
-      userEmail: Constants.testEmail,
+      serviceProvider: testServiceProvider,
+      userID: testUserID,
+      userEmail: testEmail,
       userEmailIsVerified: "y"
     )
   }
@@ -290,7 +291,13 @@ class AuthStateTests: XCTestCase {
   // MARK: - Keychain Tests
 
   func testSaveAuthorization() throws {
-    try keychainStore.save(authState: authState)
+    try keychain.save(authorization: authorization)
+    XCTAssertFalse(keychainHelper.useDataProtectionKeychain)
+  }
+
+  func testSaveAuthorizationForItemName() throws {
+    try keychain.save(authorization: authorization, forItemName: alternativeTestKeychainItemName)
+    XCTAssertFalse(keychainHelper.useDataProtectionKeychain)
   }
 
   func testSaveAuthorizationForItemName() throws {
@@ -299,10 +306,10 @@ class AuthStateTests: XCTestCase {
 
   func testSaveAuthorizationThrows() {
     let emptyItemName = ""
-    let expectedError = KeychainStore.Error.noService
+    let expectedError = GTMKeychainError.noService
 
-    XCTAssertThrowsError(try keychainStore.save(
-      authState: authState,
+    XCTAssertThrowsError(try keychain.save(
+      authorization: authorization,
       forItemName: emptyItemName
     )) { error in
       XCTAssertEqual(error as? KeychainStore.Error, expectedError)
