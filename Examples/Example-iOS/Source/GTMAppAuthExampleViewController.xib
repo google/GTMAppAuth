@@ -1,8 +1,10 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="10117" systemVersion="15G31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="20037" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="20020"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="AppAuthExampleViewController">
@@ -16,17 +18,17 @@
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
-            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+            <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Hr5-4v-dy0">
-                    <rect key="frame" x="29" y="140" width="125" height="30"/>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Hr5-4v-dy0">
+                    <rect key="frame" x="29" y="140" width="126" height="30"/>
                     <state key="normal" title="API Call (UserInfo)"/>
                     <connections>
                         <action selector="userinfo:" destination="-1" eventType="touchUpInside" id="xSN-Ga-MvO"/>
                     </connections>
                 </button>
-                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pph-Jd-bi0">
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pph-Jd-bi0">
                     <rect key="frame" x="29" y="169" width="108" height="30"/>
                     <state key="normal" title="Clear AuthState"/>
                     <connections>
@@ -34,8 +36,8 @@
                     </connections>
                 </button>
                 <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="EM1-NJ-NcX">
-                    <rect key="frame" x="8" y="315" width="359" height="344"/>
-                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <rect key="frame" x="8" y="518" width="398" height="344"/>
+                    <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="344" id="MeJ-gQ-w8V"/>
                     </constraints>
@@ -43,51 +45,57 @@
                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                     <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                 </textView>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Log:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QTy-wF-f8p">
-                    <rect key="frame" x="8" y="286" width="33.5" height="20.5"/>
-                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                    <nil key="highlightedColor"/>
-                </label>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="AppAuth" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IKv-7l-Cvd">
-                    <rect key="frame" x="141" y="29" width="93" height="21"/>
+                    <rect key="frame" x="160.5" y="44" width="93" height="21"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="21" id="VsD-Gp-4nq"/>
                         <constraint firstAttribute="width" constant="93" id="ojc-pr-hfj"/>
                     </constraints>
                     <fontDescription key="fontDescription" type="boldSystem" pointSize="19"/>
-                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <nil key="highlightedColor"/>
                 </label>
-                <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="CDb-QT-bEF">
-                    <rect key="frame" x="540" y="283" width="52" height="30"/>
-                    <state key="normal" title="clear"/>
-                    <connections>
-                        <action selector="clearLog:" destination="-1" eventType="touchUpInside" id="huR-jz-aPm"/>
-                    </connections>
-                </button>
-                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="d6O-XG-moU">
-                    <rect key="frame" x="29" y="62" width="174" height="30"/>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="d6O-XG-moU">
+                    <rect key="frame" x="29" y="73" width="66" height="30"/>
                     <state key="normal" title="Authorize"/>
                     <connections>
                         <action selector="authWithAutoCodeExchange:" destination="-1" eventType="touchUpInside" id="PsY-5Z-qCp"/>
                     </connections>
                 </button>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Log:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QTy-wF-f8p">
+                    <rect key="frame" x="8" y="489" width="33" height="20.5"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eG1-Ik-2zq">
+                    <rect key="frame" x="336" y="479" width="58" height="31"/>
+                    <state key="normal" title="Button"/>
+                    <buttonConfiguration key="configuration" style="plain" title="Clear"/>
+                    <connections>
+                        <action selector="clearLog:" destination="-1" eventType="touchUpInside" id="8ok-Cs-0Lj"/>
+                    </connections>
+                </button>
             </subviews>
-            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
-                <constraint firstItem="IKv-7l-Cvd" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="29" id="HBw-vy-6v9"/>
-                <constraint firstAttribute="bottom" secondItem="EM1-NJ-NcX" secondAttribute="bottom" constant="8" id="KWQ-sd-1Jo"/>
-                <constraint firstItem="EM1-NJ-NcX" firstAttribute="top" secondItem="CDb-QT-bEF" secondAttribute="bottom" constant="2" id="L6P-rI-jQg"/>
+                <constraint firstItem="IKv-7l-Cvd" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="44" id="HBw-vy-6v9"/>
+                <constraint firstAttribute="bottom" secondItem="EM1-NJ-NcX" secondAttribute="bottom" constant="34" id="KWQ-sd-1Jo"/>
                 <constraint firstItem="QTy-wF-f8p" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="8" id="Mpc-qp-uqD"/>
-                <constraint firstItem="EM1-NJ-NcX" firstAttribute="top" secondItem="QTy-wF-f8p" secondAttribute="bottom" constant="8" id="bKA-Lh-Pcq"/>
-                <constraint firstAttribute="trailing" secondItem="CDb-QT-bEF" secondAttribute="trailing" constant="8" id="dUb-5S-22S"/>
+                <constraint firstAttribute="trailing" secondItem="eG1-Ik-2zq" secondAttribute="trailing" constant="20" symbolic="YES" id="Vyz-6u-6jN"/>
+                <constraint firstItem="d6O-XG-moU" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="29" id="anN-5j-PEU"/>
+                <constraint firstItem="EM1-NJ-NcX" firstAttribute="top" secondItem="QTy-wF-f8p" secondAttribute="bottom" constant="8.5" id="bKA-Lh-Pcq"/>
                 <constraint firstItem="EM1-NJ-NcX" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="8" id="fot-ru-IwC"/>
+                <constraint firstItem="pph-Jd-bi0" firstAttribute="leading" secondItem="Hr5-4v-dy0" secondAttribute="leading" id="lKr-ra-epb"/>
                 <constraint firstItem="IKv-7l-Cvd" firstAttribute="centerX" secondItem="EM1-NJ-NcX" secondAttribute="centerX" id="n0U-wx-Ip7"/>
+                <constraint firstItem="pph-Jd-bi0" firstAttribute="top" secondItem="Hr5-4v-dy0" secondAttribute="bottom" constant="-1" id="o2U-T0-nnu"/>
+                <constraint firstItem="Hr5-4v-dy0" firstAttribute="top" secondItem="d6O-XG-moU" secondAttribute="bottom" constant="37" id="olL-70-htC"/>
+                <constraint firstItem="Hr5-4v-dy0" firstAttribute="leading" secondItem="d6O-XG-moU" secondAttribute="leading" id="qnD-Md-eKq"/>
+                <constraint firstItem="d6O-XG-moU" firstAttribute="top" secondItem="IKv-7l-Cvd" secondAttribute="bottom" constant="8" symbolic="YES" id="sBd-f0-hXn"/>
                 <constraint firstAttribute="trailing" secondItem="EM1-NJ-NcX" secondAttribute="trailing" constant="8" id="scC-57-iJN"/>
+                <constraint firstItem="EM1-NJ-NcX" firstAttribute="top" secondItem="eG1-Ik-2zq" secondAttribute="bottom" constant="8" symbolic="YES" id="yVk-mG-BmP"/>
             </constraints>
-            <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
-            <point key="canvasLocation" x="284.5" y="151.5"/>
+            <point key="canvasLocation" x="282.60869565217394" y="150.66964285714286"/>
         </view>
     </objects>
 </document>

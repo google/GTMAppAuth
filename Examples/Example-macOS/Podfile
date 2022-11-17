@@ -1,11 +1,11 @@
-  platform :osx, '10.12'
+platform :osx, '10.12'
 
 target 'Example-macOSForPod' do
   use_frameworks!
-  project 'Example-macOSForPod.xcodeproj'
+  project 'Example-macOSForPod'
   
   # Pods for GTMAppAuth development
-  pod 'GTMAppAuth', :path => '../../'
+  pod 'GTMAppAuthSwift', :path => '../../'
 
   # In production, you would use:
   # pod 'GTMAppAuth'
