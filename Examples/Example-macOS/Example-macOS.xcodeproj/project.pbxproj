@@ -359,7 +359,7 @@
 			repositoryURL = "https://github.com/google/gtm-session-fetcher.git";
 			requirement = {
 				kind = versionRange;
-				maximumVersion = 3.0.0;
+				maximumVersion = 4.0.0;
 				minimumVersion = 1.0.0;
 			};
 		};
