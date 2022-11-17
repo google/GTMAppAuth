@@ -152,7 +152,6 @@
 			);
 			mainGroup = 346E91601C29D42800D3620B;
 			packageReferences = (
-				C1B5D3552825968E0068D12B /* XCRemoteSwiftPackageReference "GTMAppAuth" */,
 				C1B5D358282596F00068D12B /* XCRemoteSwiftPackageReference "AppAuth-iOS" */,
 				C1B5D3602825A4900068D12B /* XCRemoteSwiftPackageReference "gtm-session-fetcher" */,
 			);
@@ -358,14 +357,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		C1B5D3552825968E0068D12B /* XCRemoteSwiftPackageReference "GTMAppAuth" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/google/GTMAppAuth.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
-			};
-		};
 		C1B5D358282596F00068D12B /* XCRemoteSwiftPackageReference "AppAuth-iOS" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/openid/AppAuth-iOS.git";
