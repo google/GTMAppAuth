@@ -325,7 +325,6 @@ import Security
 /// A protocol defining the helper API for interacting with the Keychain.
 protocol KeychainHelper {
   var accountName: String { get }
-  var useDataProtectionKeychain: Bool { get set }
   func password(forService service: String) throws -> String
   func passwordData(forService service: String) throws -> Data
   func removePassword(forService service: String) throws
