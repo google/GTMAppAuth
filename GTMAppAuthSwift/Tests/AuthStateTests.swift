@@ -31,7 +31,6 @@ class AuthStateTests: XCTestCase {
   private let testUserID = "fooUser"
   private let testEmail = "foo@foo.com"
   private let alternativeTestKeychainItemName = "alternativeItemName"
-  private let testKeychainItemName = "testName"
   private let keychainHelper = KeychainHelperFake()
   private var keychain: GTMKeychain {
     GTMKeychain(credentialItemName: Constants.testKeychainItemName, keychainHelper: keychainHelper)
@@ -292,16 +291,10 @@ class AuthStateTests: XCTestCase {
 
   func testSaveAuthorization() throws {
     try keychain.save(authorization: authorization)
-    XCTAssertFalse(keychainHelper.useDataProtectionKeychain)
   }
 
   func testSaveAuthorizationForItemName() throws {
     try keychain.save(authorization: authorization, forItemName: alternativeTestKeychainItemName)
-    XCTAssertFalse(keychainHelper.useDataProtectionKeychain)
-  }
-
-  func testSaveAuthorizationForItemName() throws {
-    try keychainStore.save(authState: authState, forItemName: alternativeTestKeychainItemName)
   }
 
   func testSaveAuthorizationThrows() {
@@ -317,13 +310,13 @@ class AuthStateTests: XCTestCase {
   }
 
   func testRemoveAuthorization() throws {
-    try keychainStore.save(authState: authState)
-    try keychainStore.removeAuthState(withItemName: Constants.testKeychainItemName)
+    try keychain.save(authorization: authorization)
+    try keychain.remove(authorizationWithItemName: Constants.testKeychainItemName)
   }
 
   func testRemoveAuthorizationThrows() {
     do {
-      try keychainStore.removeAuthState(withItemName: Constants.testKeychainItemName)
+      keychain.remove(authorizationWithItemName: Constants.testKeychainItemName)
     } catch {
       guard let keychainError = error as? KeychainStore.Error else {
         return XCTFail("`error` should be of type `GTMAppAuthFetcherAuthorization.Error`")
@@ -338,20 +331,20 @@ class AuthStateTests: XCTestCase {
   }
 
   func testReadAuthorization() throws {
-    try keychainStore.save(authState: authState, forItemName: Constants.testKeychainItemName)
-    let savedAuth = try keychainStore.retrieveAuthState(forItemName: Constants.testKeychainItemName)
-    XCTAssertEqual(savedAuth.authState.isAuthorized, authState.authState.isAuthorized)
-    XCTAssertEqual(savedAuth.serviceProvider, authState.serviceProvider)
-    XCTAssertEqual(savedAuth.userID, authState.userID)
-    XCTAssertEqual(savedAuth.userEmail, authState.userEmail)
-    XCTAssertEqual(savedAuth.userEmailIsVerified, authState.userEmailIsVerified)
+    try keychain.save(authorization: authorization, forItemName: Constants.testKeychainItemName)
+    let savedAuth = try keychain.authorization(forItemName: Constants.testKeychainItemName)
+    XCTAssertEqual(savedAuth.authState.isAuthorized, authorization.authState.isAuthorized)
+    XCTAssertEqual(savedAuth.serviceProvider, authorization.serviceProvider)
+    XCTAssertEqual(savedAuth.userID, authorization.userID)
+    XCTAssertEqual(savedAuth.userEmail, authorization.userEmail)
+    XCTAssertEqual(savedAuth.userEmailIsVerified, authorization.userEmailIsVerified)
     XCTAssertFalse(keychainHelper.useDataProtectionKeychain)
   }
 
   func testReadAuthorizationThrowsError() {
     let missingItemName = "missingItemName"
     do {
-      _ = try keychainStore.retrieveAuthState(forItemName: missingItemName)
+      _ = try keychain.authorization(forItemName: Constants.testKeychainItemName)
     } catch {
       guard case
         .passwordNotFound(forItemName: let itemName) = error as? KeychainStore.Error else {
