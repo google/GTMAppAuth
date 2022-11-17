@@ -17,19 +17,116 @@
 import Foundation
 import Security
 
-/// An internal utility for saving and loading data to the keychain.
-final class GTMKeychain {
+/// An utility for providing a concrete implementation for saving and loading data to the keychain.
+@objc public final class GTMKeychain: NSObject, CredentialStore {
   private var keychainHelper: KeychainHelper
+
+  /// An initializer for to create an instance of this keychain wrapper.
+  ///
+  /// - Parameters:
+  ///   - credentialItemName: The `String` name for the credential to store in the keychain.
+  @objc public convenience init(credentialItemName: String) {
+    self.init(credentialItemName: credentialItemName, keychainHelper: KeychainWrapper())
+  }
 
   /// An initializer for testing to create an instance of this keychain wrapper with a given helper.
   ///
-  /// - Parameter keychainHelper: An instance conforming to `KeychainHelper`.
-  init(keychainHelper: KeychainHelper? = nil) {
-    if let helper = keychainHelper {
-      self.keychainHelper = helper
+  /// - Parameters:
+  ///   - credentialItemName: The `String` name for the credential to store in the keychain.
+  ///   - keychainHelper: An instance conforming to `KeychainHelper`.
+  init(credentialItemName: String, keychainHelper: KeychainHelper) {
+    self.credentialItemName = credentialItemName
+    self.keychainHelper = keychainHelper
+    super.init()
+  }
+
+  // MARK: - CredentialStore Conformance
+
+  @objc public var credentialItemName: String
+
+  @objc public func save(authorization: GTMAppAuthFetcherAuthorization) throws {
+    if #available(macOS 10.13, iOS 11, tvOS 11, watchOS 4, *) {
+      let authorizationData = try NSKeyedArchiver.archivedData(
+        withRootObject: authorization,
+        requiringSecureCoding: true
+      )
+      try save(passwordData: authorizationData, forItemName: credentialItemName)
     } else {
-      self.keychainHelper = KeychainWrapper()
+      let authorizationData = NSKeyedArchiver.archivedData(withRootObject: authorization)
+      try save(passwordData: authorizationData, forItemName: credentialItemName)
     }
+  }
+
+  @objc public func save(authorization: GTMAppAuthFetcherAuthorization, forItemName itemName: String) throws {
+    if #available(macOS 10.13, iOS 11, tvOS 11, watchOS 4, *) {
+      let authorizationData = try NSKeyedArchiver.archivedData(
+        withRootObject: authorization,
+        requiringSecureCoding: true
+      )
+      try save(passwordData: authorizationData, forItemName: itemName)
+    } else {
+      let authorizationData = NSKeyedArchiver.archivedData(withRootObject: authorization)
+      try save(passwordData: authorizationData, forItemName: itemName)
+    }
+  }
+
+  @objc public func remove(authorizationWithItemName itemName: String) throws {
+    try removePasswordFromKeychain(keychainItemName: itemName)
+  }
+
+  @objc public func removeAuthorization() throws {
+    try removePasswordFromKeychain(keychainItemName: credentialItemName)
+  }
+
+  @objc public func authorization(forItemName itemName: String) throws -> GTMAppAuthFetcherAuthorization {
+    let passwordData = try keychainHelper.passwordData(forService: itemName)
+
+    if #available(macOS 10.13, iOS 11, tvOS 11, watchOS 4, *) {
+      return try modernUnarchiveAuthorization(withPasswordData: passwordData, itemName: itemName)
+    } else {
+      guard let auth = NSKeyedUnarchiver.unarchiveObject(with: passwordData)
+              as? GTMAppAuthFetcherAuthorization else {
+        throw GTMAppAuthFetcherAuthorization
+          .Error
+          .failedToConvertKeychainDataToAuthorization(forItemName: itemName)
+      }
+      return auth
+    }
+  }
+
+  @objc public func retrieveAuthorization() throws -> GTMAppAuthFetcherAuthorization {
+    let passwordData = try keychainHelper.passwordData(forService: credentialItemName)
+
+    if #available(macOS 10.13, iOS 11, tvOS 11, watchOS 4, *) {
+      return try modernUnarchiveAuthorization(
+        withPasswordData: passwordData,
+        itemName: credentialItemName
+      )
+    } else {
+      guard let auth = NSKeyedUnarchiver.unarchiveObject(with: passwordData)
+              as? GTMAppAuthFetcherAuthorization else {
+        throw GTMAppAuthFetcherAuthorization
+          .Error
+          .failedToConvertKeychainDataToAuthorization(forItemName: credentialItemName)
+      }
+      return auth
+    }
+  }
+
+  @available(macOS 10.13, iOS 11, tvOS 11, watchOS 4, *)
+  private func modernUnarchiveAuthorization(
+    withPasswordData passwordData: Data,
+    itemName: String
+  ) throws -> GTMAppAuthFetcherAuthorization {
+    guard let authorization = try NSKeyedUnarchiver.unarchivedObject(
+            ofClass: GTMAppAuthFetcherAuthorization.self,
+            from: passwordData
+          ) else {
+      throw GTMAppAuthFetcherAuthorization
+        .Error
+        .failedToConvertKeychainDataToAuthorization(forItemName: itemName)
+    }
+    return authorization
   }
 
   /// Saves the password `String` to the keychain with the given identifier.

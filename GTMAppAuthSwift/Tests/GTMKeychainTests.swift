@@ -20,12 +20,11 @@ import XCTest
 class GTMKeychainTests: XCTestCase {
   private let keychainHelper = KeychainHelperFake()
   private lazy var keychain: GTMKeychain = {
-    return GTMKeychain(keychainHelper: keychainHelper)
+    return GTMKeychain(
+      credentialItemName: Constants.testKeychainItemName,
+      keychainHelper: keychainHelper
+    )
   }()
-
-  override func setUp() {
-    super.setUp()
-  }
 
   override func tearDown() {
     super.tearDown()

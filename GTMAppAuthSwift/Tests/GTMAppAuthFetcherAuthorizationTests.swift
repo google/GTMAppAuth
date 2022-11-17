@@ -26,16 +26,15 @@ class GTMAppAuthFetcherAuthorizationTest: XCTestCase {
   private let authzEndpoint = URL(
     string: "https://accounts.google.com/o/oauth2/v2/auth"
   )!
-  private let tokenEndpoint = URL(
-    string: "https://www.googleapis.com/oauth2/v4/token"
-  )!
+  private let tokenEndpoint = URL(string: "https://www.googleapis.com/oauth2/v4/token")!
   private let testServiceProvider = "fooProvider"
   private let testUserID = "fooUser"
   private let testEmail = "foo@foo.com"
+  private let alternativeTestKeychainItemName = "alternativeItemName"
   private let testKeychainItemName = "testName"
   private let keychainHelper = KeychainHelperFake()
   private var keychain: GTMKeychain {
-    GTMKeychain(keychainHelper: keychainHelper)
+    GTMKeychain(credentialItemName: Constants.testKeychainItemName, keychainHelper: keychainHelper)
   }
   private var authorization: GTMAppAuthFetcherAuthorization {
     GTMAppAuthFetcherAuthorization(
@@ -45,11 +44,6 @@ class GTMAppAuthFetcherAuthorizationTest: XCTestCase {
       userEmail: testEmail,
       userEmailIsVerified: "y"
     )
-  }
-
-  override func setUp() {
-    super.setUp()
-    GTMAppAuthFetcherAuthorization.keychain = keychain
   }
 
   override func tearDown() {
@@ -315,10 +309,12 @@ class GTMAppAuthFetcherAuthorizationTest: XCTestCase {
   // MARK: - Keychain Tests
 
   func testSaveAuthorization() throws {
-    try GTMAppAuthFetcherAuthorization.save(
-      authorization: authorization,
-      withItemName: testKeychainItemName
-    )
+    try keychain.save(authorization: authorization)
+    XCTAssertFalse(keychainHelper.useDataProtectionKeychain)
+  }
+
+  func testSaveAuthorizationForItemName() throws {
+    try keychain.save(authorization: authorization, forItemName: alternativeTestKeychainItemName)
     XCTAssertFalse(keychainHelper.useDataProtectionKeychain)
   }
 
@@ -334,9 +330,10 @@ class GTMAppAuthFetcherAuthorizationTest: XCTestCase {
   func testSaveAuthorizationThrows() {
     let emptyItemName = ""
     let expectedError = GTMKeychainError.noService
-    XCTAssertThrowsError(try GTMAppAuthFetcherAuthorization.save(
+
+    XCTAssertThrowsError(try keychain.save(
       authorization: authorization,
-      withItemName: emptyItemName
+      forItemName: emptyItemName
     )) { error in
       XCTAssertEqual(error as? GTMKeychainError, expectedError)
     }
