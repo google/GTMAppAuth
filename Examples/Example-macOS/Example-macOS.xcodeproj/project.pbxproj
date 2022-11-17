@@ -7,9 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C1021F772926B2CC000E52A5 /* GTMAppAuth in Frameworks */ = {isa = PBXBuildFile; productRef = C1021F762926B2CC000E52A5 /* GTMAppAuth */; };
 		C1AF3AE72818785B003BAEFF /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = C1AF3AE52818785B003BAEFF /* Podfile */; };
 		C1AF3AE82818785B003BAEFF /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = C1AF3AE62818785B003BAEFF /* README.md */; };
-		C1B5D3652825B0870068D12B /* GTMAppAuth in Frameworks */ = {isa = PBXBuildFile; productRef = C1B5D3642825B0870068D12B /* GTMAppAuth */; };
 		C1B5D3682825B0A00068D12B /* AppAuth in Frameworks */ = {isa = PBXBuildFile; productRef = C1B5D3672825B0A00068D12B /* AppAuth */; };
 		C1B5D36B2825B0C30068D12B /* GTMSessionFetcherCore in Frameworks */ = {isa = PBXBuildFile; productRef = C1B5D36A2825B0C30068D12B /* GTMSessionFetcherCore */; };
 		F6016E951D2BD988003497D7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = F6016E8B1D2BD988003497D7 /* AppDelegate.m */; };
@@ -43,13 +43,20 @@
 			files = (
 				C1B5D36B2825B0C30068D12B /* GTMSessionFetcherCore in Frameworks */,
 				C1B5D3682825B0A00068D12B /* AppAuth in Frameworks */,
-				C1B5D3652825B0870068D12B /* GTMAppAuth in Frameworks */,
+				C1021F772926B2CC000E52A5 /* GTMAppAuth in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		C1021F752926B2CC000E52A5 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		C1B5D36C2825B0D80068D12B /* Packages */ = {
 			isa = PBXGroup;
 			children = (
@@ -66,6 +73,7 @@
 				C1AF3AE62818785B003BAEFF /* README.md */,
 				F6016E8A1D2BD973003497D7 /* Source */,
 				F6016E711D2AC11F003497D7 /* Products */,
+				C1021F752926B2CC000E52A5 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -110,9 +118,9 @@
 			);
 			name = "Example-macOS";
 			packageProductDependencies = (
-				C1B5D3642825B0870068D12B /* GTMAppAuth */,
 				C1B5D3672825B0A00068D12B /* AppAuth */,
 				C1B5D36A2825B0C30068D12B /* GTMSessionFetcherCore */,
+				C1021F762926B2CC000E52A5 /* GTMAppAuth */,
 			);
 			productName = "Example-Mac";
 			productReference = F6016E701D2AC11F003497D7 /* Example-macOS.app */;
@@ -143,7 +151,6 @@
 			);
 			mainGroup = F6016E671D2AC11E003497D7;
 			packageReferences = (
-				C1B5D3632825B0870068D12B /* XCRemoteSwiftPackageReference "GTMAppAuth" */,
 				C1B5D3662825B0A00068D12B /* XCRemoteSwiftPackageReference "AppAuth-iOS" */,
 				C1B5D3692825B0C30068D12B /* XCRemoteSwiftPackageReference "gtm-session-fetcher" */,
 			);
@@ -339,14 +346,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		C1B5D3632825B0870068D12B /* XCRemoteSwiftPackageReference "GTMAppAuth" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/google/GTMAppAuth.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
-			};
-		};
 		C1B5D3662825B0A00068D12B /* XCRemoteSwiftPackageReference "AppAuth-iOS" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/openid/AppAuth-iOS.git";
@@ -367,9 +366,8 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		C1B5D3642825B0870068D12B /* GTMAppAuth */ = {
+		C1021F762926B2CC000E52A5 /* GTMAppAuth */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = C1B5D3632825B0870068D12B /* XCRemoteSwiftPackageReference "GTMAppAuth" */;
 			productName = GTMAppAuth;
 		};
 		C1B5D3672825B0A00068D12B /* AppAuth */ = {
