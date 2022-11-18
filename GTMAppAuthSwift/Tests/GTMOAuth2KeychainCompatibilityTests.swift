@@ -24,7 +24,10 @@ class GTMOAuth2KeychainCompatibilityTests: XCTestCase {
   }()
   private let keychainHelper = KeychainHelperFake()
   private lazy var keychain: GTMKeychain = {
-    return GTMKeychain(keychainHelper: keychainHelper)
+    return GTMKeychain(
+      credentialItemName: Constants.testKeychainItemName,
+      keychainHelper: keychainHelper
+    )
   }()
   private var expectedAuthorization: GTMAppAuthFetcherAuthorization {
     GTMAppAuthFetcherAuthorization(
@@ -36,16 +39,9 @@ class GTMOAuth2KeychainCompatibilityTests: XCTestCase {
     )
   }
 
-  override func setUp() {
-    super.setUp()
-    GTMOAuth2KeychainCompatibility.keychain = keychain
-  }
-
   override func tearDown() {
     super.tearDown()
     keychainHelper.passwordStore.removeAll()
-    keychainHelper.useDataProtectionKeychain = false
-    GTMOAuth2KeychainCompatibility.keychain = nil
   }
 
   func testPersistenceResponseString() {
@@ -59,18 +55,18 @@ class GTMOAuth2KeychainCompatibilityTests: XCTestCase {
   }
 
   func testSaveOAuth2Authorization() throws {
-    try GTMOAuth2KeychainCompatibility.save(
-      authorization: expectedAuthorization,
-      forKeychainItemName: Constants.testKeychainItemName
+    try keychain.saveWithOAuth2Format(
+      forAuthorization: expectedAuthorization,
+      withItemName: Constants.testKeychainItemName
     )
   }
 
   func testSaveOAuth2AuthorizationThrowsError() {
     let emptyItemName = ""
     XCTAssertThrowsError(
-      try GTMOAuth2KeychainCompatibility.save(
-        authorization: expectedAuthorization,
-        forKeychainItemName: emptyItemName
+      try keychain.saveWithOAuth2Format(
+        forAuthorization: expectedAuthorization,
+        withItemName: emptyItemName
       )
     ) { thrownError in
       XCTAssertEqual(
@@ -81,36 +77,35 @@ class GTMOAuth2KeychainCompatibilityTests: XCTestCase {
   }
 
   func testRemoveOAuth2Authorization() throws {
-    try GTMOAuth2KeychainCompatibility.save(
-      authorization: expectedAuthorization,
-      forKeychainItemName: Constants.testKeychainItemName
+    try keychain.saveWithOAuth2Format(
+      forAuthorization: expectedAuthorization,
+      withItemName: Constants.testKeychainItemName
     )
-    try GTMOAuth2KeychainCompatibility.removeAuthorizationFromKeychain(forItemName: Constants.testKeychainItemName)
+    try keychain.removeOAuth2Authorization(withItemName: Constants.testKeychainItemName)
   }
 
   func testRemoveOAuth2AuthorizationThrowsError() {
-    let unsavedItemName = "unsavedItemName"
     XCTAssertThrowsError(
-      try GTMOAuth2KeychainCompatibility.removeAuthorizationFromKeychain(forItemName: unsavedItemName)
+      try keychain.removeOAuth2Authorization(withItemName: Constants.testKeychainItemName)
     ) { thrownError in
       XCTAssertEqual(
         thrownError as? GTMKeychainError,
-        .failedToDeletePasswordBecauseItemNotFound(itemName: unsavedItemName)
+        .failedToDeletePasswordBecauseItemNotFound(itemName: Constants.testKeychainItemName)
       )
     }
   }
 
   func testAuthorizeFromKeychainForName() throws {
-    try GTMOAuth2KeychainCompatibility.save(
-      authorization: expectedAuthorization,
-      forKeychainItemName: Constants.testKeychainItemName
+    try keychain.saveWithOAuth2Format(
+      forAuthorization: expectedAuthorization,
+      withItemName: Constants.testKeychainItemName
     )
-    let testAuth = try GTMOAuth2KeychainCompatibility.authorizeFromKeychain(
+    let testAuth = try keychain.authorization(
       forItemName: Constants.testKeychainItemName,
       tokenURL: Constants.testTokenURL,
       redirectURI: Constants.testRedirectURI,
       clientID: Constants.testClientID,
-      clientSecret: Constants.testClientSecret
+      clientSecret: Constants.testClientID
     )
 
     XCTAssertEqual(testAuth.authState.scope, expectedAuthorization.authState.scope)
@@ -128,13 +123,13 @@ class GTMOAuth2KeychainCompatibilityTests: XCTestCase {
   }
 
   func testAuthorizeFromKeychainForNameThrowsError() throws {
-    try GTMOAuth2KeychainCompatibility.save(
-      authorization: expectedAuthorization,
-      forKeychainItemName: Constants.testKeychainItemName
+    try keychain.saveWithOAuth2Format(
+      forAuthorization: expectedAuthorization,
+      withItemName: Constants.testKeychainItemName
     )
     let badRedirectURI = ""
     XCTAssertThrowsError(
-      _ = try GTMOAuth2KeychainCompatibility.authorizeFromKeychain(
+      _ = try keychain.authorization(
         forItemName: Constants.testKeychainItemName,
         tokenURL: Constants.testTokenURL,
         redirectURI: badRedirectURI,
@@ -143,7 +138,7 @@ class GTMOAuth2KeychainCompatibilityTests: XCTestCase {
       )
     ) { thrownError in
       XCTAssertEqual(
-        thrownError as? GTMOAuth2KeychainCompatibility.Error,
+        thrownError as? GTMKeychainError,
         .failedToConvertRedirectURItoURL(badRedirectURI)
       )
     }
@@ -153,7 +148,7 @@ class GTMOAuth2KeychainCompatibilityTests: XCTestCase {
     let badURI = ""
 
     XCTAssertThrowsError(
-      try GTMOAuth2KeychainCompatibility.authorizeFromKeychain(
+      try keychain.authorization(
         forPersistenceString: testPersistenceString,
         tokenURL: Constants.testTokenURL,
         redirectURI: badURI,
@@ -162,19 +157,19 @@ class GTMOAuth2KeychainCompatibilityTests: XCTestCase {
       )
     ) { thrownError in
       XCTAssertEqual(
-        thrownError as? GTMOAuth2KeychainCompatibility.Error,
+        thrownError as? GTMKeychainError,
         .failedToConvertRedirectURItoURL(badURI)
       )
     }
   }
 
   func testAuthorizeFromKeychainForPersistenceString() throws {
-    try GTMOAuth2KeychainCompatibility.save(
-      authorization: expectedAuthorization,
-      forKeychainItemName: Constants.testKeychainItemName
+    try keychain.saveWithOAuth2Format(
+      forAuthorization: expectedAuthorization,
+      withItemName: Constants.testKeychainItemName
     )
 
-    let testPersistAuth = try GTMOAuth2KeychainCompatibility.authorizeFromKeychain(
+    let testPersistAuth = try keychain.authorization(
       forPersistenceString: testPersistenceString,
       tokenURL: Constants.testTokenURL,
       redirectURI: Constants.testRedirectURI,
@@ -197,19 +192,19 @@ class GTMOAuth2KeychainCompatibilityTests: XCTestCase {
   }
 
   func testAuthorizeFromKeychainMatchesForNameAndPersistenceString() throws {
-    let expectedPersistAuth = try GTMOAuth2KeychainCompatibility.authorizeFromKeychain(
+    let expectedPersistAuth = try keychain.authorization(
       forPersistenceString: testPersistenceString,
       tokenURL: Constants.testTokenURL,
       redirectURI: Constants.testRedirectURI,
       clientID: Constants.testClientID,
       clientSecret: Constants.testClientSecret
     )
-    try GTMOAuth2KeychainCompatibility.save(
-      authorization: expectedPersistAuth,
-      forKeychainItemName: Constants.testKeychainItemName
+    try keychain.saveWithOAuth2Format(
+      forAuthorization: expectedPersistAuth,
+      withItemName: Constants.testKeychainItemName
     )
 
-    let testPersistAuth = try GTMOAuth2KeychainCompatibility.authorizeFromKeychain(
+    let testPersistAuth = try keychain.authorization(
       forItemName: Constants.testKeychainItemName,
       tokenURL: Constants.testTokenURL,
       redirectURI: Constants.testRedirectURI,
@@ -232,20 +227,20 @@ class GTMOAuth2KeychainCompatibilityTests: XCTestCase {
   }
 
   func testAuthorizeFromKeychainUsingGoogleOAuthProviderInformation() throws {
-    let expectedPersistAuth = try GTMOAuth2KeychainCompatibility.authorizeFromKeychain(
+    let expectedPersistAuth = try keychain.authorization(
       forPersistenceString: testPersistenceString,
       tokenURL: Constants.testTokenURL,
       redirectURI: Constants.testRedirectURI,
       clientID: Constants.testClientID,
       clientSecret: Constants.testClientSecret
     )
-    try GTMOAuth2KeychainCompatibility.save(
-      authorization: expectedPersistAuth,
-      forKeychainItemName: Constants.testKeychainItemName
+    try keychain.saveWithOAuth2Format(
+      forAuthorization: expectedAuthorization,
+      withItemName: Constants.testKeychainItemName
     )
 
-    let testAuthorization = try GTMOAuth2KeychainCompatibility.authForGoogleFromKeychain(
-      forKeychainItemName: Constants.testKeychainItemName,
+    let testAuthorization = try keychain.authForGoogle(
+      forItemName: Constants.testKeychainItemName,
       clientID: Constants.testClientID,
       clientSecret: Constants.testClientSecret
     )

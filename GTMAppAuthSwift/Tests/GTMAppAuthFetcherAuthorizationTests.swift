@@ -27,9 +27,6 @@ class GTMAppAuthFetcherAuthorizationTest: XCTestCase {
     string: "https://accounts.google.com/o/oauth2/v2/auth"
   )!
   private let tokenEndpoint = URL(string: "https://www.googleapis.com/oauth2/v4/token")!
-  private let testServiceProvider = "fooProvider"
-  private let testUserID = "fooUser"
-  private let testEmail = "foo@foo.com"
   private let alternativeTestKeychainItemName = "alternativeItemName"
   private let keychainHelper = KeychainHelperFake()
   private var keychain: GTMKeychain {
@@ -38,9 +35,9 @@ class GTMAppAuthFetcherAuthorizationTest: XCTestCase {
   private var authorization: GTMAppAuthFetcherAuthorization {
     GTMAppAuthFetcherAuthorization(
       authState: OIDAuthState.testInstance(),
-      serviceProvider: testServiceProvider,
-      userID: testUserID,
-      userEmail: testEmail,
+      serviceProvider: Constants.testServiceProvider,
+      userID: Constants.testUserID,
+      userEmail: Constants.testEmail,
       userEmailIsVerified: "y"
     )
   }
@@ -329,12 +326,12 @@ class GTMAppAuthFetcherAuthorizationTest: XCTestCase {
 
   func testRemoveAuthorization() throws {
     try keychain.save(authorization: authorization)
-    try keychain.remove(authorizationWithItemName: Constants.testKeychainItemName)
+    try keychain.removeAuthorization(withItemName: Constants.testKeychainItemName)
   }
 
   func testRemoveAuthorizationThrows() {
     do {
-      keychain.remove(authorizationWithItemName: Constants.testKeychainItemName)
+      try keychain.removeAuthorization(withItemName: Constants.testKeychainItemName)
     } catch {
       guard let keychainError = error as? GTMKeychainError else {
         return XCTFail("`error` should be of type `GTMAppAuthFetcherAuthorization.Error`")
@@ -362,7 +359,7 @@ class GTMAppAuthFetcherAuthorizationTest: XCTestCase {
   func testReadAuthorizationThrowsError() {
     let missingItemName = "missingItemName"
     do {
-      _ = try keychain.authorization(forItemName: Constants.testKeychainItemName)
+      _ = try keychain.authorization(forItemName: missingItemName)
     } catch {
       guard case
         .passwordNotFound(forItemName: let itemName) = error as? GTMKeychainError else {

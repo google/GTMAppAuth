@@ -16,18 +16,21 @@
 
 import Foundation
 import Security
+// Ensure that we import the correct dependency for both SPM and CocoaPods since
+// the latter doesn't define separate Clang modules for subspecs
+#if SWIFT_PACKAGE
+import AppAuthCore
+import GTMSessionFetcherCore
+#else
+import AppAuth
+import GTMSessionFetcher
+#endif
 
 /// An utility for providing a concrete implementation for saving and loading data to the keychain.
-@objc public final class GTMKeychain: NSObject, CredentialStore {
+@objc public final class GTMKeychain: NSObject {
   private var keychainHelper: KeychainHelper
-
-  /// An initializer for to create an instance of this keychain wrapper.
-  ///
-  /// - Parameters:
-  ///   - credentialItemName: The `String` name for the credential to store in the keychain.
-  @objc public convenience init(credentialItemName: String) {
-    self.init(credentialItemName: credentialItemName, keychainHelper: KeychainWrapper())
-  }
+  // Needed for `CredentialStore` and listed here because extensions cannot add stored properties
+  @objc public var credentialItemName: String
 
   /// An initializer for testing to create an instance of this keychain wrapper with a given helper.
   ///
@@ -40,45 +43,85 @@ import Security
     super.init()
   }
 
-  // MARK: - CredentialStore Conformance
+  @available(macOS 10.13, iOS 11, tvOS 11, watchOS 4, *)
+  private func modernUnarchiveAuthorization(
+    withPasswordData passwordData: Data,
+    itemName: String
+  ) throws -> GTMAppAuthFetcherAuthorization {
+    guard let authorization = try NSKeyedUnarchiver.unarchivedObject(
+            ofClass: GTMAppAuthFetcherAuthorization.self,
+            from: passwordData
+          ) else {
+      throw GTMAppAuthFetcherAuthorization
+        .Error
+        .failedToConvertKeychainDataToAuthorization(forItemName: itemName)
+    }
+    return authorization
+  }
+}
 
-  @objc public var credentialItemName: String
+// MARK: - CredentialStore Conformance
+
+extension GTMKeychain: CredentialStore {
+  /// An initializer for to create an instance of this keychain wrapper.
+  ///
+  /// - Parameters:
+  ///   - credentialItemName: The `String` name for the credential to store in the keychain.
+  @objc public convenience init(credentialItemName: String) {
+    self.init(credentialItemName: credentialItemName, keychainHelper: KeychainWrapper())
+  }
 
   @objc public func save(authorization: GTMAppAuthFetcherAuthorization) throws {
-    if #available(macOS 10.13, iOS 11, tvOS 11, watchOS 4, *) {
-      let authorizationData = try NSKeyedArchiver.archivedData(
-        withRootObject: authorization,
-        requiringSecureCoding: true
-      )
-      try save(passwordData: authorizationData, forItemName: credentialItemName)
-    } else {
-      let authorizationData = NSKeyedArchiver.archivedData(withRootObject: authorization)
-      try save(passwordData: authorizationData, forItemName: credentialItemName)
-    }
+    let authorizationData: Data = try authorizationData(fromAuthorization: authorization)
+    try keychainHelper.setPassword(
+      data: authorizationData,
+      forService: credentialItemName,
+      accessibility: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
+    )
   }
 
-  @objc public func save(authorization: GTMAppAuthFetcherAuthorization, forItemName itemName: String) throws {
-    if #available(macOS 10.13, iOS 11, tvOS 11, watchOS 4, *) {
-      let authorizationData = try NSKeyedArchiver.archivedData(
-        withRootObject: authorization,
-        requiringSecureCoding: true
-      )
-      try save(passwordData: authorizationData, forItemName: itemName)
-    } else {
-      let authorizationData = NSKeyedArchiver.archivedData(withRootObject: authorization)
-      try save(passwordData: authorizationData, forItemName: itemName)
-    }
+  @objc public func save(
+    authorization: GTMAppAuthFetcherAuthorization,
+    forItemName itemName: String
+  ) throws {
+    let authorizationData = try authorizationData(fromAuthorization: authorization)
+    try keychainHelper.setPassword(
+      data: authorizationData,
+      forService: itemName,
+      accessibility: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
+    )
   }
 
-  @objc public func remove(authorizationWithItemName itemName: String) throws {
-    try removePasswordFromKeychain(keychainItemName: itemName)
+  private func authorizationData(
+    fromAuthorization authorization: GTMAppAuthFetcherAuthorization
+  ) throws -> Data {
+    let authorizationData: Data
+    if #available(macOS 10.13, iOS 11, tvOS 11, watchOS 4, *) {
+      do {
+        authorizationData = try NSKeyedArchiver.archivedData(
+          withRootObject: authorization,
+          requiringSecureCoding: true
+        )
+      } catch {
+        throw GTMKeychainError.failedToConvertAuthorizationToData
+      }
+    } else {
+      authorizationData = NSKeyedArchiver.archivedData(withRootObject: authorization)
+    }
+    return authorizationData
+  }
+
+  @objc public func removeAuthorization(withItemName itemName: String) throws {
+    try keychainHelper.removePassword(forService: itemName)
   }
 
   @objc public func removeAuthorization() throws {
-    try removePasswordFromKeychain(keychainItemName: credentialItemName)
+    try keychainHelper.removePassword(forService: credentialItemName)
   }
 
-  @objc public func authorization(forItemName itemName: String) throws -> GTMAppAuthFetcherAuthorization {
+  @objc public func authorization(
+    forItemName itemName: String
+  ) throws -> GTMAppAuthFetcherAuthorization {
     let passwordData = try keychainHelper.passwordData(forService: itemName)
 
     if #available(macOS 10.13, iOS 11, tvOS 11, watchOS 4, *) {
@@ -112,322 +155,132 @@ import Security
       return auth
     }
   }
+}
 
-  @available(macOS 10.13, iOS 11, tvOS 11, watchOS 4, *)
-  private func modernUnarchiveAuthorization(
-    withPasswordData passwordData: Data,
-    itemName: String
+// MARK: - OAuth2CompatibilityCredentialStore Conformance
+
+extension GTMKeychain: OAuth2CompatibilityCredentialStore {
+  @objc public func authorization(
+    forItemName itemName: String,
+    tokenURL: URL,
+    redirectURI: String,
+    clientID: String,
+    clientSecret: String?
   ) throws -> GTMAppAuthFetcherAuthorization {
-    guard let authorization = try NSKeyedUnarchiver.unarchivedObject(
-            ofClass: GTMAppAuthFetcherAuthorization.self,
-            from: passwordData
-          ) else {
-      throw GTMAppAuthFetcherAuthorization
-        .Error
-        .failedToConvertKeychainDataToAuthorization(forItemName: itemName)
-    }
+    let password = try keychainHelper.password(forService: itemName)
+    let authorization = try authorization(
+      forPersistenceString: password,
+      tokenURL: tokenURL,
+      redirectURI: redirectURI,
+      clientID: clientID,
+      clientSecret: clientSecret
+    )
     return authorization
   }
 
-  /// Saves the password `String` to the keychain with the given identifier.
-  ///
-  /// - Parameters:
-  ///   - password: The `String` password.
-  ///   - itemName: The name for the Keychain item.
-  /// - Throws: An instance of `KeychainWrapper.Error`.
-  func save(password: String, forItemName itemName: String) throws {
-    try savePasswordToKeychain(password, forItemName: itemName)
+  @objc public func authorization(
+    forPersistenceString persistenceString: String,
+    tokenURL: URL,
+    redirectURI: String,
+    clientID: String,
+    clientSecret: String?
+  ) throws -> GTMAppAuthFetcherAuthorization {
+    let persistenceDictionary = GTMOAuth2KeychainCompatibility.dictionary(
+      fromKeychainPassword: persistenceString
+    )
+    guard let redirectURL = URL(string: redirectURI) else {
+      throw GTMKeychainError.failedToConvertRedirectURItoURL(redirectURI)
+    }
+
+    let authConfig = OIDServiceConfiguration(
+      authorizationEndpoint: tokenURL,
+      tokenEndpoint: tokenURL
+    )
+
+    let authRequest = OIDAuthorizationRequest(
+      configuration: authConfig,
+      clientId: clientID,
+      clientSecret: clientSecret,
+      scope: persistenceDictionary[oauth2ScopeKey],
+      redirectURL: redirectURL,
+      responseType: OIDResponseTypeCode,
+      state: nil,
+      nonce: nil,
+      codeVerifier: nil,
+      codeChallenge: nil,
+      codeChallengeMethod: nil,
+      additionalParameters: nil
+    )
+
+    let authResponse = OIDAuthorizationResponse(
+      request: authRequest,
+      parameters: persistenceDictionary as [String: NSString]
+    )
+    var additionalParameters = persistenceDictionary
+    additionalParameters.removeValue(forKey: oauth2ScopeKey)
+    additionalParameters.removeValue(forKey: oauth2RefreshTokenKey)
+
+    let tokenRequest = OIDTokenRequest(
+      configuration: authConfig,
+      grantType: "token",
+      authorizationCode: nil,
+      redirectURL: redirectURL,
+      clientID: clientID,
+      clientSecret: clientSecret,
+      scope: persistenceDictionary[oauth2ScopeKey],
+      refreshToken: persistenceDictionary[oauth2RefreshTokenKey],
+      codeVerifier: nil,
+      additionalParameters: additionalParameters
+    )
+    let tokenResponse = OIDTokenResponse(
+      request: tokenRequest,
+      parameters: persistenceDictionary as [String: NSString]
+    )
+
+    let authState = OIDAuthState(authorizationResponse: authResponse, tokenResponse: tokenResponse)
+    // We're not serializing the token expiry date, so the first refresh needs to be forced.
+    authState.setNeedsTokenRefresh()
+
+    let authorization = GTMAppAuthFetcherAuthorization(
+      authState: authState,
+      serviceProvider: persistenceDictionary[GTMAppAuthFetcherAuthorization.serviceProviderKey],
+      userID: persistenceDictionary[GTMAppAuthFetcherAuthorization.userIDKey],
+      userEmail: persistenceDictionary[GTMAppAuthFetcherAuthorization.userEmailKey],
+      userEmailIsVerified: persistenceDictionary[GTMAppAuthFetcherAuthorization.userEmailIsVerifiedKey]
+    )
+    return authorization
   }
 
-  /// Saves the password `String` to the keychain with the given identifier.
-  ///
-  /// - Parameters:
-  ///   - password: The `String` password.
-  ///   - itemName: The name for the Keychain item.
-  ///   - usingDataProtectionKeychain: A `Bool` indicating whether to use the data
-  ///     protection keychain on macOS 10.15.
-  /// - Throws: An instance of `KeychainWrapper.Error`.
-  @available(macOS 10.15, *)
-  func save(
-    password: String,
+  @objc public func authForGoogle(
     forItemName itemName: String,
-    usingDataProtectionKeychain: Bool
-  ) throws {
-    try savePasswordToKeychain(
-      password,
+    clientID: String,
+    clientSecret: String
+  ) throws -> GTMAppAuthFetcherAuthorization {
+    return try authorization(
       forItemName: itemName,
-      usingDataProtectionKeychain: usingDataProtectionKeychain
+      tokenURL: GTMOAuth2KeychainCompatibility.googleTokenURL,
+      redirectURI: GTMOAuth2KeychainCompatibility.nativeClientRedirectURI,
+      clientID: clientID,
+      clientSecret: clientSecret
     )
   }
 
-  private func savePasswordToKeychain(
-    _ password: String,
-    forItemName name: String,
-    usingDataProtectionKeychain: Bool = false
+  @objc public func saveWithOAuth2Format(
+    forAuthorization authorization: GTMAppAuthFetcherAuthorization,
+    withItemName itemName: String
   ) throws {
-    keychainHelper.useDataProtectionKeychain = usingDataProtectionKeychain
+    guard let persistence = GTMOAuth2KeychainCompatibility
+      .persistenceResponseStringForAuthorization(authorization) else {
+      throw GTMKeychainError.failedToCreateResponseStringFromAuthorization(authorization)
+    }
     try keychainHelper.setPassword(
-      password,
-      forService: name,
-      accessibility: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
-    )
-  }
-
-  /// Retrieves the `String` password for the given `String` identifier.
-  ///
-  /// - Parameter itemName: A `String` identifier for the Keychain item.
-  /// - Returns: A `String` password if found.
-  /// - Throws: An instance of `KeychainWrapper.Error`.
-  func password(forItemName itemName: String) throws -> String {
-    try passwordFromKeychain(withKeychainItemName: itemName)
-  }
-
-  /// Retrieves the `String` password for the given `String` identifier.
-  ///
-  /// - Parameters:
-  ///   - itemName: A `String` identifier for the Keychain item.
-  ///   - usingDataProtectionKeychain: A `Bool` indicating whether to use the data protection
-  ///     keychain on macOS 10.15.
-  /// - Returns: A `String` password if found.
-  /// - Throws: An instance of `KeychainWrapper.Error`.
-  @available(macOS 10.15, *)
-  func password(forItemName itemName: String, usingDataProtectionKeychain: Bool) throws -> String {
-    try passwordFromKeychain(
-      withKeychainItemName: itemName,
-      usingDataProtectionKeychain: usingDataProtectionKeychain
-    )
-  }
-
-  private func passwordFromKeychain(
-    withKeychainItemName itemName: String,
-    usingDataProtectionKeychain: Bool = false
-  ) throws -> String {
-    keychainHelper.useDataProtectionKeychain = usingDataProtectionKeychain
-    return try keychainHelper.password(forService: itemName)
-  }
-
-  /// Saves the password `Data` to the keychain with the given identifier.
-  ///
-  /// - Parameters:
-  ///   - passwordData: The password `Data`.
-  ///   - itemName: The name for the Keychain item.
-  /// - Throws: An instance of `KeychainWrapper.Error`.
-  func save(passwordData: Data, forItemName itemName: String) throws {
-    try savePasswordDataToKeychain(passwordData, forItemName: itemName)
-  }
-
-  /// Saves the password `Data` to the keychain with the given identifier.
-  ///
-  /// - Parameters:
-  ///   - password: The password `Data`.
-  ///   - itemName: The name for the Keychain item.
-  ///   - usingDataProtectionKeychain: A `Bool` indicating whether to use the data protection
-  ///     keychain on macOS 10.15.
-  /// - Throws: An instance of `KeychainWrapper.Error`.
-  @available(macOS 10.15, *)
-  func save(
-    passwordData: Data,
-    forItemName itemName: String,
-    usingDataProtectionKeychain: Bool
-  ) throws {
-    try savePasswordDataToKeychain(
-      passwordData,
-      forItemName: itemName,
-      usingDataProtectionKeychain: usingDataProtectionKeychain
-    )
-  }
-
-  private func savePasswordDataToKeychain(
-    _ passwordData: Data,
-    forItemName itemName: String,
-    usingDataProtectionKeychain: Bool = false
-  ) throws {
-    keychainHelper.useDataProtectionKeychain = usingDataProtectionKeychain
-    try keychainHelper.setPassword(
-      data: passwordData,
+      persistence,
       forService: itemName,
-      accessibility: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
-    )
+      accessibility: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly)
   }
 
-  /// Retrieves the password `Data` for the given `String` identifier.
-  ///
-  /// - Parameter itemName: A `String` identifier for the Keychain item.
-  /// - Returns: The password `Data` if found.
-  /// - Throws: An instance of `KeychainWrapper.Error`.
-  func passwordData(forItemName itemName: String) throws -> Data {
-    try passwordDataFromKeychain(withItemName: itemName)
-  }
-
-  /// Retrieves the password `Data` for the given `String` identifier.
-  ///
-  /// - Parameters:
-  ///   - itemName: A `String` identifier for the Keychain item.
-  ///   - usingDataProtectionKeychain: A `Bool` indicating whether to use the data protection
-  ///     keychain on macOS 10.15.
-  /// - Returns: The password `Data` if found.
-  /// - Throws: An instance of `KeychainWrapper.Error`.
-  @available(macOS 10.15, *)
-  func passwordData(
-    forItemName itemName: String,
-    usingDataProtectionKeychain: Bool
-  ) throws -> Data {
-    try passwordDataFromKeychain(
-      withItemName: itemName,
-      usingDataProtectionKeychain: usingDataProtectionKeychain
-    )
-  }
-
-  private func passwordDataFromKeychain(
-    withItemName itemName: String,
-    usingDataProtectionKeychain: Bool = false
-  ) throws -> Data {
-    keychainHelper.useDataProtectionKeychain = usingDataProtectionKeychain
-    return try keychainHelper.passwordData(forService: itemName)
-  }
-
-  /// Removes stored password string, such as when the user signs out.
-  ///
-  /// - Parameter itemName: The Keychain name for the item.
-  /// - Throws: An instance of `KeychainWrapper.Error`.
-  func removePasswordFromKeychain(withItemName itemName: String) throws {
-    try removePasswordFromKeychain(keychainItemName: itemName)
-  }
-
-  /// Removes stored password string, such as when the user signs out. Note that if you choose to
-  /// start using the data protection keychain on macOS, any items previously created will not be
-  /// accessible without migration.
-  ///
-  /// - Parameters:
-  ///   - itemName: The Keychain name for the item.
-  ///   - usingDataProtectionKeychain: A Boolean value that indicates whether to use the data
-  ///     protection keychain on macOS 10.15+.
-  /// - Throws: An instance of `KeychainWrapper.Error`.
-  @available(macOS 10.15, *)
-  func removePasswordFromKeychain(forName name: String, usingDataProtectionKeychain: Bool) throws {
-    try removePasswordFromKeychain(
-      keychainItemName: name,
-      usingDataProtectionKeychain: usingDataProtectionKeychain
-    )
-  }
-
-  private func removePasswordFromKeychain(
-    keychainItemName: String,
-    usingDataProtectionKeychain: Bool = false
-  ) throws {
-    keychainHelper.useDataProtectionKeychain = usingDataProtectionKeychain
-    try keychainHelper.removePassword(forService: keychainItemName)
-  }
-}
-
-// MARK: - Keychain helper
-
-/// A protocol defining the helper API for interacting with the Keychain.
-protocol KeychainHelper {
-  var accountName: String { get }
-  func password(forService service: String) throws -> String
-  func passwordData(forService service: String) throws -> Data
-  func removePassword(forService service: String) throws
-  func setPassword(_ password: String, forService service: String, accessibility: CFTypeRef) throws
-  func setPassword(data: Data, forService service: String, accessibility: CFTypeRef?) throws
-}
-
-/// An internally scoped keychain helper.
-private struct KeychainWrapper: KeychainHelper {
-  let accountName = "OAuth"
-  var useDataProtectionKeychain = false
-  @available(macOS 10.15, *)
-  private var isMaxMacOSVersionGreaterThanTenOneFive: Bool {
-    let tenOneFive = OperatingSystemVersion(majorVersion: 10, minorVersion: 15, patchVersion: 0)
-    return ProcessInfo().isOperatingSystemAtLeast(tenOneFive)
-  }
-
-  func keychainQuery(forService service: String) -> [String: Any] {
-    var query: [String: Any] = [
-      kSecClass as String: kSecClassGenericPassword,
-      kSecAttrAccount as String : accountName,
-      kSecAttrService as String: service,
-    ]
-
-    #if os(macOS) && isMaxMacOSVersionGreaterThanTenOneFive
-    if #available(macOS 10.15, *), useDataProtectionKeychain {
-      query[kSecUseDataProtectionKeychain as String] = kCFBooleanTrue
-    }
-    #endif
-
-    return query
-  }
-
-  func password(forService service: String) throws -> String {
-    let passwordData = try passwordData(forService: service)
-    guard let result = String(data: passwordData, encoding: .utf8) else {
-      throw GTMKeychainError.unexpectedPasswordData(forItemName: service)
-    }
-    return result
-  }
-
-  func passwordData(forService service: String) throws -> Data {
-    guard !service.isEmpty else { throw GTMKeychainError.noService }
-
-    var passwordItem: AnyObject?
-    var keychainQuery = keychainQuery(forService: service)
-    keychainQuery[kSecReturnData as String] = true
-    keychainQuery[kSecMatchLimit as String] = kSecMatchLimitOne
-    let status = SecItemCopyMatching(keychainQuery as CFDictionary, &passwordItem)
-
-    guard status != errSecItemNotFound else {
-      throw GTMKeychainError.passwordNotFound(forItemName: service)
-    }
-
-    guard status == errSecSuccess else { throw GTMKeychainError.unhandled(status: status) }
-
-    guard let result = passwordItem as? Data else {
-      throw GTMKeychainError.unexpectedPasswordData(forItemName: service)
-    }
-
-    return result
-  }
-
-  func removePassword(forService service: String) throws {
-    guard !service.isEmpty else { throw GTMKeychainError.noService }
-    let keychainQuery = keychainQuery(forService: service)
-    let status = SecItemDelete(keychainQuery as CFDictionary)
-
-    guard status != errSecItemNotFound else {
-      throw GTMKeychainError.failedToDeletePasswordBecauseItemNotFound(itemName: service)
-    }
-    guard status == noErr else { throw GTMKeychainError.failedToDeletePassword(forItemName: service) }
-  }
-
-  func setPassword(
-    _ password: String,
-    forService service: String,
-    accessibility: CFTypeRef
-  ) throws {
-    let passwordData = Data(password.utf8)
-    try setPassword(data: passwordData, forService: service, accessibility: accessibility)
-  }
-
-  func setPassword(data: Data, forService service: String, accessibility: CFTypeRef?) throws {
-    guard !service.isEmpty else { throw GTMKeychainError.noService }
-    do {
-      try removePassword(forService: service)
-    } catch GTMKeychainError.failedToDeletePasswordBecauseItemNotFound {
-      // Don't throw; password doesn't exist since the password is being saved for the first time
-    } catch {
-      // throw here since this is some other error
-      throw error
-    }
-    guard !data.isEmpty else { return }
-    var keychainQuery = keychainQuery(forService: service)
-    keychainQuery[kSecValueData as String] = data
-
-    if let accessibility = accessibility {
-      keychainQuery[kSecAttrAccessible as String] = accessibility
-    }
-
-    let status = SecItemAdd(keychainQuery as CFDictionary, nil)
-    guard status == noErr else { throw GTMKeychainError.failedToSetPassword(forItemName: service) }
+  @objc public func removeOAuth2Authorization(withItemName itemName: String) throws {
+    try keychainHelper.removePassword(forService: itemName)
   }
 }
 
@@ -440,6 +293,9 @@ public enum GTMKeychainError: Error, Equatable, CustomNSError {
   /// Error thrown when there is no name for the item in the keychain.
   case noService
   case unexpectedPasswordData(forItemName: String)
+  case failedToCreateResponseStringFromAuthorization(GTMAppAuthFetcherAuthorization)
+  case failedToConvertRedirectURItoURL(String)
+  case failedToConvertAuthorizationToData
   case failedToDeletePassword(forItemName: String)
   case failedToDeletePasswordBecauseItemNotFound(itemName: String)
   case failedToSetPassword(forItemName: String)
@@ -458,6 +314,12 @@ public enum GTMKeychainError: Error, Equatable, CustomNSError {
       return [:]
     case .unexpectedPasswordData(let itemName):
       return ["itemName": itemName]
+    case .failedToCreateResponseStringFromAuthorization(let authorization):
+      return ["authorization": authorization]
+    case .failedToConvertRedirectURItoURL(let redirectURI):
+      return ["redirectURI": redirectURI]
+    case .failedToConvertAuthorizationToData:
+      return [:]
     case .failedToDeletePassword(let itemName):
       return ["itemName": itemName]
     case .failedToDeletePasswordBecauseItemNotFound(itemName: let itemName):

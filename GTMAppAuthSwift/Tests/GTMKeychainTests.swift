@@ -15,6 +15,7 @@
  */
 
 import XCTest
+import AppAuthCore
 @testable import GTMAppAuthSwift
 
 class GTMKeychainTests: XCTestCase {
@@ -25,57 +26,106 @@ class GTMKeychainTests: XCTestCase {
       keychainHelper: keychainHelper
     )
   }()
+  private var authorization: GTMAppAuthFetcherAuthorization {
+    GTMAppAuthFetcherAuthorization(
+      authState: OIDAuthState.testInstance(),
+      serviceProvider: Constants.testServiceProvider,
+      userID: Constants.testUserID,
+      userEmail: Constants.testEmail,
+      userEmailIsVerified: "y"
+    )
+  }
 
   override func tearDown() {
     super.tearDown()
     keychainHelper.passwordStore.removeAll()
   }
 
-  func testStringPassword() throws {
-    try keychain.save(password: Constants.testPassword, forItemName: Constants.testKeychainItemName)
-    let expectedPassword = try keychain.password(forItemName: Constants.testKeychainItemName)
-    XCTAssertEqual(expectedPassword, Constants.testPassword)
-    try keychain.removePasswordFromKeychain(withItemName: Constants.testKeychainItemName)
+  func testSaveAndReadAuthorization() throws {
+    try keychain.save(authorization: authorization)
+    let expectedAuthorization = try keychain.authorization(
+      forItemName: Constants.testKeychainItemName
+    )
+    XCTAssertEqual(
+      expectedAuthorization.authState.isAuthorized,
+      authorization.authState.isAuthorized
+    )
+    XCTAssertEqual(expectedAuthorization.serviceProvider, authorization.serviceProvider)
+    XCTAssertEqual(expectedAuthorization.userID, authorization.userID)
+    XCTAssertEqual(expectedAuthorization.userEmail, authorization.userEmail)
+    XCTAssertEqual(expectedAuthorization.userEmailIsVerified, authorization.userEmailIsVerified)
   }
 
-  func testDataPassword() throws {
-    guard let passwordData = Constants.testPassword.data(using: .utf8) else {
-      return XCTFail("Could not convert `testPassword` into `Data`.")
-    }
-    try keychain.save(passwordData: passwordData, forItemName: Constants.testKeychainItemName)
-    let expectedPasswordData = try keychain.passwordData(forItemName: Constants.testKeychainItemName)
-    XCTAssertEqual(expectedPasswordData, Constants.testPassword.data(using: .utf8)!)
-    try keychain.removePasswordFromKeychain(withItemName: Constants.testKeychainItemName)
+  func testReadAuthorizationWithItemNameGivenToKeychain() throws {
+    try keychain.save(authorization: authorization)
+    let expectedAuthorization = try keychain.retrieveAuthorization()
+    XCTAssertEqual(
+      expectedAuthorization.authState.isAuthorized,
+      authorization.authState.isAuthorized
+    )
+    XCTAssertEqual(expectedAuthorization.serviceProvider, authorization.serviceProvider)
+    XCTAssertEqual(expectedAuthorization.userID, authorization.userID)
+    XCTAssertEqual(expectedAuthorization.userEmail, authorization.userEmail)
+    XCTAssertEqual(expectedAuthorization.userEmailIsVerified, authorization.userEmailIsVerified)
+  }
+
+  func testReadAuthorizationForItemName() throws {
+    let anotherItemName = "anotherItemName"
+    try keychain.save(authorization: authorization, forItemName: anotherItemName)
+    let expectedAuthorization = try keychain.authorization(forItemName: anotherItemName)
+
+    XCTAssertEqual(
+      expectedAuthorization.authState.isAuthorized,
+      authorization.authState.isAuthorized
+    )
+    XCTAssertEqual(expectedAuthorization.serviceProvider, authorization.serviceProvider)
+    XCTAssertEqual(expectedAuthorization.userID, authorization.userID)
+    XCTAssertEqual(expectedAuthorization.userEmail, authorization.userEmail)
+    XCTAssertEqual(expectedAuthorization.userEmailIsVerified, authorization.userEmailIsVerified)
+  }
+
+  func testSaveAuthorizationForItemName() throws {
+    let anotherItemName = "anotherItemName"
+    try keychain.save(authorization: authorization, forItemName: anotherItemName)
+    let expectedAuthorization = try keychain.authorization(
+      forItemName: anotherItemName
+    )
+    XCTAssertEqual(
+      expectedAuthorization.authState.isAuthorized,
+      authorization.authState.isAuthorized
+    )
+    XCTAssertEqual(expectedAuthorization.serviceProvider, authorization.serviceProvider)
+    XCTAssertEqual(expectedAuthorization.userID, authorization.userID)
+    XCTAssertEqual(expectedAuthorization.userEmail, authorization.userEmail)
+    XCTAssertEqual(expectedAuthorization.userEmailIsVerified, authorization.userEmailIsVerified)
   }
 
   func testSetPasswordNoService() {
     XCTAssertThrowsError(
-      try keychain.save(password: Constants.testPassword, forItemName: "")
+      try keychain.save(authorization: authorization, forItemName: "")
     ) { thrownError in
       XCTAssertEqual(thrownError as? GTMKeychainError, .noService)
     }
   }
 
   func testReadPasswordNoService() throws {
-    try keychain.save(password: Constants.testPassword, forItemName: Constants.testKeychainItemName)
+    try keychain.save(authorization: authorization)
 
-    XCTAssertThrowsError(try keychain.password(forItemName: "")) { thrownError in
+    XCTAssertThrowsError(try keychain.authorization(forItemName: "")) { thrownError in
       XCTAssertEqual(thrownError as? GTMKeychainError, .noService)
     }
   }
 
   func testRemovePasswordNoService() throws {
-    try keychain.save(password: Constants.testPassword, forItemName: Constants.testKeychainItemName)
+    try keychain.save(authorization: authorization)
 
-    XCTAssertThrowsError(try keychain.removePasswordFromKeychain(withItemName: "")) { thrownError in
+    XCTAssertThrowsError(try keychain.removeAuthorization(withItemName: "")) { thrownError in
       XCTAssertEqual(thrownError as? GTMKeychainError, .noService)
     }
   }
 
   func testFailedToDeletePasswordError() {
-    XCTAssertThrowsError(try keychain.removePasswordFromKeychain(
-      withItemName: Constants.testKeychainItemName
-    )) { thrownError in
+    XCTAssertThrowsError(try keychain.removeAuthorization()) { thrownError in
       XCTAssertEqual(
         thrownError as? GTMKeychainError,
         .failedToDeletePasswordBecauseItemNotFound(itemName: Constants.testKeychainItemName)
@@ -85,7 +135,7 @@ class GTMKeychainTests: XCTestCase {
 
   func testPasswordNotFoundError() {
     XCTAssertThrowsError(
-      try keychain.password(forItemName: Constants.testKeychainItemName)
+      try keychain.authorization(forItemName: Constants.testKeychainItemName)
     ) { thrownError in
       XCTAssertEqual(
         thrownError as? GTMKeychainError,
