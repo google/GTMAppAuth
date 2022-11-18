@@ -54,13 +54,13 @@ struct KeychainWrapper: KeychainHelper {
   func password(forService service: String) throws -> String {
     let passwordData = try passwordData(forService: service)
     guard let result = String(data: passwordData, encoding: .utf8) else {
-      throw KeychainStore.Error.unexpectedPasswordData(forItemName: service)
+      throw GTMKeychainError.unexpectedPasswordData(forItemName: service)
     }
     return result
   }
 
   func passwordData(forService service: String) throws -> Data {
-    guard !service.isEmpty else { throw KeychainStore.Error.noService }
+    guard !service.isEmpty else { throw GTMKeychainError.noService }
 
     var passwordItem: AnyObject?
     var keychainQuery = keychainQuery(forService: service)
@@ -69,29 +69,27 @@ struct KeychainWrapper: KeychainHelper {
     let status = SecItemCopyMatching(keychainQuery as CFDictionary, &passwordItem)
 
     guard status != errSecItemNotFound else {
-      throw KeychainStore.Error.passwordNotFound(forItemName: service)
+      throw GTMKeychainError.passwordNotFound(forItemName: service)
     }
 
-    guard status == errSecSuccess else { throw KeychainStore.Error.unhandled(status: status) }
+    guard status == errSecSuccess else { throw GTMKeychainError.unhandled(status: status) }
 
     guard let result = passwordItem as? Data else {
-      throw KeychainStore.Error.unexpectedPasswordData(forItemName: service)
+      throw GTMKeychainError.unexpectedPasswordData(forItemName: service)
     }
 
     return result
   }
 
   func removePassword(forService service: String) throws {
-    guard !service.isEmpty else { throw KeychainStore.Error.noService }
+    guard !service.isEmpty else { throw GTMKeychainError.noService }
     let keychainQuery = keychainQuery(forService: service)
     let status = SecItemDelete(keychainQuery as CFDictionary)
 
     guard status != errSecItemNotFound else {
-      throw KeychainStore.Error.failedToDeletePasswordBecauseItemNotFound(itemName: service)
+      throw GTMKeychainError.failedToDeletePasswordBecauseItemNotFound(itemName: service)
     }
-    guard status == noErr else {
-      throw KeychainStore.Error.failedToDeletePassword(forItemName: service)
-    }
+    guard status == noErr else { throw GTMKeychainError.failedToDeletePassword(forItemName: service) }
   }
 
   func setPassword(
@@ -104,10 +102,10 @@ struct KeychainWrapper: KeychainHelper {
   }
 
   func setPassword(data: Data, forService service: String, accessibility: CFTypeRef?) throws {
-    guard !service.isEmpty else { throw KeychainStore.Error.noService }
+    guard !service.isEmpty else { throw GTMKeychainError.noService }
     do {
       try removePassword(forService: service)
-    } catch KeychainStore.Error.failedToDeletePasswordBecauseItemNotFound {
+    } catch GTMKeychainError.failedToDeletePasswordBecauseItemNotFound {
       // Don't throw; password doesn't exist since the password is being saved for the first time
     } catch {
       // throw here since this is some other error
@@ -122,8 +120,6 @@ struct KeychainWrapper: KeychainHelper {
     }
 
     let status = SecItemAdd(keychainQuery as CFDictionary, nil)
-    guard status == noErr else {
-      throw KeychainStore.Error.failedToSetPassword(forItemName: service)
-    }
+    guard status == noErr else { throw GTMKeychainError.failedToSetPassword(forItemName: service) }
   }
 }
