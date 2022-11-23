@@ -26,8 +26,9 @@ import AppAuth
 import GTMSessionFetcher
 #endif
 
-/// An utility for providing a concrete implementation for saving and loading data to the keychain.
-@objc public final class GTMKeychain: NSObject {
+/// A helper providing a concrete implementation for saving and loading auth data to the keychain.
+@objc(GTMKeychainStore)
+public final class KeychainStore: NSObject {
   private var keychainHelper: KeychainHelper
   // Needed for `CredentialStore` and listed here because extensions cannot add stored properties
   @objc public var credentialItemName: String
@@ -47,12 +48,12 @@ import GTMSessionFetcher
   private func modernUnarchiveAuthorization(
     withPasswordData passwordData: Data,
     itemName: String
-  ) throws -> GTMAppAuthFetcherAuthorization {
+  ) throws -> AuthState {
     guard let authorization = try NSKeyedUnarchiver.unarchivedObject(
-            ofClass: GTMAppAuthFetcherAuthorization.self,
+            ofClass: AuthState.self,
             from: passwordData
           ) else {
-      throw GTMAppAuthFetcherAuthorization
+      throw AuthState
         .Error
         .failedToConvertKeychainDataToAuthorization(forItemName: itemName)
     }
@@ -60,9 +61,9 @@ import GTMSessionFetcher
   }
 }
 
-// MARK: - CredentialStore Conformance
+// MARK: - AuthStateStore Conformance
 
-extension GTMKeychain: CredentialStore {
+extension KeychainStore: AuthStateStore {
   /// An initializer for to create an instance of this keychain wrapper.
   ///
   /// - Parameters:
@@ -71,8 +72,8 @@ extension GTMKeychain: CredentialStore {
     self.init(credentialItemName: credentialItemName, keychainHelper: KeychainWrapper())
   }
 
-  @objc public func save(authorization: GTMAppAuthFetcherAuthorization) throws {
-    let authorizationData: Data = try authorizationData(fromAuthorization: authorization)
+  @objc public func save(authState: AuthState) throws {
+    let authorizationData: Data = try authorizationData(fromAuthorization: authState)
     try keychainHelper.setPassword(
       data: authorizationData,
       forService: credentialItemName,
@@ -80,11 +81,8 @@ extension GTMKeychain: CredentialStore {
     )
   }
 
-  @objc public func save(
-    authorization: GTMAppAuthFetcherAuthorization,
-    forItemName itemName: String
-  ) throws {
-    let authorizationData = try authorizationData(fromAuthorization: authorization)
+  @objc public func save(authState: AuthState, forItemName itemName: String) throws {
+    let authorizationData = try authorizationData(fromAuthorization: authState)
     try keychainHelper.setPassword(
       data: authorizationData,
       forService: itemName,
@@ -93,43 +91,40 @@ extension GTMKeychain: CredentialStore {
   }
 
   private func authorizationData(
-    fromAuthorization authorization: GTMAppAuthFetcherAuthorization
+    fromAuthorization authState: AuthState
   ) throws -> Data {
     let authorizationData: Data
     if #available(macOS 10.13, iOS 11, tvOS 11, watchOS 4, *) {
       do {
         authorizationData = try NSKeyedArchiver.archivedData(
-          withRootObject: authorization,
+          withRootObject: authState,
           requiringSecureCoding: true
         )
       } catch {
-        throw GTMKeychainError.failedToConvertAuthorizationToData
+        throw KeychainStore.Error.failedToConvertAuthorizationToData
       }
     } else {
-      authorizationData = NSKeyedArchiver.archivedData(withRootObject: authorization)
+      authorizationData = NSKeyedArchiver.archivedData(withRootObject: authState)
     }
     return authorizationData
   }
 
-  @objc public func removeAuthorization(withItemName itemName: String) throws {
+  @objc public func removeAuthState(withItemName itemName: String) throws {
     try keychainHelper.removePassword(forService: itemName)
   }
 
-  @objc public func removeAuthorization() throws {
+  @objc public func removeAuthState() throws {
     try keychainHelper.removePassword(forService: credentialItemName)
   }
 
-  @objc public func authorization(
-    forItemName itemName: String
-  ) throws -> GTMAppAuthFetcherAuthorization {
+  @objc public func authState(forItemName itemName: String) throws -> AuthState {
     let passwordData = try keychainHelper.passwordData(forService: itemName)
 
     if #available(macOS 10.13, iOS 11, tvOS 11, watchOS 4, *) {
       return try modernUnarchiveAuthorization(withPasswordData: passwordData, itemName: itemName)
     } else {
-      guard let auth = NSKeyedUnarchiver.unarchiveObject(with: passwordData)
-              as? GTMAppAuthFetcherAuthorization else {
-        throw GTMAppAuthFetcherAuthorization
+      guard let auth = NSKeyedUnarchiver.unarchiveObject(with: passwordData) as? AuthState else {
+        throw AuthState
           .Error
           .failedToConvertKeychainDataToAuthorization(forItemName: itemName)
       }
@@ -137,7 +132,7 @@ extension GTMKeychain: CredentialStore {
     }
   }
 
-  @objc public func retrieveAuthorization() throws -> GTMAppAuthFetcherAuthorization {
+  @objc public func retrieveAuthState() throws -> AuthState {
     let passwordData = try keychainHelper.passwordData(forService: credentialItemName)
 
     if #available(macOS 10.13, iOS 11, tvOS 11, watchOS 4, *) {
@@ -146,9 +141,8 @@ extension GTMKeychain: CredentialStore {
         itemName: credentialItemName
       )
     } else {
-      guard let auth = NSKeyedUnarchiver.unarchiveObject(with: passwordData)
-              as? GTMAppAuthFetcherAuthorization else {
-        throw GTMAppAuthFetcherAuthorization
+      guard let auth = NSKeyedUnarchiver.unarchiveObject(with: passwordData) as? AuthState else {
+        throw AuthState
           .Error
           .failedToConvertKeychainDataToAuthorization(forItemName: credentialItemName)
       }
@@ -159,16 +153,16 @@ extension GTMKeychain: CredentialStore {
 
 // MARK: - OAuth2CompatibilityCredentialStore Conformance
 
-extension GTMKeychain: OAuth2CompatibilityCredentialStore {
-  @objc public func authorization(
+extension KeychainStore: OAuth2AuthStateStore {
+  @objc public func authState(
     forItemName itemName: String,
     tokenURL: URL,
     redirectURI: String,
     clientID: String,
     clientSecret: String?
-  ) throws -> GTMAppAuthFetcherAuthorization {
+  ) throws -> AuthState {
     let password = try keychainHelper.password(forService: itemName)
-    let authorization = try authorization(
+    let authorization = try authState(
       forPersistenceString: password,
       tokenURL: tokenURL,
       redirectURI: redirectURI,
@@ -178,18 +172,18 @@ extension GTMKeychain: OAuth2CompatibilityCredentialStore {
     return authorization
   }
 
-  @objc public func authorization(
+  @objc public func authState(
     forPersistenceString persistenceString: String,
     tokenURL: URL,
     redirectURI: String,
     clientID: String,
     clientSecret: String?
-  ) throws -> GTMAppAuthFetcherAuthorization {
-    let persistenceDictionary = GTMOAuth2KeychainCompatibility.dictionary(
+  ) throws -> AuthState {
+    let persistenceDictionary = OAuth2AuthStateCompatibility.dictionary(
       fromKeychainPassword: persistenceString
     )
     guard let redirectURL = URL(string: redirectURI) else {
-      throw GTMKeychainError.failedToConvertRedirectURItoURL(redirectURI)
+      throw KeychainStore.Error.failedToConvertRedirectURItoURL(redirectURI)
     }
 
     let authConfig = OIDServiceConfiguration(
@@ -241,12 +235,12 @@ extension GTMKeychain: OAuth2CompatibilityCredentialStore {
     // We're not serializing the token expiry date, so the first refresh needs to be forced.
     authState.setNeedsTokenRefresh()
 
-    let authorization = GTMAppAuthFetcherAuthorization(
+    let authorization = AuthState(
       authState: authState,
-      serviceProvider: persistenceDictionary[GTMAppAuthFetcherAuthorization.serviceProviderKey],
-      userID: persistenceDictionary[GTMAppAuthFetcherAuthorization.userIDKey],
-      userEmail: persistenceDictionary[GTMAppAuthFetcherAuthorization.userEmailKey],
-      userEmailIsVerified: persistenceDictionary[GTMAppAuthFetcherAuthorization.userEmailIsVerifiedKey]
+      serviceProvider: persistenceDictionary[AuthState.serviceProviderKey],
+      userID: persistenceDictionary[AuthState.userIDKey],
+      userEmail: persistenceDictionary[AuthState.userEmailKey],
+      userEmailIsVerified: persistenceDictionary[AuthState.userEmailIsVerifiedKey]
     )
     return authorization
   }
@@ -255,23 +249,23 @@ extension GTMKeychain: OAuth2CompatibilityCredentialStore {
     forItemName itemName: String,
     clientID: String,
     clientSecret: String
-  ) throws -> GTMAppAuthFetcherAuthorization {
-    return try authorization(
+  ) throws -> AuthState {
+    return try authState(
       forItemName: itemName,
-      tokenURL: GTMOAuth2KeychainCompatibility.googleTokenURL,
-      redirectURI: GTMOAuth2KeychainCompatibility.nativeClientRedirectURI,
+      tokenURL: OAuth2AuthStateCompatibility.googleTokenURL,
+      redirectURI: OAuth2AuthStateCompatibility.nativeClientRedirectURI,
       clientID: clientID,
       clientSecret: clientSecret
     )
   }
 
   @objc public func saveWithOAuth2Format(
-    forAuthorization authorization: GTMAppAuthFetcherAuthorization,
+    forAuthorization authorization: AuthState,
     withItemName itemName: String
   ) throws {
-    guard let persistence = GTMOAuth2KeychainCompatibility
-      .persistenceResponseStringForAuthorization(authorization) else {
-      throw GTMKeychainError.failedToCreateResponseStringFromAuthorization(authorization)
+    guard let persistence = OAuth2AuthStateCompatibility
+      .persistenceResponseString(forAuthState: authorization) else {
+      throw KeychainStore.Error.failedToCreateResponseStringFromAuthorization(authorization)
     }
     try keychainHelper.setPassword(
       persistence,
@@ -279,53 +273,55 @@ extension GTMKeychain: OAuth2CompatibilityCredentialStore {
       accessibility: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly)
   }
 
-  @objc public func removeOAuth2Authorization(withItemName itemName: String) throws {
+  @objc public func removeOAuth2AuthState(withItemName itemName: String) throws {
     try keychainHelper.removePassword(forService: itemName)
   }
 }
 
 // MARK: - Keychain Errors
 
-/// Errors that may arise while saving, reading, and removing passwords from the Keychain.
-public enum GTMKeychainError: Error, Equatable, CustomNSError {
-  case unhandled(status: OSStatus)
-  case passwordNotFound(forItemName: String)
-  /// Error thrown when there is no name for the item in the keychain.
-  case noService
-  case unexpectedPasswordData(forItemName: String)
-  case failedToCreateResponseStringFromAuthorization(GTMAppAuthFetcherAuthorization)
-  case failedToConvertRedirectURItoURL(String)
-  case failedToConvertAuthorizationToData
-  case failedToDeletePassword(forItemName: String)
-  case failedToDeletePasswordBecauseItemNotFound(itemName: String)
-  case failedToSetPassword(forItemName: String)
+public extension KeychainStore {
+  /// Errors that may arise while saving, reading, and removing passwords from the Keychain.
+  enum Error: Swift.Error, Equatable, CustomNSError {
+    case unhandled(status: OSStatus)
+    case passwordNotFound(forItemName: String)
+    /// Error thrown when there is no name for the item in the keychain.
+    case noService
+    case unexpectedPasswordData(forItemName: String)
+    case failedToCreateResponseStringFromAuthorization(AuthState)
+    case failedToConvertRedirectURItoURL(String)
+    case failedToConvertAuthorizationToData
+    case failedToDeletePassword(forItemName: String)
+    case failedToDeletePasswordBecauseItemNotFound(itemName: String)
+    case failedToSetPassword(forItemName: String)
 
-  public static var errorDomain: String {
-    "GTMAppAuthKeychainErrorDomain"
-  }
+    public static var errorDomain: String {
+      "GTMAppAuthKeychainErrorDomain"
+    }
 
-  public var errorUserInfo: [String : Any] {
-    switch self {
-    case .unhandled(status: let status):
-      return ["status": status]
-    case .passwordNotFound(let itemName):
-      return ["itemName": itemName]
-    case .noService:
-      return [:]
-    case .unexpectedPasswordData(let itemName):
-      return ["itemName": itemName]
-    case .failedToCreateResponseStringFromAuthorization(let authorization):
-      return ["authorization": authorization]
-    case .failedToConvertRedirectURItoURL(let redirectURI):
-      return ["redirectURI": redirectURI]
-    case .failedToConvertAuthorizationToData:
-      return [:]
-    case .failedToDeletePassword(let itemName):
-      return ["itemName": itemName]
-    case .failedToDeletePasswordBecauseItemNotFound(itemName: let itemName):
-      return ["itemName": itemName]
-    case .failedToSetPassword(forItemName: let itemName):
-      return ["itemName": itemName]
+    public var errorUserInfo: [String : Any] {
+      switch self {
+      case .unhandled(status: let status):
+        return ["status": status]
+      case .passwordNotFound(let itemName):
+        return ["itemName": itemName]
+      case .noService:
+        return [:]
+      case .unexpectedPasswordData(let itemName):
+        return ["itemName": itemName]
+      case .failedToCreateResponseStringFromAuthorization(let authorization):
+        return ["authorization": authorization]
+      case .failedToConvertRedirectURItoURL(let redirectURI):
+        return ["redirectURI": redirectURI]
+      case .failedToConvertAuthorizationToData:
+        return [:]
+      case .failedToDeletePassword(let itemName):
+        return ["itemName": itemName]
+      case .failedToDeletePasswordBecauseItemNotFound(itemName: let itemName):
+        return ["itemName": itemName]
+      case .failedToSetPassword(forItemName: let itemName):
+        return ["itemName": itemName]
+      }
     }
   }
 }

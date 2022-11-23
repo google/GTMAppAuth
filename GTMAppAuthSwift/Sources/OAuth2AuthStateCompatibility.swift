@@ -42,37 +42,37 @@ let oauth2RefreshScopeKey = "refreshScope"
 //
 let oobString = "urn:ietf:wg:oauth:2.0:oob"
 
-/// Class to support serialization and deserialization of `GTMAppAuthFetcherAuthorization` in the
-/// format used by GTMOAuth2.
+/// Class to support serialization and deserialization of `AuthState` in the format used by
+/// GTMOAuth2.
 ///
 /// The methods of this class are capable of serializing and deserializing auth objects in a way
 /// compatible with the serialization in `GTMOAuth2ViewControllerTouch` and
 /// `GTMOAuth2WindowController` in GTMOAuth2.
-@objc public final class GTMOAuth2KeychainCompatibility: NSObject {
+@objc(GTMOAuth2KeychainCompatibility)
+public final class OAuth2AuthStateCompatibility: NSObject {
   // MARK: - OAuth2 Utilities
 
-  /// Encodes the given `GTMAppAuthFetcherAuthorization` in a GTMOAuth2 compatible persistence
-  /// string using URL param key/value encoding.
+  /// Encodes the given `AuthState` in a GTMOAuth2 compatible persistence string using URL param
+  /// key/value encoding.
   ///
   /// - Parameters:
-  ///   - authorization: The `GTMAppAuthFetcherAuthorization` to serialize in GTMOAuth2 format.
+  ///   - authState: The `AuthState` to serialize in GTMOAuth2 format.
   /// - Returns: A `String?` representing the GTMOAuth2 persistence representation of the
   ///   authorization object.
-  @objc public static func persistenceResponseStringForAuthorization(
-    _ authorization: GTMAppAuthFetcherAuthorization
-  ) -> String? {
+  @objc(persistenceResponseStringForAuthState:)
+  public static func persistenceResponseString(forAuthState authState: AuthState) -> String? {
     // TODO: (mdmathias) Write a test for this method that ensures nil is returned.
-    let refreshToken = authorization.authState.refreshToken
-    let accessToken = authorization.authState.lastTokenResponse?.accessToken
+    let refreshToken = authState.authState.refreshToken
+    let accessToken = authState.authState.lastTokenResponse?.accessToken
 
     let dict = [
       oauth2RefreshTokenKey: refreshToken,
       oauth2AccessTokenKey: accessToken,
-      GTMAppAuthFetcherAuthorization.serviceProviderKey: authorization.serviceProvider,
-      GTMAppAuthFetcherAuthorization.userIDKey: authorization.userID,
-      GTMAppAuthFetcherAuthorization.userEmailKey: authorization.userEmail,
-      GTMAppAuthFetcherAuthorization.userEmailIsVerifiedKey: authorization._userEmailIsVerified,
-      oauth2ScopeKey: authorization.authState.scope
+      AuthState.serviceProviderKey: authState.serviceProvider,
+      AuthState.userIDKey: authState.userID,
+      AuthState.userEmailKey: authState.userEmail,
+      AuthState.userEmailIsVerifiedKey: authState._userEmailIsVerified,
+      oauth2ScopeKey: authState.authState.scope
     ]
 
     let responseString = dict

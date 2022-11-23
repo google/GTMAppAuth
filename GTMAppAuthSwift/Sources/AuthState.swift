@@ -255,7 +255,7 @@ open class GTMAppAuthFetcherAuthorization: NSObject,
 
   /// Delegate of the `GTMAppAuthFetcherAuthorization` used to supply additional parameters on token
   /// refresh.
-  @objc public weak var tokenRefreshDelegate: GTMAppAuthFetcherAuthorizationTokenRefreshDelegate?
+  @objc public weak var tokenRefreshDelegate: AuthStateTokenRefreshDelegate?
 
   /// The fetcher service.
   @objc public weak var fetcherService: GTMSessionFetcherServiceProtocol? = nil
@@ -263,7 +263,7 @@ open class GTMAppAuthFetcherAuthorization: NSObject,
   private let serialAuthArgsQueue = DispatchQueue(label: "com.google.gtmappauth")
   private var authorizationArgs = [AuthorizationArguments]()
 
-  /// Creates a new `GTMAppAuthFetcherAuthorization` using the given `OIDAuthState` from AppAuth.
+  /// Creates a new `AuthState` using the given `OIDAuthState` from AppAuth.
   ///
   /// - Parameters:
   ///   - authState: The authorization state.
@@ -278,7 +278,7 @@ open class GTMAppAuthFetcherAuthorization: NSObject,
     )
   }
 
-  /// Creates a new `GTMAppAuthFetcherAuthorization` using the given `OIDAuthState` from AppAuth.
+  /// Creates a new `AuthState` using the given `OIDAuthState` from AppAuth.
   ///
   /// - Parameters:
   ///   - authState: The authorization state.
@@ -318,35 +318,35 @@ open class GTMAppAuthFetcherAuthorization: NSObject,
   @objc public static let supportsSecureCoding = true
 
   @objc public func encode(with coder: NSCoder) {
-    coder.encode(authState, forKey: GTMAppAuthFetcherAuthorization.authStateKey)
-    coder.encode(serviceProvider, forKey: GTMAppAuthFetcherAuthorization.serviceProviderKey)
-    coder.encode(userID, forKey: GTMAppAuthFetcherAuthorization.userIDKey)
-    coder.encode(userEmail, forKey: GTMAppAuthFetcherAuthorization.userEmailKey)
-    coder.encode(_userEmailIsVerified, forKey: GTMAppAuthFetcherAuthorization.userEmailIsVerifiedKey)
+    coder.encode(authState, forKey: AuthState.authStateKey)
+    coder.encode(serviceProvider, forKey: AuthState.serviceProviderKey)
+    coder.encode(userID, forKey: AuthState.userIDKey)
+    coder.encode(userEmail, forKey: AuthState.userEmailKey)
+    coder.encode(_userEmailIsVerified, forKey: AuthState.userEmailIsVerifiedKey)
   }
 
   @objc public required convenience init?(coder: NSCoder) {
     guard let authState = coder.decodeObject(
       of: OIDAuthState.self,
-      forKey: GTMAppAuthFetcherAuthorization.authStateKey
+      forKey: AuthState.authStateKey
     ) else {
       return nil
     }
     let serviceProvider = coder.decodeObject(
       of: NSString.self,
-      forKey: GTMAppAuthFetcherAuthorization.serviceProviderKey
+      forKey: AuthState.serviceProviderKey
     ) as String?
     let userID = coder.decodeObject(
       of: NSString.self,
-      forKey: GTMAppAuthFetcherAuthorization.userIDKey
+      forKey: AuthState.userIDKey
     ) as String?
     let userEmail = coder.decodeObject(
       of: NSString.self,
-      forKey: GTMAppAuthFetcherAuthorization.userEmailKey
+      forKey: AuthState.userEmailKey
     ) as String?
     let _userEmailIsVerified = coder.decodeObject(
       of: NSString.self,
-      forKey: GTMAppAuthFetcherAuthorization.userEmailIsVerifiedKey
+      forKey: AuthState.userEmailIsVerifiedKey
     ) as String?
 
     self.init(
@@ -368,7 +368,7 @@ open class GTMAppAuthFetcherAuthorization: NSObject,
   ///   - handler: The block that is called after authorizing the request is attempted. If `error`
   ///     is non-nil, the authorization failed. Errors in the domain `OIDOAuthTokenErrorDomain`
   ///     indicate that the authorization itself is invalid, and will need to be re-obtained from
-  ///     the user. `GTMAppAuthFetcherAuthorization.Error` indicate another unrecoverable error.
+  ///     the user. `KeychainStore.Error` and `AuthState.Error` indicate other unrecoverable errors.
   ///     Errors in other domains may indicate a transitive error condition such as a network error,
   ///     and typically you do not need to reauthenticate the user on such errors.
   ///
@@ -502,7 +502,7 @@ Request (\(request)) is not https, a local file, or nil. It may be insecure.
     typealias DelegateCallback = @convention(c) (
       NSObject,
       Selector,
-      GTMAppAuthFetcherAuthorization,
+      AuthState,
       NSMutableURLRequest,
       NSError?
     ) -> Void
@@ -622,15 +622,15 @@ extension AuthorizationArguments {
   }
 }
 
-/// Delegate of the GTMAppAuthFetcherAuthorization used to supply additional parameters on token
-/// refresh.
-@objc public protocol GTMAppAuthFetcherAuthorizationTokenRefreshDelegate: NSObjectProtocol {
+/// Delegate of the `AuthState` used to supply additional parameters on token refresh.
+@objc(GTMAuthStateTokenRefreshDelegate)
+public protocol AuthStateTokenRefreshDelegate: NSObjectProtocol {
   func additionalRefreshParameters(
-    authorization: GTMAppAuthFetcherAuthorization
+    authorization: AuthState
   ) -> [String: String]?
 }
 
-public extension GTMAppAuthFetcherAuthorization {
+public extension AuthState {
   // MARK: - Keys
 
   static let authStateKey = "authState"
