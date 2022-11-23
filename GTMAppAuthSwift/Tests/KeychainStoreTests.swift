@@ -22,7 +22,7 @@ class KeychainStoreTests: XCTestCase {
   private let keychainHelper = KeychainHelperFake()
   private lazy var keychainStore: KeychainStore = {
     return KeychainStore(
-      itemName: Constants.testKeychainItemName,
+      credentialItemName: Constants.testKeychainItemName,
       keychainHelper: keychainHelper
     )
   }()
@@ -43,7 +43,7 @@ class KeychainStoreTests: XCTestCase {
 
   func testSaveAndReadAuthorization() throws {
     try keychainStore.save(authState: authState)
-    let expectedAuthorization = try keychainStore.retrieveAuthState(
+    let expectedAuthorization = try keychainStore.authState(
       forItemName: Constants.testKeychainItemName
     )
     XCTAssertEqual(
@@ -72,7 +72,7 @@ class KeychainStoreTests: XCTestCase {
   func testReadAuthorizationForItemName() throws {
     let anotherItemName = "anotherItemName"
     try keychainStore.save(authState: authState, forItemName: anotherItemName)
-    let expectedAuthorization = try keychainStore.retrieveAuthState(forItemName: anotherItemName)
+    let expectedAuthorization = try keychainStore.authState(forItemName: anotherItemName)
 
     XCTAssertEqual(
       expectedAuthorization.authState.isAuthorized,
@@ -87,7 +87,7 @@ class KeychainStoreTests: XCTestCase {
   func testSaveAuthorizationForItemName() throws {
     let anotherItemName = "anotherItemName"
     try keychainStore.save(authState: authState, forItemName: anotherItemName)
-    let expectedAuthorization = try keychainStore.retrieveAuthState(forItemName: anotherItemName)
+    let expectedAuthorization = try keychainStore.authState(forItemName: anotherItemName)
     XCTAssertEqual(
       expectedAuthorization.authState.isAuthorized,
       authState.authState.isAuthorized
@@ -109,7 +109,7 @@ class KeychainStoreTests: XCTestCase {
   func testReadPasswordNoService() throws {
     try keychainStore.save(authState: authState)
 
-    XCTAssertThrowsError(try keychainStore.retrieveAuthState(forItemName: "")) { thrownError in
+    XCTAssertThrowsError(try keychainStore.authState(forItemName: "")) { thrownError in
       XCTAssertEqual(thrownError as? KeychainStore.Error, .noService)
     }
   }
@@ -133,7 +133,7 @@ class KeychainStoreTests: XCTestCase {
 
   func testPasswordNotFoundError() {
     XCTAssertThrowsError(
-      try keychainStore.retrieveAuthState(forItemName: Constants.testKeychainItemName)
+      try keychainStore.authState(forItemName: Constants.testKeychainItemName)
     ) { thrownError in
       XCTAssertEqual(
         thrownError as? KeychainStore.Error,

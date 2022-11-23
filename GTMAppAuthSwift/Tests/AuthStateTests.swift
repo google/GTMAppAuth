@@ -29,11 +29,14 @@ class AuthStateTests: XCTestCase {
   private let tokenEndpoint = URL(string: "https://www.googleapis.com/oauth2/v4/token")!
   private let alternativeTestKeychainItemName = "alternativeItemName"
   private let keychainHelper = KeychainHelperFake()
-  private var keychain: GTMKeychain {
-    GTMKeychain(credentialItemName: Constants.testKeychainItemName, keychainHelper: keychainHelper)
+  private var keychainStore: KeychainStore {
+    KeychainStore(
+      credentialItemName: Constants.testKeychainItemName,
+      keychainHelper: keychainHelper
+    )
   }
-  private var authorization: GTMAppAuthFetcherAuthorization {
-    GTMAppAuthFetcherAuthorization(
+  private var authState: AuthState {
+    AuthState(
       authState: OIDAuthState.testInstance(),
       serviceProvider: Constants.testServiceProvider,
       userID: Constants.testUserID,
@@ -287,19 +290,19 @@ class AuthStateTests: XCTestCase {
   // MARK: - Keychain Tests
 
   func testSaveAuthorization() throws {
-    try keychain.save(authorization: authorization)
+    try keychainStore.save(authState: authState)
   }
 
   func testSaveAuthorizationForItemName() throws {
-    try keychain.save(authorization: authorization, forItemName: alternativeTestKeychainItemName)
+    try keychainStore.save(authState: authState, forItemName: alternativeTestKeychainItemName)
   }
 
   func testSaveAuthorizationThrows() {
     let emptyItemName = ""
-    let expectedError = GTMKeychainError.noService
+    let expectedError = KeychainStore.Error.noService
 
-    XCTAssertThrowsError(try keychain.save(
-      authorization: authorization,
+    XCTAssertThrowsError(try keychainStore.save(
+      authState: authState,
       forItemName: emptyItemName
     )) { error in
       XCTAssertEqual(error as? KeychainStore.Error, expectedError)
@@ -307,13 +310,13 @@ class AuthStateTests: XCTestCase {
   }
 
   func testRemoveAuthorization() throws {
-    try keychain.save(authorization: authorization)
-    try keychain.removeAuthorization(withItemName: Constants.testKeychainItemName)
+    try keychainStore.save(authState: authState)
+    try keychainStore.removeAuthState(withItemName: Constants.testKeychainItemName)
   }
 
   func testRemoveAuthorizationThrows() {
     do {
-      try keychain.removeAuthorization(withItemName: Constants.testKeychainItemName)
+      try keychainStore.removeAuthState(withItemName: Constants.testKeychainItemName)
     } catch {
       guard let keychainError = error as? KeychainStore.Error else {
         return XCTFail("`error` should be of type `GTMAppAuthFetcherAuthorization.Error`")
@@ -328,20 +331,20 @@ class AuthStateTests: XCTestCase {
   }
 
   func testReadAuthorization() throws {
-    try keychain.save(authorization: authorization, forItemName: Constants.testKeychainItemName)
-    let savedAuth = try keychain.authorization(forItemName: Constants.testKeychainItemName)
-    XCTAssertEqual(savedAuth.authState.isAuthorized, authorization.authState.isAuthorized)
-    XCTAssertEqual(savedAuth.serviceProvider, authorization.serviceProvider)
-    XCTAssertEqual(savedAuth.userID, authorization.userID)
-    XCTAssertEqual(savedAuth.userEmail, authorization.userEmail)
-    XCTAssertEqual(savedAuth.userEmailIsVerified, authorization.userEmailIsVerified)
+    try keychainStore.save(authState: authState, forItemName: Constants.testKeychainItemName)
+    let savedAuth = try keychainStore.authState(forItemName: Constants.testKeychainItemName)
+    XCTAssertEqual(savedAuth.authState.isAuthorized, authState.authState.isAuthorized)
+    XCTAssertEqual(savedAuth.serviceProvider, authState.serviceProvider)
+    XCTAssertEqual(savedAuth.userID, authState.userID)
+    XCTAssertEqual(savedAuth.userEmail, authState.userEmail)
+    XCTAssertEqual(savedAuth.userEmailIsVerified, authState.userEmailIsVerified)
     XCTAssertFalse(keychainHelper.useDataProtectionKeychain)
   }
 
   func testReadAuthorizationThrowsError() {
     let missingItemName = "missingItemName"
     do {
-      _ = try keychain.authorization(forItemName: missingItemName)
+      _ = try keychainStore.authState(forItemName: missingItemName)
     } catch {
       guard case
         .passwordNotFound(forItemName: let itemName) = error as? KeychainStore.Error else {

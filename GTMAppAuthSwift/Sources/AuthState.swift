@@ -28,9 +28,8 @@ import GTMSessionFetcher
 /// An implementation of the `GTMFetcherAuthorizationProtocol` protocol for the AppAuth library.
 ///
 /// Enables you to use AppAuth with the GTM Session Fetcher library.
-@objc open class GTMAppAuthFetcherAuthorization: NSObject,
-                                                 GTMFetcherAuthorizationProtocol,
-                                                 NSSecureCoding {
+@objc(GTMAppAuthFetcherAuthorization)
+open class AuthState: NSObject, GTMFetcherAuthorizationProtocol, NSSecureCoding {
   /// The AppAuth authentication state.
   @objc public let authState: OIDAuthState
 
@@ -67,7 +66,8 @@ import GTMSessionFetcher
   /// bearer token unencrypted.
   @objc public var shouldAuthorizeAllRequests = false
 
-  /// Delegate of the `AuthState` used to supply additional parameters on token refresh.
+  /// Delegate of the `GTMAppAuthFetcherAuthorization` used to supply additional parameters on token
+  /// refresh.
   @objc public weak var tokenRefreshDelegate: AuthStateTokenRefreshDelegate?
 
   /// The fetcher service.

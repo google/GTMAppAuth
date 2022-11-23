@@ -30,16 +30,16 @@ import GTMSessionFetcher
 @objc(GTMKeychainStore)
 public final class KeychainStore: NSObject {
   private var keychainHelper: KeychainHelper
-  // Needed for `AuthStateStore` and listed here because extensions cannot add stored properties
-  @objc public var itemName: String
+  // Needed for `CredentialStore` and listed here because extensions cannot add stored properties
+  @objc public var credentialItemName: String
 
   /// An initializer for testing to create an instance of this keychain wrapper with a given helper.
   ///
   /// - Parameters:
-  ///   - itemName: The `String` name for the credential to store in the keychain.
+  ///   - credentialItemName: The `String` name for the credential to store in the keychain.
   ///   - keychainHelper: An instance conforming to `KeychainHelper`.
-  init(itemName: String, keychainHelper: KeychainHelper) {
-    self.itemName = itemName
+  init(credentialItemName: String, keychainHelper: KeychainHelper) {
+    self.credentialItemName = credentialItemName
     self.keychainHelper = keychainHelper
     super.init()
   }
@@ -67,16 +67,16 @@ extension KeychainStore: AuthStateStore {
   /// An initializer for to create an instance of this keychain wrapper.
   ///
   /// - Parameters:
-  ///   - itemName: The `String` name for the credential to store in the keychain.
-  @objc public convenience init(itemName: String) {
-    self.init(itemName: itemName, keychainHelper: KeychainWrapper())
+  ///   - credentialItemName: The `String` name for the credential to store in the keychain.
+  @objc public convenience init(credentialItemName: String) {
+    self.init(credentialItemName: credentialItemName, keychainHelper: KeychainWrapper())
   }
 
   @objc public func save(authState: AuthState) throws {
     let authorizationData: Data = try authorizationData(fromAuthorization: authState)
     try keychainHelper.setPassword(
       data: authorizationData,
-      forService: itemName,
+      forService: credentialItemName,
       accessibility: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
     )
   }
@@ -114,10 +114,10 @@ extension KeychainStore: AuthStateStore {
   }
 
   @objc public func removeAuthState() throws {
-    try keychainHelper.removePassword(forService: itemName)
+    try keychainHelper.removePassword(forService: credentialItemName)
   }
 
-  @objc public func retrieveAuthState(forItemName itemName: String) throws -> AuthState {
+  @objc public func authState(forItemName itemName: String) throws -> AuthState {
     let passwordData = try keychainHelper.passwordData(forService: itemName)
 
     if #available(macOS 10.13, iOS 11, tvOS 11, watchOS 4, *) {
@@ -133,41 +133,36 @@ extension KeychainStore: AuthStateStore {
   }
 
   @objc public func retrieveAuthState() throws -> AuthState {
-    let passwordData = try keychainHelper.passwordData(forService: itemName)
+    let passwordData = try keychainHelper.passwordData(forService: credentialItemName)
 
     if #available(macOS 10.13, iOS 11, tvOS 11, watchOS 4, *) {
       return try modernUnarchiveAuthorization(
         withPasswordData: passwordData,
-        itemName: itemName
+        itemName: credentialItemName
       )
     } else {
       guard let auth = NSKeyedUnarchiver.unarchiveObject(with: passwordData) as? AuthState else {
         throw AuthState
           .Error
-          .failedToConvertKeychainDataToAuthorization(forItemName: itemName)
+          .failedToConvertKeychainDataToAuthorization(forItemName: credentialItemName)
       }
       return auth
     }
   }
+}
 
-  /// Attempts to create an `AuthState` from stored data in GTMOAuth2 format.
-  ///
-  /// - Parameters:
-  ///   - tokenURL: The OAuth token endpoint URL.
-  ///   - redirectURI: The OAuth redirect URI used when obtaining the original authorization.
-  ///   - clientID: The OAuth client ID.
-  ///   - clientSecret: The OAuth client secret.
-  /// - Returns: An `AuthState` object.
-  /// - Throws: Any error arising from the `AuthState` creation.
-  @objc public func retrieveAuthStateInGTMOAuth2Format(
+// MARK: - OAuth2CompatibilityCredentialStore Conformance
+
+extension KeychainStore: OAuth2AuthStateStore {
+  @objc public func authState(
+    forItemName itemName: String,
     tokenURL: URL,
     redirectURI: String,
     clientID: String,
     clientSecret: String?
   ) throws -> AuthState {
     let password = try keychainHelper.password(forService: itemName)
-    let oauth2Compatibility = OAuth2AuthStateCompatibility()
-    let authorization = try oauth2Compatibility.authState(
+    let authorization = try authState(
       forPersistenceString: password,
       tokenURL: tokenURL,
       redirectURI: redirectURI,
@@ -177,20 +172,86 @@ extension KeychainStore: AuthStateStore {
     return authorization
   }
 
-  /// Attempts to create a `AuthState` from data stored in a GTMOAuth2 format.
-  ///
-  /// Uses Google OAuth provider information.
-  ///
-  /// - Parameters:
-  ///   - clientID: The OAuth client id.
-  ///   - clientSecret: The OAuth client secret.
-  /// - Returns: An `AuthState` object, or nil.
-  /// - Throws: Any error arising from the `AuthState` creation.
-  @objc public func retrieveAuthStateForGoogleInGTMOAuth2Format(
+  @objc public func authState(
+    forPersistenceString persistenceString: String,
+    tokenURL: URL,
+    redirectURI: String,
+    clientID: String,
+    clientSecret: String?
+  ) throws -> AuthState {
+    let persistenceDictionary = OAuth2AuthStateCompatibility.dictionary(
+      fromKeychainPassword: persistenceString
+    )
+    guard let redirectURL = URL(string: redirectURI) else {
+      throw KeychainStore.Error.failedToConvertRedirectURItoURL(redirectURI)
+    }
+
+    let authConfig = OIDServiceConfiguration(
+      authorizationEndpoint: tokenURL,
+      tokenEndpoint: tokenURL
+    )
+
+    let authRequest = OIDAuthorizationRequest(
+      configuration: authConfig,
+      clientId: clientID,
+      clientSecret: clientSecret,
+      scope: persistenceDictionary[oauth2ScopeKey],
+      redirectURL: redirectURL,
+      responseType: OIDResponseTypeCode,
+      state: nil,
+      nonce: nil,
+      codeVerifier: nil,
+      codeChallenge: nil,
+      codeChallengeMethod: nil,
+      additionalParameters: nil
+    )
+
+    let authResponse = OIDAuthorizationResponse(
+      request: authRequest,
+      parameters: persistenceDictionary as [String: NSString]
+    )
+    var additionalParameters = persistenceDictionary
+    additionalParameters.removeValue(forKey: oauth2ScopeKey)
+    additionalParameters.removeValue(forKey: oauth2RefreshTokenKey)
+
+    let tokenRequest = OIDTokenRequest(
+      configuration: authConfig,
+      grantType: "token",
+      authorizationCode: nil,
+      redirectURL: redirectURL,
+      clientID: clientID,
+      clientSecret: clientSecret,
+      scope: persistenceDictionary[oauth2ScopeKey],
+      refreshToken: persistenceDictionary[oauth2RefreshTokenKey],
+      codeVerifier: nil,
+      additionalParameters: additionalParameters
+    )
+    let tokenResponse = OIDTokenResponse(
+      request: tokenRequest,
+      parameters: persistenceDictionary as [String: NSString]
+    )
+
+    let authState = OIDAuthState(authorizationResponse: authResponse, tokenResponse: tokenResponse)
+    // We're not serializing the token expiry date, so the first refresh needs to be forced.
+    authState.setNeedsTokenRefresh()
+
+    let authorization = AuthState(
+      authState: authState,
+      serviceProvider: persistenceDictionary[AuthState.serviceProviderKey],
+      userID: persistenceDictionary[AuthState.userIDKey],
+      userEmail: persistenceDictionary[AuthState.userEmailKey],
+      userEmailIsVerified: persistenceDictionary[AuthState.userEmailIsVerifiedKey]
+    )
+    return authorization
+  }
+
+  @objc public func authForGoogle(
+    forItemName itemName: String,
     clientID: String,
     clientSecret: String
   ) throws -> AuthState {
-    return try retrieveAuthStateInGTMOAuth2Format(
+    return try authState(
+      forItemName: itemName,
       tokenURL: OAuth2AuthStateCompatibility.googleTokenURL,
       redirectURI: OAuth2AuthStateCompatibility.nativeClientRedirectURI,
       clientID: clientID,
@@ -198,13 +259,9 @@ extension KeychainStore: AuthStateStore {
     )
   }
 
-  /// Saves the authorization state in a GTMOAuth2 compatible manner.
-  ///
-  /// - Parameters:
-  ///   - authorization: The `AuthState` to save.
-  /// - Throws: Any error that may arise during the retrieval.
-  @objc public func saveWithGTMOAuth2Format(
-    forAuthorization authorization: AuthState
+  @objc public func saveWithOAuth2Format(
+    forAuthorization authorization: AuthState,
+    withItemName itemName: String
   ) throws {
     guard let persistence = OAuth2AuthStateCompatibility
       .persistenceResponseString(forAuthState: authorization) else {
@@ -214,6 +271,10 @@ extension KeychainStore: AuthStateStore {
       persistence,
       forService: itemName,
       accessibility: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly)
+  }
+
+  @objc public func removeOAuth2AuthState(withItemName itemName: String) throws {
+    try keychainHelper.removePassword(forService: itemName)
   }
 }
 
