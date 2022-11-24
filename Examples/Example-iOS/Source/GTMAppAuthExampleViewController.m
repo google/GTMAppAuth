@@ -56,6 +56,9 @@ static NSString *const kExampleAuthorizerKey = @"authorization";
 
 @interface GTMAppAuthExampleViewController () <OIDAuthStateChangeDelegate,
                                                OIDAuthStateErrorDelegate>
+
+@property (nonatomic, strong) GTMKeychainStore *keychainStore;
+
 @end
 
 @implementation GTMAppAuthExampleViewController
@@ -63,6 +66,7 @@ static NSString *const kExampleAuthorizerKey = @"authorization";
 - (void)viewDidLoad {
   [super viewDidLoad];
 
+  self.keychainStore = [[GTMKeychainStore alloc] initWithCredentialItemName:kExampleAuthorizerKey];
 #if !defined(NS_BLOCK_ASSERTIONS)
   // NOTE:
   //
@@ -109,12 +113,9 @@ static NSString *const kExampleAuthorizerKey = @"authorization";
 - (void)saveState {
   NSError *error;
   if (_authorization.canAuthorize) {
-    [GTMAppAuthFetcherAuthorization saveAuthorization:_authorization
-                                         withItemName:kExampleAuthorizerKey
-                                                error:&error];
+    [self.keychainStore saveWithAuthState:_authorization error:&error];
   } else {
-    [GTMAppAuthFetcherAuthorization removeAuthorizationForItemName:kExampleAuthorizerKey
-                                                             error:&error];
+    [self.keychainStore removeAuthStateAndReturnError:&error];
   }
   if (error) {
     NSLog(@"Error saving state: %@ error", error);
