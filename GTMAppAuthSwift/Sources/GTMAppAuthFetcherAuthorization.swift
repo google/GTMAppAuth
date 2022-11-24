@@ -28,9 +28,10 @@ import GTMSessionFetcher
 /// An implementation of the `GTMFetcherAuthorizationProtocol` protocol for the AppAuth library.
 ///
 /// Enables you to use AppAuth with the GTM Session Fetcher library.
-@objc open class GTMAppAuthFetcherAuthorization: NSObject,
-                                                 GTMFetcherAuthorizationProtocol,
-                                                 NSSecureCoding {
+@objc(GTMAppAuthFetcherAuthorization)
+open class GTMAppAuthFetcherAuthorization: NSObject,
+                                           GTMFetcherAuthorizationProtocol,
+                                           NSSecureCoding {
   // MARK: - Retrieving Authorizations
 
   /// Internally scoped helper for used for setting the keychain to a fake in tests.

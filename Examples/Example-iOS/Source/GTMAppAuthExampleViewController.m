@@ -126,7 +126,7 @@ static NSString *const kExampleAuthorizerKey = @"authorization";
 - (void)loadState {
   NSError *error;
   GTMAppAuthFetcherAuthorization *authorization =
-  [GTMAppAuthFetcherAuthorization authorizationForItemName:kExampleAuthorizerKey error:&error];
+      [GTMAppAuthFetcherAuthorization authorizationForItemName:kExampleAuthorizerKey error:&error];
   if (error) {
     NSLog(@"Error loading state: %@", error);
   }
