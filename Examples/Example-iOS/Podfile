@@ -11,5 +11,5 @@ target 'Example-iOSForPod' do
   # pod 'GTMAppAuth'
 
   pod 'AppAuth', '~> 1.0'
-  pod 'GTMSessionFetcher/Core', '>= 1.0', '< 3.0'
+  pod 'GTMSessionFetcher/Core', '>= 1.0', '< 4.0'
 end
