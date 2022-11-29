@@ -19,6 +19,9 @@ import Foundation
 /// A protocol defining the helper API for interacting with the Keychain.
 protocol KeychainHelper {
   var accountName: String { get }
+  var keychainConfigurations: Set<KeychainConfiguration> { get }
+  init(keychainConfigurations: Set<KeychainConfiguration>)
+  func keychainQuery(forService service: String) -> [String: Any]
   func password(forService service: String) throws -> String
   func passwordData(forService service: String) throws -> Data
   func removePassword(forService service: String) throws
@@ -29,10 +32,15 @@ protocol KeychainHelper {
 /// An internally scoped keychain helper.
 struct KeychainWrapper: KeychainHelper {
   let accountName = "OAuth"
+  let keychainConfigurations: Set<KeychainConfiguration>
   @available(macOS 10.15, *)
   private var isMaxMacOSVersionGreaterThanTenOneFive: Bool {
     let tenOneFive = OperatingSystemVersion(majorVersion: 10, minorVersion: 15, patchVersion: 0)
     return ProcessInfo().isOperatingSystemAtLeast(tenOneFive)
+  }
+
+  init(keychainConfigurations: Set<KeychainConfiguration>) {
+    self.keychainConfigurations = keychainConfigurations
   }
 
   func keychainQuery(forService service: String) -> [String: Any] {
@@ -42,11 +50,18 @@ struct KeychainWrapper: KeychainHelper {
       kSecAttrService as String: service,
     ]
 
-    #if os(macOS) && isMaxMacOSVersionGreaterThanTenOneFive
-    if #available(macOS 10.15, *) {
-      query[kSecUseDataProtectionKeychain as String] = kCFBooleanTrue
+    keychainConfigurations.forEach { configuration in
+      switch configuration.attribute {
+      case .dataProtectionKeychain:
+#if os(macOS) && isMaxMacOSVersionGreaterThanTenOneFive
+        if #available(macOS 10.15, *) {
+          query[configuration.attribute.keyName] = kCFBooleanTrue
+        }
+#endif
+      case .accessGroup(let name):
+        query[configuration.attribute.keyName] = name
+      }
     }
-    #endif
 
     return query
   }

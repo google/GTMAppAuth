@@ -21,6 +21,31 @@ class KeychainHelperFake: KeychainHelper {
   var useDataProtectionKeychain = false
   var passwordStore = [String: Data]()
   let accountName = "OauthTest"
+  let keychainConfigurations: Set<KeychainConfiguration>
+  var generatedKeychainQuery: [String: Any]?
+
+  required init(keychainConfigurations: Set<KeychainConfiguration>) {
+    self.keychainConfigurations = keychainConfigurations
+  }
+
+  func keychainQuery(forService service: String) -> [String : Any] {
+    var query: [String: Any] = [
+      kSecClass as String: kSecClassGenericPassword,
+      kSecAttrAccount as String : accountName,
+      kSecAttrService as String: service,
+    ]
+
+    keychainConfigurations.forEach { configuration in
+      switch configuration.attribute {
+      case .dataProtectionKeychain:
+        query[configuration.attribute.keyName] = kCFBooleanTrue
+      case .accessGroup(let name):
+        query[configuration.attribute.keyName] = name
+      }
+    }
+
+    return query
+  }
 
   func password(forService service: String) throws -> String {
     guard !service.isEmpty else { throw KeychainStore.Error.noService }
@@ -35,6 +60,7 @@ class KeychainHelperFake: KeychainHelper {
   func passwordData(forService service: String) throws -> Data {
     guard !service.isEmpty else { throw KeychainStore.Error.noService }
 
+    generatedKeychainQuery = keychainQuery(forService: service)
     guard let passwordData = passwordStore[service + accountName] else {
       throw KeychainStore.Error.passwordNotFound(forItemName: service)
     }
@@ -44,6 +70,7 @@ class KeychainHelperFake: KeychainHelper {
   func removePassword(forService service: String) throws {
     guard !service.isEmpty else { throw KeychainStore.Error.noService }
 
+    generatedKeychainQuery = keychainQuery(forService: service)
     guard let _ = passwordStore.removeValue(forKey: service + accountName) else {
       throw KeychainStore.Error.failedToDeletePasswordBecauseItemNotFound(itemName: service)
     }
@@ -70,6 +97,7 @@ class KeychainHelperFake: KeychainHelper {
 
   func setPassword(data: Data, forService service: String, accessibility: CFTypeRef?) throws {
     guard !service.isEmpty else { throw KeychainStore.Error.noService }
+    generatedKeychainQuery = keychainQuery(forService: service)
     passwordStore.updateValue(data, forKey: service + accountName)
   }
 }

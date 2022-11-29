@@ -30,16 +30,54 @@ import GTMSessionFetcher
 @objc(GTMKeychainStore)
 public final class KeychainStore: NSObject {
   private var keychainHelper: KeychainHelper
-  // Needed for `CredentialStore` and listed here because extensions cannot add stored properties
+  // Needed for `AuthStateStore` and listed here because extensions cannot add stored properties
   @objc public var credentialItemName: String
+  /// Attributes that configure the behavior of the keychain.
+  @objc public let keychainConfigurations: Set<KeychainConfiguration>
+
+  /// An initializer for testing to create an instance of this keychain wrapper with a given helper.
+  ///
+  /// - Parameters:
+  ///   - credentialItemName: The `String` name for the credential to store in the keychain.
+  ///   - keychainConfigurations: A `Set` of `KeychainConfiguration` to use with the keychain.
+  @objc public convenience init(
+    credentialItemName: String,
+    keychainConfigurations: Set<KeychainConfiguration>
+  ) {
+    let keychain = KeychainWrapper(keychainConfigurations: keychainConfigurations)
+    self.init(
+      credentialItemName: credentialItemName,
+      keychainConfigurations: keychainConfigurations,
+      keychainHelper: keychain
+    )
+  }
 
   /// An initializer for testing to create an instance of this keychain wrapper with a given helper.
   ///
   /// - Parameters:
   ///   - credentialItemName: The `String` name for the credential to store in the keychain.
   ///   - keychainHelper: An instance conforming to `KeychainHelper`.
-  init(credentialItemName: String, keychainHelper: KeychainHelper) {
+  convenience init(credentialItemName: String, keychainHelper: KeychainHelper) {
+    self.init(
+      credentialItemName: credentialItemName,
+      keychainConfigurations: [],
+      keychainHelper: keychainHelper
+    )
+  }
+
+  /// An initializer for testing to create an instance of this keychain wrapper with a given helper.
+  ///
+  /// - Parameters:
+  ///   - credentialItemName: The `String` name for the credential to store in the keychain.
+  ///   - keychainConfigurations: A `Set` of `KeychainConfiguration` to use with the keychain.
+  ///   - keychainHelper: An instance conforming to `KeychainHelper`.
+  init(
+    credentialItemName: String,
+    keychainConfigurations: Set<KeychainConfiguration>,
+    keychainHelper: KeychainHelper
+  ) {
     self.credentialItemName = credentialItemName
+    self.keychainConfigurations = keychainConfigurations
     self.keychainHelper = keychainHelper
     super.init()
   }
@@ -69,7 +107,7 @@ extension KeychainStore: AuthStateStore {
   /// - Parameters:
   ///   - credentialItemName: The `String` name for the credential to store in the keychain.
   @objc public convenience init(credentialItemName: String) {
-    self.init(credentialItemName: credentialItemName, keychainHelper: KeychainWrapper())
+    self.init(credentialItemName: credentialItemName, keychainConfigurations: [])
   }
 
   @objc public func save(authState: AuthState) throws {

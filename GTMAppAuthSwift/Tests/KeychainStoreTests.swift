@@ -19,7 +19,7 @@ import AppAuthCore
 @testable import GTMAppAuthSwift
 
 class KeychainStoreTests: XCTestCase {
-  private let keychainHelper = KeychainHelperFake()
+  private let keychainHelper = KeychainHelperFake(keychainConfigurations: [])
   private lazy var keychainStore: KeychainStore = {
     return KeychainStore(
       credentialItemName: Constants.testKeychainItemName,
@@ -39,6 +39,322 @@ class KeychainStoreTests: XCTestCase {
   override func tearDown() {
     super.tearDown()
     keychainHelper.passwordStore.removeAll()
+    keychainHelper.generatedKeychainQuery = nil
+  }
+
+  func testKeychainQueryHasDataProtectionAttributeOnSave() throws {
+    let useDataProtectionAttributeSet: Set<KeychainConfiguration> = [.useDataProtectionKeychain]
+    let fakeWithDataProtection = KeychainHelperFake(
+      keychainConfigurations: useDataProtectionAttributeSet
+    )
+    let store = KeychainStore(
+      credentialItemName: Constants.testKeychainItemName,
+      keychainHelper: fakeWithDataProtection
+    )
+    try store.save(authState: authState)
+    guard let testQuery = fakeWithDataProtection.generatedKeychainQuery as? [String: AnyHashable]
+    else {
+      XCTFail("`fakeWithDataProtection` missing keychain query attributes")
+      return
+    }
+
+    let comparisonQuery = comparisonKeychainQuery(
+      withAttributes: useDataProtectionAttributeSet,
+      accountName: fakeWithDataProtection.accountName,
+      service: Constants.testKeychainItemName
+    )
+    XCTAssertEqual(testQuery, comparisonQuery)
+  }
+
+  func testKeychainQueryHasAccessGroupAttributeOnSave() throws {
+    let expectedGroupName = "testGroup"
+    let accessGroupAttributeSet: Set<KeychainConfiguration> = [
+      .keychainAccessGroup(name: expectedGroupName)
+    ]
+    let fakeWithAccessGroup = KeychainHelperFake(
+      keychainConfigurations: accessGroupAttributeSet
+    )
+    let store = KeychainStore(
+      credentialItemName: Constants.testKeychainItemName,
+      keychainHelper: fakeWithAccessGroup
+    )
+    try store.save(authState: authState)
+    guard let testQuery = fakeWithAccessGroup.generatedKeychainQuery as? [String: AnyHashable]
+    else {
+      XCTFail("`fakeWithAccessGroup` missing keychain query attributes")
+      return
+    }
+
+    let comparisonQuery = comparisonKeychainQuery(
+      withAttributes: accessGroupAttributeSet,
+      accountName: fakeWithAccessGroup.accountName,
+      service: Constants.testKeychainItemName
+    )
+    XCTAssertEqual(testQuery, comparisonQuery)
+
+    guard let testGroupName = testQuery[
+      fakeWithAccessGroup.keychainConfigurations.first!.attribute.keyName
+    ] else {
+      XCTFail("`fakeWithAccessGroup` missing access group keychain attribute")
+      return
+    }
+    XCTAssertEqual(expectedGroupName, testGroupName)
+  }
+
+  func testKeychainQueryHasDataProtectionAndAccessGroupAttributesOnSave() throws {
+    let expectedGroupName = "testGroup"
+    let accessGroupAttributeSet: Set<KeychainConfiguration> = [
+      .useDataProtectionKeychain,
+      .keychainAccessGroup(name: expectedGroupName)
+    ]
+    let fakeWithDataProtectionAndAccessGroup = KeychainHelperFake(
+      keychainConfigurations: accessGroupAttributeSet
+    )
+    let store = KeychainStore(
+      credentialItemName: Constants.testKeychainItemName,
+      keychainHelper: fakeWithDataProtectionAndAccessGroup
+    )
+    try store.save(authState: authState)
+    guard let testQuery = fakeWithDataProtectionAndAccessGroup.generatedKeychainQuery
+            as? [String: AnyHashable] else {
+      XCTFail("`fakeWithDataProtectionAndAccessGroup` missing keychain query attributes")
+      return
+    }
+
+    let comparisonQuery = comparisonKeychainQuery(
+      withAttributes: accessGroupAttributeSet,
+      accountName: fakeWithDataProtectionAndAccessGroup.accountName,
+      service: Constants.testKeychainItemName
+    )
+    XCTAssertEqual(testQuery, comparisonQuery)
+
+    guard let testUseDataProtectionValue = testQuery[
+      KeychainAttribute.dataProtectionKeychain.keyName
+    ] as? Bool else {
+      XCTFail("`testQuery` did not have a `.useDataProtectionKeychain` attribute")
+      return
+    }
+    XCTAssertTrue(testUseDataProtectionValue)
+
+    guard let testAccessGroupName = testQuery[
+      KeychainAttribute.accessGroup(expectedGroupName).keyName
+    ] else {
+      XCTFail("`testQuery` did not have an `.keychainAccessGroup` attribute")
+      return
+    }
+    XCTAssertEqual(testAccessGroupName, expectedGroupName)
+  }
+
+  func testKeychainQueryHasDataProtectionAttributeOnRead() throws {
+    let useDataProtectionAttributeSet: Set<KeychainConfiguration> = [.useDataProtectionKeychain]
+    let fakeWithDataProtection = KeychainHelperFake(
+      keychainConfigurations: useDataProtectionAttributeSet
+    )
+    let store = KeychainStore(
+      credentialItemName: Constants.testKeychainItemName,
+      keychainHelper: fakeWithDataProtection
+    )
+    // Use `try?` to "throw away" the error since we are testing the keychain query and not the call
+    _ = try? store.authState(forItemName: Constants.testKeychainItemName)
+    guard let testQuery = fakeWithDataProtection.generatedKeychainQuery as? [String: AnyHashable]
+    else {
+      XCTFail("`fakeWithDataProtection` missing keychain query attributes")
+      return
+    }
+
+    let comparisonQuery = comparisonKeychainQuery(
+      withAttributes: useDataProtectionAttributeSet,
+      accountName: fakeWithDataProtection.accountName,
+      service: Constants.testKeychainItemName
+    )
+    XCTAssertEqual(testQuery, comparisonQuery)
+  }
+
+  func testKeychainQueryHasAccessGroupAttributeOnRead() throws {
+    let expectedGroupName = "testGroup"
+    let accessGroupAttributeSet: Set<KeychainConfiguration> = [
+      .keychainAccessGroup(name: expectedGroupName)
+    ]
+    let fakeWithAccessGroup = KeychainHelperFake(
+      keychainConfigurations: accessGroupAttributeSet
+    )
+    let store = KeychainStore(
+      credentialItemName: Constants.testKeychainItemName,
+      keychainHelper: fakeWithAccessGroup
+    )
+    // Use `try?` to "throw away" the error since we are testing the keychain query and not the call
+    _ = try? store.authState(forItemName: Constants.testKeychainItemName)
+    guard let testQuery = fakeWithAccessGroup.generatedKeychainQuery as? [String: AnyHashable]
+    else {
+      XCTFail("`fakeWithAccessGroup` missing keychain query attributes")
+      return
+    }
+
+    let comparisonQuery = comparisonKeychainQuery(
+      withAttributes: accessGroupAttributeSet,
+      accountName: fakeWithAccessGroup.accountName,
+      service: Constants.testKeychainItemName
+    )
+    XCTAssertEqual(testQuery, comparisonQuery)
+
+    guard let testGroupName = testQuery[
+      fakeWithAccessGroup.keychainConfigurations.first!.attribute.keyName
+    ] else {
+      XCTFail("`fakeWithAccessGroup` missing access group keychain attribute")
+      return
+    }
+    XCTAssertEqual(expectedGroupName, testGroupName)
+  }
+
+  func testKeychainQueryHasDataProtectionAndAccessGroupAttributesOnRead() throws {
+    let expectedGroupName = "testGroup"
+    let accessGroupAttributeSet: Set<KeychainConfiguration> = [
+      .useDataProtectionKeychain,
+      .keychainAccessGroup(name: expectedGroupName)
+    ]
+    let fakeWithDataProtectionAndAccessGroup = KeychainHelperFake(
+      keychainConfigurations: accessGroupAttributeSet
+    )
+    let store = KeychainStore(
+      credentialItemName: Constants.testKeychainItemName,
+      keychainHelper: fakeWithDataProtectionAndAccessGroup
+    )
+    // Use `try?` to "throw away" the error since we are testing the keychain query and not the call
+    _ = try? store.authState(forItemName: Constants.testKeychainItemName)
+    guard let testQuery = fakeWithDataProtectionAndAccessGroup.generatedKeychainQuery
+            as? [String: AnyHashable] else {
+      XCTFail("`fakeWithDataProtectionAndAccessGroup` missing keychain query attributes")
+      return
+    }
+
+    let comparisonQuery = comparisonKeychainQuery(
+      withAttributes: accessGroupAttributeSet,
+      accountName: fakeWithDataProtectionAndAccessGroup.accountName,
+      service: Constants.testKeychainItemName
+    )
+    XCTAssertEqual(testQuery, comparisonQuery)
+
+    guard let testUseDataProtectionValue = testQuery[
+      KeychainAttribute.dataProtectionKeychain.keyName
+    ] as? Bool else {
+      XCTFail("`testQuery` did not have a `.useDataProtectionKeychain` attribute")
+      return
+    }
+    XCTAssertTrue(testUseDataProtectionValue)
+
+    guard let testAccessGroupName = testQuery[
+      KeychainAttribute.accessGroup(expectedGroupName).keyName
+    ] else {
+      XCTFail("`testQuery` did not have an `.keychainAccessGroup` attribute")
+      return
+    }
+    XCTAssertEqual(testAccessGroupName, expectedGroupName)
+  }
+
+  func testKeychainQueryHasDataProtectionAttributeOnRemove() throws {
+    let useDataProtectionAttributeSet: Set<KeychainConfiguration> = [.useDataProtectionKeychain]
+    let fakeWithDataProtection = KeychainHelperFake(
+      keychainConfigurations: useDataProtectionAttributeSet
+    )
+    let store = KeychainStore(
+      credentialItemName: Constants.testKeychainItemName,
+      keychainHelper: fakeWithDataProtection
+    )
+    // Use `try?` to "throw away" the error since we are testing the keychain query and not the call
+    _ = try? store.removeAuthState()
+    guard let testQuery = fakeWithDataProtection.generatedKeychainQuery as? [String: AnyHashable]
+    else {
+      XCTFail("`fakeWithDataProtection` missing keychain query attributes")
+      return
+    }
+
+    let comparisonQuery = comparisonKeychainQuery(
+      withAttributes: useDataProtectionAttributeSet,
+      accountName: fakeWithDataProtection.accountName,
+      service: Constants.testKeychainItemName
+    )
+    XCTAssertEqual(testQuery, comparisonQuery)
+  }
+
+  func testKeychainQueryHasAccessGroupAttributeOnRemove() throws {
+    let expectedGroupName = "testGroup"
+    let accessGroupAttributeSet: Set<KeychainConfiguration> = [
+      .keychainAccessGroup(name: expectedGroupName)
+    ]
+    let fakeWithAccessGroup = KeychainHelperFake(
+      keychainConfigurations: accessGroupAttributeSet
+    )
+    let store = KeychainStore(
+      credentialItemName: Constants.testKeychainItemName,
+      keychainHelper: fakeWithAccessGroup
+    )
+    // Use `try?` to "throw away" the error since we are testing the keychain query and not the call
+    _ = try? store.removeAuthState()
+    guard let testQuery = fakeWithAccessGroup.generatedKeychainQuery as? [String: AnyHashable]
+    else {
+      XCTFail("`fakeWithAccessGroup` missing keychain query attributes")
+      return
+    }
+
+    let comparisonQuery = comparisonKeychainQuery(
+      withAttributes: accessGroupAttributeSet,
+      accountName: fakeWithAccessGroup.accountName,
+      service: Constants.testKeychainItemName
+    )
+    XCTAssertEqual(testQuery, comparisonQuery)
+
+    guard let testGroupName = testQuery[
+      fakeWithAccessGroup.keychainConfigurations.first!.attribute.keyName
+    ] else {
+      XCTFail("`fakeWithAccessGroup` missing access group keychain attribute")
+      return
+    }
+    XCTAssertEqual(expectedGroupName, testGroupName)
+  }
+
+  func testKeychainQueryHasDataProtectionAndAccessGroupAttributesOnRemove() throws {
+    let expectedGroupName = "testGroup"
+    let accessGroupAttributeSet: Set<KeychainConfiguration> = [
+      .useDataProtectionKeychain,
+      .keychainAccessGroup(name: expectedGroupName)
+    ]
+    let fakeWithDataProtectionAndAccessGroup = KeychainHelperFake(
+      keychainConfigurations: accessGroupAttributeSet
+    )
+    let store = KeychainStore(
+      credentialItemName: Constants.testKeychainItemName,
+      keychainHelper: fakeWithDataProtectionAndAccessGroup
+    )
+    // Use `try?` to "throw away" the error since we are testing the keychain query and not the call
+    _ = try? store.removeAuthState()
+    guard let testQuery = fakeWithDataProtectionAndAccessGroup.generatedKeychainQuery
+            as? [String: AnyHashable] else {
+      XCTFail("`fakeWithDataProtectionAndAccessGroup` missing keychain query attributes")
+      return
+    }
+
+    let comparisonQuery = comparisonKeychainQuery(
+      withAttributes: accessGroupAttributeSet,
+      accountName: fakeWithDataProtectionAndAccessGroup.accountName,
+      service: Constants.testKeychainItemName
+    )
+    XCTAssertEqual(testQuery, comparisonQuery)
+
+    guard let testUseDataProtectionValue = testQuery[
+      KeychainAttribute.dataProtectionKeychain.keyName
+    ] as? Bool else {
+      XCTFail("`testQuery` did not have a `.useDataProtectionKeychain` attribute")
+      return
+    }
+    XCTAssertTrue(testUseDataProtectionValue)
+
+    guard let testAccessGroupName = testQuery[
+      KeychainAttribute.accessGroup(expectedGroupName).keyName
+    ] else {
+      XCTFail("`testQuery` did not have an `.keychainAccessGroup` attribute")
+      return
+    }
+    XCTAssertEqual(testAccessGroupName, expectedGroupName)
   }
 
   func testSaveAndReadAuthorization() throws {
@@ -143,3 +459,27 @@ class KeychainStoreTests: XCTestCase {
   }
 }
 
+extension KeychainStoreTests {
+  func comparisonKeychainQuery(
+    withAttributes attributes: Set<KeychainConfiguration>,
+    accountName: String,
+    service: String
+  ) -> [String: AnyHashable] {
+    var query: [String: AnyHashable] = [
+      kSecClass as String: kSecClassGenericPassword,
+      kSecAttrAccount as String : accountName,
+      kSecAttrService as String: service,
+    ]
+
+    attributes.forEach { configuration in
+      switch configuration.attribute {
+      case .dataProtectionKeychain:
+        query[configuration.attribute.keyName] = kCFBooleanTrue
+      case .accessGroup(let name):
+        query[configuration.attribute.keyName] = name
+      }
+    }
+
+    return query
+  }
+}

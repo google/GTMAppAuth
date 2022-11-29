@@ -22,7 +22,7 @@ class OAuth2AuthStateCompatibilityTests: XCTestCase {
   private lazy var testPersistenceString: String = {
     return "access_token=\(Constants.testAccessToken)&refresh_token=\(Constants.testRefreshToken)&scope=\(Constants.testScope2)&serviceProvider=\(Constants.testServiceProvider)&userEmail=foo%40foo.com&userEmailIsVerified=y&userID=\(Constants.testUserID)"
   }()
-  private let keychainHelper = KeychainHelperFake()
+  private let keychainHelper = KeychainHelperFake(keychainConfigurations: [])
   private lazy var keychainStore: KeychainStore = {
     return KeychainStore(
       credentialItemName: Constants.testKeychainItemName,
