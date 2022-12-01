@@ -19,13 +19,13 @@ import Foundation
 /// Represents the operations needed to provide credential storage.
 @objc(GTMAuthStateStore)
 public protocol AuthStateStore {
-  /// The `String` name for the stored credential.
-  @objc var credentialItemName: String { get }
+  /// The `String` name for the stored auth state.
+  @objc var itemName: String { get }
 
   /// Creates an instance of an `AuthStateStore` conforming instance.
   ///
-  /// - Parameter credentialItemName: The `String` name for the credential.
-  @objc init(credentialItemName: String)
+  /// - Parameter itemName: The `String` name for the auth state.
+  @objc init(itemName: String)
 
   /// Saves the provided authorization.
   ///

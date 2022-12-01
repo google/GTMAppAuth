@@ -22,7 +22,7 @@ class KeychainStoreTests: XCTestCase {
   private let keychainHelper = KeychainHelperFake()
   private lazy var keychainStore: KeychainStore = {
     return KeychainStore(
-      credentialItemName: Constants.testKeychainItemName,
+      itemName: Constants.testKeychainItemName,
       keychainHelper: keychainHelper
     )
   }()

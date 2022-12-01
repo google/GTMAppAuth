@@ -31,7 +31,7 @@ class AuthStateTests: XCTestCase {
   private let keychainHelper = KeychainHelperFake()
   private var keychainStore: KeychainStore {
     KeychainStore(
-      credentialItemName: Constants.testKeychainItemName,
+      itemName: Constants.testKeychainItemName,
       keychainHelper: keychainHelper
     )
   }

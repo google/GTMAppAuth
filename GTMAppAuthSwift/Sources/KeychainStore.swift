@@ -30,16 +30,16 @@ import GTMSessionFetcher
 @objc(GTMKeychainStore)
 public final class KeychainStore: NSObject {
   private var keychainHelper: KeychainHelper
-  // Needed for `CredentialStore` and listed here because extensions cannot add stored properties
-  @objc public var credentialItemName: String
+  // Needed for `AuthStateStore` and listed here because extensions cannot add stored properties
+  @objc public var itemName: String
 
   /// An initializer for testing to create an instance of this keychain wrapper with a given helper.
   ///
   /// - Parameters:
-  ///   - credentialItemName: The `String` name for the credential to store in the keychain.
+  ///   - itemName: The `String` name for the credential to store in the keychain.
   ///   - keychainHelper: An instance conforming to `KeychainHelper`.
-  init(credentialItemName: String, keychainHelper: KeychainHelper) {
-    self.credentialItemName = credentialItemName
+  init(itemName: String, keychainHelper: KeychainHelper) {
+    self.itemName = itemName
     self.keychainHelper = keychainHelper
     super.init()
   }
@@ -67,16 +67,16 @@ extension KeychainStore: AuthStateStore {
   /// An initializer for to create an instance of this keychain wrapper.
   ///
   /// - Parameters:
-  ///   - credentialItemName: The `String` name for the credential to store in the keychain.
-  @objc public convenience init(credentialItemName: String) {
-    self.init(credentialItemName: credentialItemName, keychainHelper: KeychainWrapper())
+  ///   - itemName: The `String` name for the credential to store in the keychain.
+  @objc public convenience init(itemName: String) {
+    self.init(itemName: itemName, keychainHelper: KeychainWrapper())
   }
 
   @objc public func save(authState: AuthState) throws {
     let authorizationData: Data = try authorizationData(fromAuthorization: authState)
     try keychainHelper.setPassword(
       data: authorizationData,
-      forService: credentialItemName,
+      forService: itemName,
       accessibility: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
     )
   }
@@ -114,7 +114,7 @@ extension KeychainStore: AuthStateStore {
   }
 
   @objc public func removeAuthState() throws {
-    try keychainHelper.removePassword(forService: credentialItemName)
+    try keychainHelper.removePassword(forService: itemName)
   }
 
   @objc public func authState(forItemName itemName: String) throws -> AuthState {
@@ -133,18 +133,18 @@ extension KeychainStore: AuthStateStore {
   }
 
   @objc public func retrieveAuthState() throws -> AuthState {
-    let passwordData = try keychainHelper.passwordData(forService: credentialItemName)
+    let passwordData = try keychainHelper.passwordData(forService: itemName)
 
     if #available(macOS 10.13, iOS 11, tvOS 11, watchOS 4, *) {
       return try modernUnarchiveAuthorization(
         withPasswordData: passwordData,
-        itemName: credentialItemName
+        itemName: itemName
       )
     } else {
       guard let auth = NSKeyedUnarchiver.unarchiveObject(with: passwordData) as? AuthState else {
         throw AuthState
           .Error
-          .failedToConvertKeychainDataToAuthorization(forItemName: credentialItemName)
+          .failedToConvertKeychainDataToAuthorization(forItemName: itemName)
       }
       return auth
     }
