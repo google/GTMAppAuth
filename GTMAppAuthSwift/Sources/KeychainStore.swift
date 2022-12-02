@@ -117,7 +117,7 @@ extension KeychainStore: AuthStateStore {
     try keychainHelper.removePassword(forService: itemName)
   }
 
-  @objc public func authState(forItemName itemName: String) throws -> AuthState {
+  @objc public func retrieveAuthState(forItemName itemName: String) throws -> AuthState {
     let passwordData = try keychainHelper.passwordData(forService: itemName)
 
     if #available(macOS 10.13, iOS 11, tvOS 11, watchOS 4, *) {

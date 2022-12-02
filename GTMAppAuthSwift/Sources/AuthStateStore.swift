@@ -60,7 +60,7 @@ public protocol AuthStateStore {
   /// - Parameter itemName: The `String` name for the `authState` to retrieve from the store.
   /// - Throws: Any error that may arise during the retrieval.
   /// - Note: This retrieval will _not_ use the `itemName` provided during initialization.
-  @objc func authState(forItemName itemName: String) throws -> AuthState
+  @objc func retrieveAuthState(forItemName itemName: String) throws -> AuthState
 
   /// Retrieves the `authState`.
   ///
