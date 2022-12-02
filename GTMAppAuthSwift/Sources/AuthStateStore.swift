@@ -16,7 +16,7 @@
 
 import Foundation
 
-/// Represents the operations needed to provide credential storage.
+/// Represents the operations needed to provide `AuthState` storage.
 @objc(GTMAuthStateStore)
 public protocol AuthStateStore {
   /// The `String` name for the stored auth state.
@@ -31,14 +31,14 @@ public protocol AuthStateStore {
   ///
   /// - Parameter authState: An instance of `AuthState` to save.
   /// - Throws: Any error that may arise during the save.
-  /// - Note: This save operation will use the `credentialItemName` provided during initialization.
+  /// - Note: This save operation will use the `itemName` provided during initialization.
   @objc func save(authState: AuthState) throws
 
   /// Saves the provided authorization with the given `itemName`.
   ///
   /// - Parameter authState: An instance of `AuthState` to save.
   /// - Throws: Any error that may arise during the save.
-  /// - Note: This save operation will _not_ use the `credentialItemName` provided during
+  /// - Note: This save operation will _not_ use the `itemName` provided during
   ///     initialization.
   @objc func save(authState: AuthState, forItemName itemName: String) throws
 
@@ -46,26 +46,26 @@ public protocol AuthStateStore {
   ///
   /// - Parameter itemName: The `String` name to use while finding the `AuthState` to remove.
   /// - Throws: Any error that may arise during the removal.
-  /// - Note: This removal will _not_ use the `credentialItemName` provided during initialization.
+  /// - Note: This removal will _not_ use the `itemName` provided during initialization.
   @objc func removeAuthState(withItemName itemName: String) throws
 
   /// Removes the `AuthState`.
   ///
   /// - Throws: Any error that may arise during the removal.
-  /// - Note: This removal will use the `credentialItemName` provided during initialization.
+  /// - Note: This removal will use the `itemName` provided during initialization.
   @objc func removeAuthState() throws
 
   /// Retrieves the `AuthState` matching the provided item name.
   ///
   /// - Parameter itemName: The `String` name for the `authState` to retrieve from the store.
   /// - Throws: Any error that may arise during the retrieval.
-  /// - Note: This retrieval will _not_ use the `credentialItemName` provided during initialization.
+  /// - Note: This retrieval will _not_ use the `itemName` provided during initialization.
   @objc func authState(forItemName itemName: String) throws -> AuthState
 
   /// Retrieves the `authState`.
   ///
   /// - Throws: Any error that may arise during the retrieval.
-  /// - Note: This retrieval will use the `credentialItemName` provided during initialization.
+  /// - Note: This retrieval will use the `itemName` provided during initialization.
   @objc func retrieveAuthState() throws -> AuthState
 }
 
