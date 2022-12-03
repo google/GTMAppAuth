@@ -48,7 +48,7 @@ static NSString *const kClientID = @"YOUR_CLIENT.apps.googleusercontent.com";
         'oauthredirect' here to help disambiguate from any other use of this scheme.
  */
 static NSString *const kRedirectURI =
-    @"com.googleusercontent.apps.YOUR_CLIENT:/oauthredirect";
+    @"com.googleusercontent.apps.YOUR_CLIENT";
 
 /*! @brief @c NSCoding key for the authState property.
  */
@@ -66,7 +66,7 @@ static NSString *const kExampleAuthorizerKey = @"authorization";
 - (void)viewDidLoad {
   [super viewDidLoad];
 
-  self.keychainStore = [[GTMKeychainStore alloc] initWithCredentialItemName:kExampleAuthorizerKey];
+  self.keychainStore = [[GTMKeychainStore alloc] initWithItemName:kExampleAuthorizerKey];
 #if !defined(NS_BLOCK_ASSERTIONS)
   // NOTE:
   //
@@ -127,7 +127,7 @@ static NSString *const kExampleAuthorizerKey = @"authorization";
 - (void)loadState {
   NSError *error;
   GTMAppAuthFetcherAuthorization *authorization =
-      [GTMAppAuthFetcherAuthorization authorizationForItemName:kExampleAuthorizerKey error:&error];
+      [self.keychainStore retrieveAuthStateAndReturnError:&error];
   if (error) {
     NSLog(@"Error loading state: %@", error);
   }

@@ -83,7 +83,7 @@ class AuthStateTests: XCTestCase {
       }
       XCTAssertEqual(
         error,
-        FetcherAuthError.cannotAuthorizeRequest(insecureRequest)
+        FetcherAuthError.cannotAuthorizeRequest(insecureRequest as URLRequest)
       )
       authorizeInsecureRequestExpectation.fulfill()
     }
@@ -178,7 +178,7 @@ class AuthStateTests: XCTestCase {
       .passedError as? FetcherAuthError else {
       return XCTFail("Testing delegate did not receive the error")
     }
-    let expectedError = FetcherAuthError.cannotAuthorizeRequest(originalRequest)
+    let expectedError = FetcherAuthError.cannotAuthorizeRequest(originalRequest as URLRequest)
     XCTAssertEqual(receivedError, expectedError)
   }
 

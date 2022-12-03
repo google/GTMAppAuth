@@ -153,8 +153,8 @@ extension KeychainStore: AuthStateStore {
 
 // MARK: - OAuth2CompatibilityCredentialStore Conformance
 
-extension KeychainStore: OAuth2AuthStateStore {
-  @objc public func authState(
+extension KeychainStore: GTMOAuth2AuthStateStore {
+  @objc public func retrieveAuthStateInGTMOAuth2Format(
     forItemName itemName: String,
     tokenURL: URL,
     redirectURI: String,
@@ -162,7 +162,8 @@ extension KeychainStore: OAuth2AuthStateStore {
     clientSecret: String?
   ) throws -> AuthState {
     let password = try keychainHelper.password(forService: itemName)
-    let authorization = try authState(
+    let oauth2Compatibility = OAuth2AuthStateCompatibility()
+    let authorization = try oauth2Compatibility.authState(
       forPersistenceString: password,
       tokenURL: tokenURL,
       redirectURI: redirectURI,
@@ -172,85 +173,12 @@ extension KeychainStore: OAuth2AuthStateStore {
     return authorization
   }
 
-  @objc public func authState(
-    forPersistenceString persistenceString: String,
-    tokenURL: URL,
-    redirectURI: String,
-    clientID: String,
-    clientSecret: String?
-  ) throws -> AuthState {
-    let persistenceDictionary = OAuth2AuthStateCompatibility.dictionary(
-      fromKeychainPassword: persistenceString
-    )
-    guard let redirectURL = URL(string: redirectURI) else {
-      throw KeychainStore.Error.failedToConvertRedirectURItoURL(redirectURI)
-    }
-
-    let authConfig = OIDServiceConfiguration(
-      authorizationEndpoint: tokenURL,
-      tokenEndpoint: tokenURL
-    )
-
-    let authRequest = OIDAuthorizationRequest(
-      configuration: authConfig,
-      clientId: clientID,
-      clientSecret: clientSecret,
-      scope: persistenceDictionary[oauth2ScopeKey],
-      redirectURL: redirectURL,
-      responseType: OIDResponseTypeCode,
-      state: nil,
-      nonce: nil,
-      codeVerifier: nil,
-      codeChallenge: nil,
-      codeChallengeMethod: nil,
-      additionalParameters: nil
-    )
-
-    let authResponse = OIDAuthorizationResponse(
-      request: authRequest,
-      parameters: persistenceDictionary as [String: NSString]
-    )
-    var additionalParameters = persistenceDictionary
-    additionalParameters.removeValue(forKey: oauth2ScopeKey)
-    additionalParameters.removeValue(forKey: oauth2RefreshTokenKey)
-
-    let tokenRequest = OIDTokenRequest(
-      configuration: authConfig,
-      grantType: "token",
-      authorizationCode: nil,
-      redirectURL: redirectURL,
-      clientID: clientID,
-      clientSecret: clientSecret,
-      scope: persistenceDictionary[oauth2ScopeKey],
-      refreshToken: persistenceDictionary[oauth2RefreshTokenKey],
-      codeVerifier: nil,
-      additionalParameters: additionalParameters
-    )
-    let tokenResponse = OIDTokenResponse(
-      request: tokenRequest,
-      parameters: persistenceDictionary as [String: NSString]
-    )
-
-    let authState = OIDAuthState(authorizationResponse: authResponse, tokenResponse: tokenResponse)
-    // We're not serializing the token expiry date, so the first refresh needs to be forced.
-    authState.setNeedsTokenRefresh()
-
-    let authorization = AuthState(
-      authState: authState,
-      serviceProvider: persistenceDictionary[AuthState.serviceProviderKey],
-      userID: persistenceDictionary[AuthState.userIDKey],
-      userEmail: persistenceDictionary[AuthState.userEmailKey],
-      userEmailIsVerified: persistenceDictionary[AuthState.userEmailIsVerifiedKey]
-    )
-    return authorization
-  }
-
-  @objc public func authForGoogle(
+  @objc public func retrieveAuthStateForGoogleInGTMOAuth2Format(
     forItemName itemName: String,
     clientID: String,
     clientSecret: String
   ) throws -> AuthState {
-    return try authState(
+    return try retrieveAuthStateInGTMOAuth2Format(
       forItemName: itemName,
       tokenURL: OAuth2AuthStateCompatibility.googleTokenURL,
       redirectURI: OAuth2AuthStateCompatibility.nativeClientRedirectURI,
@@ -259,7 +187,7 @@ extension KeychainStore: OAuth2AuthStateStore {
     )
   }
 
-  @objc public func saveWithOAuth2Format(
+  @objc public func saveWithGTMOAuth2Format(
     forAuthorization authorization: AuthState,
     withItemName itemName: String
   ) throws {

@@ -48,7 +48,7 @@ let oobString = "urn:ietf:wg:oauth:2.0:oob"
 /// The methods of this class are capable of serializing and deserializing auth objects in a way
 /// compatible with the serialization in `GTMOAuth2ViewControllerTouch` and
 /// `GTMOAuth2WindowController` in GTMOAuth2.
-@objc(GTMOAuth2KeychainCompatibility)
+@objc(GTMOAuth2AuthStateCompatibility)
 public final class OAuth2AuthStateCompatibility: NSObject {
   // MARK: - OAuth2 Utilities
 
@@ -127,5 +127,78 @@ public final class OAuth2AuthStateCompatibility: NSObject {
       }
     let passwordDictionary = Dictionary(uniqueKeysWithValues: keyValueTuples)
     return passwordDictionary
+  }
+  
+  @objc public func authState(
+    forPersistenceString persistenceString: String,
+    tokenURL: URL,
+    redirectURI: String,
+    clientID: String,
+    clientSecret: String?
+  ) throws -> AuthState {
+    let persistenceDictionary = OAuth2AuthStateCompatibility.dictionary(
+      fromKeychainPassword: persistenceString
+    )
+    guard let redirectURL = URL(string: redirectURI) else {
+      throw KeychainStore.Error.failedToConvertRedirectURItoURL(redirectURI)
+    }
+
+    let authConfig = OIDServiceConfiguration(
+      authorizationEndpoint: tokenURL,
+      tokenEndpoint: tokenURL
+    )
+
+    let authRequest = OIDAuthorizationRequest(
+      configuration: authConfig,
+      clientId: clientID,
+      clientSecret: clientSecret,
+      scope: persistenceDictionary[oauth2ScopeKey],
+      redirectURL: redirectURL,
+      responseType: OIDResponseTypeCode,
+      state: nil,
+      nonce: nil,
+      codeVerifier: nil,
+      codeChallenge: nil,
+      codeChallengeMethod: nil,
+      additionalParameters: nil
+    )
+
+    let authResponse = OIDAuthorizationResponse(
+      request: authRequest,
+      parameters: persistenceDictionary as [String: NSString]
+    )
+    var additionalParameters = persistenceDictionary
+    additionalParameters.removeValue(forKey: oauth2ScopeKey)
+    additionalParameters.removeValue(forKey: oauth2RefreshTokenKey)
+
+    let tokenRequest = OIDTokenRequest(
+      configuration: authConfig,
+      grantType: "token",
+      authorizationCode: nil,
+      redirectURL: redirectURL,
+      clientID: clientID,
+      clientSecret: clientSecret,
+      scope: persistenceDictionary[oauth2ScopeKey],
+      refreshToken: persistenceDictionary[oauth2RefreshTokenKey],
+      codeVerifier: nil,
+      additionalParameters: additionalParameters
+    )
+    let tokenResponse = OIDTokenResponse(
+      request: tokenRequest,
+      parameters: persistenceDictionary as [String: NSString]
+    )
+
+    let authState = OIDAuthState(authorizationResponse: authResponse, tokenResponse: tokenResponse)
+    // We're not serializing the token expiry date, so the first refresh needs to be forced.
+    authState.setNeedsTokenRefresh()
+
+    let authorization = AuthState(
+      authState: authState,
+      serviceProvider: persistenceDictionary[AuthState.serviceProviderKey],
+      userID: persistenceDictionary[AuthState.userIDKey],
+      userEmail: persistenceDictionary[AuthState.userEmailKey],
+      userEmailIsVerified: persistenceDictionary[AuthState.userEmailIsVerifiedKey]
+    )
+    return authorization
   }
 }

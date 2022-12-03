@@ -19,14 +19,6 @@ import Foundation
 /// Represents the operations needed to provide `AuthState` storage.
 @objc(GTMAuthStateStore)
 public protocol AuthStateStore {
-  /// The `String` name for the stored auth state.
-  @objc var itemName: String { get }
-
-  /// Creates an instance of an `AuthStateStore` conforming instance.
-  ///
-  /// - Parameter itemName: The `String` name for the auth state.
-  @objc init(itemName: String)
-
   /// Saves the provided authorization.
   ///
   /// - Parameter authState: An instance of `AuthState` to save.
@@ -34,33 +26,11 @@ public protocol AuthStateStore {
   /// - Note: This save operation will use the `itemName` provided during initialization.
   @objc func save(authState: AuthState) throws
 
-  /// Saves the provided authorization with the given `itemName`.
-  ///
-  /// - Parameter authState: An instance of `AuthState` to save.
-  /// - Throws: Any error that may arise during the save.
-  /// - Note: This save operation will _not_ use the `itemName` provided during
-  ///     initialization.
-  @objc func save(authState: AuthState, forItemName itemName: String) throws
-
-  /// Removes the `AuthState` matching the provided `itemName`.
-  ///
-  /// - Parameter itemName: The `String` name to use while finding the `AuthState` to remove.
-  /// - Throws: Any error that may arise during the removal.
-  /// - Note: This removal will _not_ use the `itemName` provided during initialization.
-  @objc func removeAuthState(withItemName itemName: String) throws
-
   /// Removes the `AuthState`.
   ///
   /// - Throws: Any error that may arise during the removal.
   /// - Note: This removal will use the `itemName` provided during initialization.
   @objc func removeAuthState() throws
-
-  /// Retrieves the `AuthState` matching the provided item name.
-  ///
-  /// - Parameter itemName: The `String` name for the `authState` to retrieve from the store.
-  /// - Throws: Any error that may arise during the retrieval.
-  /// - Note: This retrieval will _not_ use the `itemName` provided during initialization.
-  @objc func retrieveAuthState(forItemName itemName: String) throws -> AuthState
 
   /// Retrieves the `authState`.
   ///
@@ -71,8 +41,7 @@ public protocol AuthStateStore {
 
 /// Represents the operations needed to convert OAuth2 authorizations to `AuthState` instances along
 /// with credential storage.
-@objc(GTMOAuth2AuthStateStore)
-public protocol OAuth2AuthStateStore {
+@objc public protocol GTMOAuth2AuthStateStore {
   /// Attempts to create an `AuthState` from stored data in GTMOAuth2 format, at the supplied
   /// identifier.
   ///
@@ -84,27 +53,8 @@ public protocol OAuth2AuthStateStore {
   ///   - clientSecret: The OAuth client secret.
   /// - Returns: An `AuthState` object.
   /// - Throws: Any error arising from the `AuthState` creation.
-  @objc func authState(
+  @objc func retrieveAuthStateInGTMOAuth2Format(
     forItemName itemName: String,
-    tokenURL: URL,
-    redirectURI: String,
-    clientID: String,
-    clientSecret: String?
-  ) throws -> AuthState
-
-  /// Attempts to create a `AuthState` from a `String` representation of the GTMOAuth2 keychain
-  /// data.
-  ///
-  /// - Parameters:
-  ///   - persistenceString: `String` representation of the GTMOAuth2 data.
-  ///   - tokenURL: The OAuth token endpoint URL.
-  ///   - redirectURI: The OAuth redirect URI used when obtaining the original authorization.
-  ///   - clientID: The OAuth client ID.
-  ///   - clientSecret: The OAuth client secret.
-  /// - Returns: An `AuthState` object, or nil.
-  /// - Throws: Any error arising from the `AuthState` creation.
-  @objc func authState(
-    forPersistenceString persistenceString: String,
     tokenURL: URL,
     redirectURI: String,
     clientID: String,
@@ -122,8 +72,7 @@ public protocol OAuth2AuthStateStore {
   ///   - clientSecret: The OAuth client secret.
   /// - Returns: An `AuthState` object, or nil.
   /// - Throws: Any error arising from the `AuthState` creation.
-  @objc(authForGoogleForItemName:clientID:clientSecret:error:)
-  func authForGoogle(
+  @objc func retrieveAuthStateForGoogleInGTMOAuth2Format(
     forItemName itemName: String,
     clientID: String,
     clientSecret: String
@@ -135,8 +84,8 @@ public protocol OAuth2AuthStateStore {
   ///   - authorization: The `AuthState` to save.
   ///   - itemName: The name of the item to save.
   /// - Throws: An instance of `GTMOAuth2KeychainCompatibility.Error` arising from the save.
-  @available(*, deprecated, message: "Use GTMAppAuthFetcherAuthorization.save(authorization:with:)")
-  @objc func saveWithOAuth2Format(
+  @available(*, deprecated, message: "Use AuthStateStore.save(authState:)")
+  @objc func saveWithGTMOAuth2Format(
     forAuthorization authorization: AuthState,
     withItemName itemName: String
   ) throws

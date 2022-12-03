@@ -271,9 +271,9 @@ open class AuthState: NSObject, GTMFetcherAuthorizationProtocol, NSSecureCoding 
       // `request` is authorized even if previous refreshes produced an error
       args.error = nil
     } else if accessToken?.isEmpty ?? true {
-      args.error = Error.accessTokenEmptyForRequest(request)
+      args.error = Error.accessTokenEmptyForRequest(request as URLRequest)
     } else {
-      args.error = Error.cannotAuthorizeRequest(request)
+      args.error = Error.cannotAuthorizeRequest(request as URLRequest)
     }
     let callbackQueue = fetcherService?.callbackQueue ?? DispatchQueue.main
     callbackQueue.async { [weak self] in
@@ -448,8 +448,8 @@ public extension AuthState {
 
   /// Errors that may arise while authorizing a request or saving a request to the keychain.
   enum Error: Swift.Error, Equatable, CustomNSError {
-    case cannotAuthorizeRequest(NSURLRequest)
-    case accessTokenEmptyForRequest(NSURLRequest)
+    case cannotAuthorizeRequest(URLRequest)
+    case accessTokenEmptyForRequest(URLRequest)
     case failedToConvertKeychainDataToAuthorization(forItemName: String)
     public static let errorDomain: String = "GTMAppAuthFetcherAuthorizationErrorDomain"
     public var errorUserInfo: [String : Any] {
