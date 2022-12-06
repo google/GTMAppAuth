@@ -55,20 +55,14 @@ class OAuth2AuthStateCompatibilityTests: XCTestCase {
     XCTAssertEqual(response, testPersistenceString)
   }
 
-  func testSaveOAuth2Authorization() throws {
-    try keychainStore.saveWithGTMOAuth2Format(
-      forAuthorization: expectedAuthorization,
-      withItemName: Constants.testKeychainItemName
-    )
+  func testSaveGTMOAuth2Authorization() throws {
+    try keychainStore.saveWithGTMOAuth2Format(forAuthorization: expectedAuthorization)
   }
 
-  func testSaveOAuth2AuthorizationThrowsError() {
-    let emptyItemName = ""
+  func testSaveGTMOAuth2AuthorizationThrowsError() {
+    keychainStore.itemName = ""
     XCTAssertThrowsError(
-      try keychainStore.saveWithGTMOAuth2Format(
-        forAuthorization: expectedAuthorization,
-        withItemName: emptyItemName
-      )
+      try keychainStore.saveWithGTMOAuth2Format(forAuthorization: expectedAuthorization)
     ) { thrownError in
       XCTAssertEqual(
         thrownError as? KeychainStore.Error,
@@ -77,17 +71,14 @@ class OAuth2AuthStateCompatibilityTests: XCTestCase {
     }
   }
 
-  func testRemoveOAuth2Authorization() throws {
-    try keychainStore.saveWithGTMOAuth2Format(
-      forAuthorization: expectedAuthorization,
-      withItemName: Constants.testKeychainItemName
-    )
-    try keychainStore.removeOAuth2AuthState(withItemName: Constants.testKeychainItemName)
+  func testRemoveGTMOAuth2Authorization() throws {
+    try keychainStore.saveWithGTMOAuth2Format(forAuthorization: expectedAuthorization)
+    try keychainStore.removeGTMOAuth2AuthState()
   }
 
-  func testRemoveOAuth2AuthorizationThrowsError() {
+  func testRemoveGTMOAuth2AuthorizationThrowsError() {
     XCTAssertThrowsError(
-      try keychainStore.removeOAuth2AuthState(withItemName: Constants.testKeychainItemName)
+      try keychainStore.removeGTMOAuth2AuthState()
     ) { thrownError in
       XCTAssertEqual(
         thrownError as? KeychainStore.Error,
@@ -97,12 +88,8 @@ class OAuth2AuthStateCompatibilityTests: XCTestCase {
   }
 
   func testAuthorizeFromKeychainForName() throws {
-    try keychainStore.saveWithGTMOAuth2Format(
-      forAuthorization: expectedAuthorization,
-      withItemName: Constants.testKeychainItemName
-    )
+    try keychainStore.saveWithGTMOAuth2Format(forAuthorization: expectedAuthorization)
     let testAuth = try keychainStore.retrieveAuthStateInGTMOAuth2Format(
-      forItemName: Constants.testKeychainItemName,
       tokenURL: Constants.testTokenURL,
       redirectURI: Constants.testRedirectURI,
       clientID: Constants.testClientID,
@@ -124,14 +111,10 @@ class OAuth2AuthStateCompatibilityTests: XCTestCase {
   }
 
   func testAuthorizeFromKeychainForNameThrowsError() throws {
-    try keychainStore.saveWithGTMOAuth2Format(
-      forAuthorization: expectedAuthorization,
-      withItemName: Constants.testKeychainItemName
-    )
+    try keychainStore.saveWithGTMOAuth2Format(forAuthorization: expectedAuthorization)
     let badRedirectURI = ""
     XCTAssertThrowsError(
       _ = try keychainStore.retrieveAuthStateInGTMOAuth2Format(
-        forItemName: Constants.testKeychainItemName,
         tokenURL: Constants.testTokenURL,
         redirectURI: badRedirectURI,
         clientID: Constants.testClientID,
@@ -166,10 +149,7 @@ class OAuth2AuthStateCompatibilityTests: XCTestCase {
   }
 
   func testAuthorizeFromKeychainForPersistenceString() throws {
-    try keychainStore.saveWithGTMOAuth2Format(
-      forAuthorization: expectedAuthorization,
-      withItemName: Constants.testKeychainItemName
-    )
+    try keychainStore.saveWithGTMOAuth2Format(forAuthorization: expectedAuthorization)
 
     let testPersistAuth = try oauth2Compatibility.authState(
       forPersistenceString: testPersistenceString,
@@ -201,13 +181,9 @@ class OAuth2AuthStateCompatibilityTests: XCTestCase {
       clientID: Constants.testClientID,
       clientSecret: Constants.testClientSecret
     )
-    try keychainStore.saveWithGTMOAuth2Format(
-      forAuthorization: expectedPersistAuth,
-      withItemName: Constants.testKeychainItemName
-    )
+    try keychainStore.saveWithGTMOAuth2Format(forAuthorization: expectedPersistAuth)
 
     let testPersistAuth = try keychainStore.retrieveAuthStateInGTMOAuth2Format(
-      forItemName: Constants.testKeychainItemName,
       tokenURL: Constants.testTokenURL,
       redirectURI: Constants.testRedirectURI,
       clientID: Constants.testClientID,
@@ -236,13 +212,9 @@ class OAuth2AuthStateCompatibilityTests: XCTestCase {
       clientID: Constants.testClientID,
       clientSecret: Constants.testClientSecret
     )
-    try keychainStore.saveWithGTMOAuth2Format(
-      forAuthorization: expectedAuthorization,
-      withItemName: Constants.testKeychainItemName
-    )
+    try keychainStore.saveWithGTMOAuth2Format(forAuthorization: expectedAuthorization)
 
     let testAuthorization = try keychainStore.retrieveAuthStateForGoogleInGTMOAuth2Format(
-      forItemName: Constants.testKeychainItemName,
       clientID: Constants.testClientID,
       clientSecret: Constants.testClientSecret
     )

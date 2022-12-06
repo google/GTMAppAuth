@@ -155,7 +155,6 @@ extension KeychainStore: AuthStateStore {
 
 extension KeychainStore: GTMOAuth2AuthStateStore {
   @objc public func retrieveAuthStateInGTMOAuth2Format(
-    forItemName itemName: String,
     tokenURL: URL,
     redirectURI: String,
     clientID: String,
@@ -173,13 +172,20 @@ extension KeychainStore: GTMOAuth2AuthStateStore {
     return authorization
   }
 
+  /// Attempts to create a `AuthState` from data stored in a GTMOAuth2 format.
+  ///
+  /// Uses Google OAuth provider information.
+  ///
+  /// - Parameters:
+  ///   - clientID: The OAuth client id.
+  ///   - clientSecret: The OAuth client secret.
+  /// - Returns: An `AuthState` object, or nil.
+  /// - Throws: Any error arising from the `AuthState` creation.
   @objc public func retrieveAuthStateForGoogleInGTMOAuth2Format(
-    forItemName itemName: String,
     clientID: String,
     clientSecret: String
   ) throws -> AuthState {
     return try retrieveAuthStateInGTMOAuth2Format(
-      forItemName: itemName,
       tokenURL: OAuth2AuthStateCompatibility.googleTokenURL,
       redirectURI: OAuth2AuthStateCompatibility.nativeClientRedirectURI,
       clientID: clientID,
@@ -188,8 +194,7 @@ extension KeychainStore: GTMOAuth2AuthStateStore {
   }
 
   @objc public func saveWithGTMOAuth2Format(
-    forAuthorization authorization: AuthState,
-    withItemName itemName: String
+    forAuthorization authorization: AuthState
   ) throws {
     guard let persistence = OAuth2AuthStateCompatibility
       .persistenceResponseString(forAuthState: authorization) else {
@@ -201,7 +206,7 @@ extension KeychainStore: GTMOAuth2AuthStateStore {
       accessibility: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly)
   }
 
-  @objc public func removeOAuth2AuthState(withItemName itemName: String) throws {
+  @objc public func removeGTMOAuth2AuthState() throws {
     try keychainHelper.removePassword(forService: itemName)
   }
 }
