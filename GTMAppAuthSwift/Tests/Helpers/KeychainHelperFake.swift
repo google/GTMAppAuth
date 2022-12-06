@@ -37,7 +37,7 @@ class KeychainHelperFake: KeychainHelper {
 
     keychainConfigurations.forEach { configuration in
       switch configuration.attribute {
-      case .dataProtectionKeychain:
+      case .useDataProtectionKeychain:
         query[configuration.attribute.keyName] = kCFBooleanTrue
       case .accessGroup(let name):
         query[configuration.attribute.keyName] = name

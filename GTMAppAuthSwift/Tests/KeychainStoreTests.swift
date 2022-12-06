@@ -129,7 +129,7 @@ class KeychainStoreTests: XCTestCase {
     XCTAssertEqual(testQuery, comparisonQuery)
 
     guard let testUseDataProtectionValue = testQuery[
-      KeychainAttribute.dataProtectionKeychain.keyName
+      KeychainAttribute.useDataProtectionKeychain.keyName
     ] as? Bool else {
       XCTFail("`testQuery` did not have a `.useDataProtectionKeychain` attribute")
       return
@@ -235,7 +235,7 @@ class KeychainStoreTests: XCTestCase {
     XCTAssertEqual(testQuery, comparisonQuery)
 
     guard let testUseDataProtectionValue = testQuery[
-      KeychainAttribute.dataProtectionKeychain.keyName
+      KeychainAttribute.useDataProtectionKeychain.keyName
     ] as? Bool else {
       XCTFail("`testQuery` did not have a `.useDataProtectionKeychain` attribute")
       return
@@ -341,7 +341,7 @@ class KeychainStoreTests: XCTestCase {
     XCTAssertEqual(testQuery, comparisonQuery)
 
     guard let testUseDataProtectionValue = testQuery[
-      KeychainAttribute.dataProtectionKeychain.keyName
+      KeychainAttribute.useDataProtectionKeychain.keyName
     ] as? Bool else {
       XCTFail("`testQuery` did not have a `.useDataProtectionKeychain` attribute")
       return
@@ -473,7 +473,7 @@ extension KeychainStoreTests {
 
     attributes.forEach { configuration in
       switch configuration.attribute {
-      case .dataProtectionKeychain:
+      case .useDataProtectionKeychain:
         query[configuration.attribute.keyName] = kCFBooleanTrue
       case .accessGroup(let name):
         query[configuration.attribute.keyName] = name

@@ -52,7 +52,7 @@ struct KeychainWrapper: KeychainHelper {
 
     keychainConfigurations.forEach { configuration in
       switch configuration.attribute {
-      case .dataProtectionKeychain:
+      case .useDataProtectionKeychain:
 #if os(macOS) && isMaxMacOSVersionGreaterThanTenOneFive
         if #available(macOS 10.15, *) {
           query[configuration.attribute.keyName] = kCFBooleanTrue

@@ -17,13 +17,13 @@
 import Foundation
 
 enum KeychainAttribute {
-  case dataProtectionKeychain
+  case useDataProtectionKeychain
   case accessGroup(String)
 
   var keyName: String {
     switch self {
-    case .dataProtectionKeychain:
-      return "kSecDataProtectionKeychain"
+    case .useDataProtectionKeychain:
+      return "kSecUseDataProtectionKeychain"
     case .accessGroup:
       return "kSecKeychainAccessGroup"
     }
@@ -40,7 +40,7 @@ public final class KeychainConfiguration: NSObject {
 
   @available(macOS 10.15, *)
   @objc public static let useDataProtectionKeychain = KeychainConfiguration(
-    attribute: .dataProtectionKeychain
+    attribute: .useDataProtectionKeychain
   )
 
   @objc public static func keychainAccessGroup(name: String) -> KeychainConfiguration {
