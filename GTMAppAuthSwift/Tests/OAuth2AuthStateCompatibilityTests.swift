@@ -73,12 +73,12 @@ class OAuth2AuthStateCompatibilityTests: XCTestCase {
 
   func testRemoveGTMOAuth2Authorization() throws {
     try keychainStore.saveWithGTMOAuth2Format(forAuthorization: expectedAuthorization)
-    try keychainStore.removeGTMOAuth2AuthState()
+    try keychainStore.removeAuthState()
   }
 
   func testRemoveGTMOAuth2AuthorizationThrowsError() {
     XCTAssertThrowsError(
-      try keychainStore.removeGTMOAuth2AuthState()
+      try keychainStore.removeAuthState()
     ) { thrownError in
       XCTAssertEqual(
         thrownError as? KeychainStore.Error,
