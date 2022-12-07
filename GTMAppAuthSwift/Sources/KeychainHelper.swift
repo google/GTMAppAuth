@@ -19,8 +19,8 @@ import Foundation
 /// A protocol defining the helper API for interacting with the Keychain.
 protocol KeychainHelper {
   var accountName: String { get }
-  var keychainConfigurations: Set<KeychainConfiguration> { get }
-  init(keychainConfigurations: Set<KeychainConfiguration>)
+  var keychainAttributes: Set<KeychainAttribute> { get }
+  init(keychainAttributes: Set<KeychainAttribute>)
   func keychainQuery(forService service: String) -> [String: Any]
   func password(forService service: String) throws -> String
   func passwordData(forService service: String) throws -> Data
@@ -32,15 +32,15 @@ protocol KeychainHelper {
 /// An internally scoped keychain helper.
 struct KeychainWrapper: KeychainHelper {
   let accountName = "OAuth"
-  let keychainConfigurations: Set<KeychainConfiguration>
+  let keychainAttributes: Set<KeychainAttribute>
   @available(macOS 10.15, *)
   private var isMaxMacOSVersionGreaterThanTenOneFive: Bool {
     let tenOneFive = OperatingSystemVersion(majorVersion: 10, minorVersion: 15, patchVersion: 0)
     return ProcessInfo().isOperatingSystemAtLeast(tenOneFive)
   }
 
-  init(keychainConfigurations: Set<KeychainConfiguration>) {
-    self.keychainConfigurations = keychainConfigurations
+  init(keychainAttributes: Set<KeychainAttribute>) {
+    self.keychainAttributes = keychainAttributes
   }
 
   func keychainQuery(forService service: String) -> [String: Any] {
@@ -50,7 +50,7 @@ struct KeychainWrapper: KeychainHelper {
       kSecAttrService as String: service,
     ]
 
-    keychainConfigurations.forEach { configuration in
+    keychainAttributes.forEach { configuration in
       switch configuration.attribute {
       case .useDataProtectionKeychain:
 #if os(macOS) && isMaxMacOSVersionGreaterThanTenOneFive

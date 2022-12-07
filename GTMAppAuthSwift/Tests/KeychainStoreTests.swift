@@ -19,7 +19,7 @@ import AppAuthCore
 @testable import GTMAppAuthSwift
 
 class KeychainStoreTests: XCTestCase {
-  private let keychainHelper = KeychainHelperFake(keychainConfigurations: [])
+  private let keychainHelper = KeychainHelperFake(keychainAttributes: [])
   private lazy var keychainStore: KeychainStore = {
     return KeychainStore(
       credentialItemName: Constants.testKeychainItemName,
@@ -43,9 +43,9 @@ class KeychainStoreTests: XCTestCase {
   }
 
   func testKeychainQueryHasDataProtectionAttributeOnSave() throws {
-    let useDataProtectionAttributeSet: Set<KeychainConfiguration> = [.useDataProtectionKeychain]
+    let useDataProtectionAttributeSet: Set<KeychainAttribute> = [.useDataProtectionKeychain]
     let fakeWithDataProtection = KeychainHelperFake(
-      keychainConfigurations: useDataProtectionAttributeSet
+      keychainAttributes: useDataProtectionAttributeSet
     )
     let store = KeychainStore(
       credentialItemName: Constants.testKeychainItemName,
@@ -68,11 +68,11 @@ class KeychainStoreTests: XCTestCase {
 
   func testKeychainQueryHasAccessGroupAttributeOnSave() throws {
     let expectedGroupName = "testGroup"
-    let accessGroupAttributeSet: Set<KeychainConfiguration> = [
+    let accessGroupAttributeSet: Set<KeychainAttribute> = [
       .keychainAccessGroup(name: expectedGroupName)
     ]
     let fakeWithAccessGroup = KeychainHelperFake(
-      keychainConfigurations: accessGroupAttributeSet
+      keychainAttributes: accessGroupAttributeSet
     )
     let store = KeychainStore(
       credentialItemName: Constants.testKeychainItemName,
@@ -93,7 +93,7 @@ class KeychainStoreTests: XCTestCase {
     XCTAssertEqual(testQuery, comparisonQuery)
 
     guard let testGroupName = testQuery[
-      fakeWithAccessGroup.keychainConfigurations.first!.attribute.keyName
+      fakeWithAccessGroup.keychainAttributes.first!.attribute.keyName
     ] else {
       XCTFail("`fakeWithAccessGroup` missing access group keychain attribute")
       return
@@ -103,12 +103,12 @@ class KeychainStoreTests: XCTestCase {
 
   func testKeychainQueryHasDataProtectionAndAccessGroupAttributesOnSave() throws {
     let expectedGroupName = "testGroup"
-    let accessGroupAttributeSet: Set<KeychainConfiguration> = [
+    let accessGroupAttributeSet: Set<KeychainAttribute> = [
       .useDataProtectionKeychain,
       .keychainAccessGroup(name: expectedGroupName)
     ]
     let fakeWithDataProtectionAndAccessGroup = KeychainHelperFake(
-      keychainConfigurations: accessGroupAttributeSet
+      keychainAttributes: accessGroupAttributeSet
     )
     let store = KeychainStore(
       credentialItemName: Constants.testKeychainItemName,
@@ -129,7 +129,7 @@ class KeychainStoreTests: XCTestCase {
     XCTAssertEqual(testQuery, comparisonQuery)
 
     guard let testUseDataProtectionValue = testQuery[
-      KeychainAttribute.useDataProtectionKeychain.keyName
+      KeychainAttribute.Attribute.useDataProtectionKeychain.keyName
     ] as? Bool else {
       XCTFail("`testQuery` did not have a `.useDataProtectionKeychain` attribute")
       return
@@ -137,7 +137,7 @@ class KeychainStoreTests: XCTestCase {
     XCTAssertTrue(testUseDataProtectionValue)
 
     guard let testAccessGroupName = testQuery[
-      KeychainAttribute.accessGroup(expectedGroupName).keyName
+      KeychainAttribute.Attribute.accessGroup(expectedGroupName).keyName
     ] else {
       XCTFail("`testQuery` did not have an `.keychainAccessGroup` attribute")
       return
@@ -146,9 +146,9 @@ class KeychainStoreTests: XCTestCase {
   }
 
   func testKeychainQueryHasDataProtectionAttributeOnRead() throws {
-    let useDataProtectionAttributeSet: Set<KeychainConfiguration> = [.useDataProtectionKeychain]
+    let useDataProtectionAttributeSet: Set<KeychainAttribute> = [.useDataProtectionKeychain]
     let fakeWithDataProtection = KeychainHelperFake(
-      keychainConfigurations: useDataProtectionAttributeSet
+      keychainAttributes: useDataProtectionAttributeSet
     )
     let store = KeychainStore(
       credentialItemName: Constants.testKeychainItemName,
@@ -172,11 +172,11 @@ class KeychainStoreTests: XCTestCase {
 
   func testKeychainQueryHasAccessGroupAttributeOnRead() throws {
     let expectedGroupName = "testGroup"
-    let accessGroupAttributeSet: Set<KeychainConfiguration> = [
+    let accessGroupAttributeSet: Set<KeychainAttribute> = [
       .keychainAccessGroup(name: expectedGroupName)
     ]
     let fakeWithAccessGroup = KeychainHelperFake(
-      keychainConfigurations: accessGroupAttributeSet
+      keychainAttributes: accessGroupAttributeSet
     )
     let store = KeychainStore(
       credentialItemName: Constants.testKeychainItemName,
@@ -198,7 +198,7 @@ class KeychainStoreTests: XCTestCase {
     XCTAssertEqual(testQuery, comparisonQuery)
 
     guard let testGroupName = testQuery[
-      fakeWithAccessGroup.keychainConfigurations.first!.attribute.keyName
+      fakeWithAccessGroup.keychainAttributes.first!.attribute.keyName
     ] else {
       XCTFail("`fakeWithAccessGroup` missing access group keychain attribute")
       return
@@ -208,12 +208,12 @@ class KeychainStoreTests: XCTestCase {
 
   func testKeychainQueryHasDataProtectionAndAccessGroupAttributesOnRead() throws {
     let expectedGroupName = "testGroup"
-    let accessGroupAttributeSet: Set<KeychainConfiguration> = [
+    let accessGroupAttributeSet: Set<KeychainAttribute> = [
       .useDataProtectionKeychain,
       .keychainAccessGroup(name: expectedGroupName)
     ]
     let fakeWithDataProtectionAndAccessGroup = KeychainHelperFake(
-      keychainConfigurations: accessGroupAttributeSet
+      keychainAttributes: accessGroupAttributeSet
     )
     let store = KeychainStore(
       credentialItemName: Constants.testKeychainItemName,
@@ -235,7 +235,7 @@ class KeychainStoreTests: XCTestCase {
     XCTAssertEqual(testQuery, comparisonQuery)
 
     guard let testUseDataProtectionValue = testQuery[
-      KeychainAttribute.useDataProtectionKeychain.keyName
+      KeychainAttribute.Attribute.useDataProtectionKeychain.keyName
     ] as? Bool else {
       XCTFail("`testQuery` did not have a `.useDataProtectionKeychain` attribute")
       return
@@ -243,7 +243,7 @@ class KeychainStoreTests: XCTestCase {
     XCTAssertTrue(testUseDataProtectionValue)
 
     guard let testAccessGroupName = testQuery[
-      KeychainAttribute.accessGroup(expectedGroupName).keyName
+      KeychainAttribute.Attribute.accessGroup(expectedGroupName).keyName
     ] else {
       XCTFail("`testQuery` did not have an `.keychainAccessGroup` attribute")
       return
@@ -252,9 +252,9 @@ class KeychainStoreTests: XCTestCase {
   }
 
   func testKeychainQueryHasDataProtectionAttributeOnRemove() throws {
-    let useDataProtectionAttributeSet: Set<KeychainConfiguration> = [.useDataProtectionKeychain]
+    let useDataProtectionAttributeSet: Set<KeychainAttribute> = [.useDataProtectionKeychain]
     let fakeWithDataProtection = KeychainHelperFake(
-      keychainConfigurations: useDataProtectionAttributeSet
+      keychainAttributes: useDataProtectionAttributeSet
     )
     let store = KeychainStore(
       credentialItemName: Constants.testKeychainItemName,
@@ -278,11 +278,11 @@ class KeychainStoreTests: XCTestCase {
 
   func testKeychainQueryHasAccessGroupAttributeOnRemove() throws {
     let expectedGroupName = "testGroup"
-    let accessGroupAttributeSet: Set<KeychainConfiguration> = [
+    let accessGroupAttributeSet: Set<KeychainAttribute> = [
       .keychainAccessGroup(name: expectedGroupName)
     ]
     let fakeWithAccessGroup = KeychainHelperFake(
-      keychainConfigurations: accessGroupAttributeSet
+      keychainAttributes: accessGroupAttributeSet
     )
     let store = KeychainStore(
       credentialItemName: Constants.testKeychainItemName,
@@ -304,7 +304,7 @@ class KeychainStoreTests: XCTestCase {
     XCTAssertEqual(testQuery, comparisonQuery)
 
     guard let testGroupName = testQuery[
-      fakeWithAccessGroup.keychainConfigurations.first!.attribute.keyName
+      fakeWithAccessGroup.keychainAttributes.first!.attribute.keyName
     ] else {
       XCTFail("`fakeWithAccessGroup` missing access group keychain attribute")
       return
@@ -314,12 +314,12 @@ class KeychainStoreTests: XCTestCase {
 
   func testKeychainQueryHasDataProtectionAndAccessGroupAttributesOnRemove() throws {
     let expectedGroupName = "testGroup"
-    let accessGroupAttributeSet: Set<KeychainConfiguration> = [
+    let accessGroupAttributeSet: Set<KeychainAttribute> = [
       .useDataProtectionKeychain,
       .keychainAccessGroup(name: expectedGroupName)
     ]
     let fakeWithDataProtectionAndAccessGroup = KeychainHelperFake(
-      keychainConfigurations: accessGroupAttributeSet
+      keychainAttributes: accessGroupAttributeSet
     )
     let store = KeychainStore(
       credentialItemName: Constants.testKeychainItemName,
@@ -341,7 +341,7 @@ class KeychainStoreTests: XCTestCase {
     XCTAssertEqual(testQuery, comparisonQuery)
 
     guard let testUseDataProtectionValue = testQuery[
-      KeychainAttribute.useDataProtectionKeychain.keyName
+      KeychainAttribute.Attribute.useDataProtectionKeychain.keyName
     ] as? Bool else {
       XCTFail("`testQuery` did not have a `.useDataProtectionKeychain` attribute")
       return
@@ -349,7 +349,7 @@ class KeychainStoreTests: XCTestCase {
     XCTAssertTrue(testUseDataProtectionValue)
 
     guard let testAccessGroupName = testQuery[
-      KeychainAttribute.accessGroup(expectedGroupName).keyName
+      KeychainAttribute.Attribute.accessGroup(expectedGroupName).keyName
     ] else {
       XCTFail("`testQuery` did not have an `.keychainAccessGroup` attribute")
       return
@@ -461,7 +461,7 @@ class KeychainStoreTests: XCTestCase {
 
 extension KeychainStoreTests {
   func comparisonKeychainQuery(
-    withAttributes attributes: Set<KeychainConfiguration>,
+    withAttributes attributes: Set<KeychainAttribute>,
     accountName: String,
     service: String
   ) -> [String: AnyHashable] {

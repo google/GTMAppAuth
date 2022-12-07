@@ -16,34 +16,34 @@
 
 import Foundation
 
-enum KeychainAttribute {
-  case useDataProtectionKeychain
-  case accessGroup(String)
+@objc(GTMKeychainAttribute)
+public final class KeychainAttribute: NSObject {
+  enum Attribute {
+    case useDataProtectionKeychain
+    case accessGroup(String)
 
-  var keyName: String {
-    switch self {
-    case .useDataProtectionKeychain:
-      return "kSecUseDataProtectionKeychain"
-    case .accessGroup:
-      return "kSecKeychainAccessGroup"
+    var keyName: String {
+      switch self {
+      case .useDataProtectionKeychain:
+        return "kSecUseDataProtectionKeychain"
+      case .accessGroup:
+        return "kSecKeychainAccessGroup"
+      }
     }
   }
-}
 
-@objc(GTMKeychainConfiguration)
-public final class KeychainConfiguration: NSObject {
-  let attribute: KeychainAttribute
+  let attribute: Attribute
 
-  init(attribute: KeychainAttribute) {
+  init(attribute: Attribute) {
     self.attribute = attribute
   }
 
   @available(macOS 10.15, *)
-  @objc public static let useDataProtectionKeychain = KeychainConfiguration(
+  @objc public static let useDataProtectionKeychain = KeychainAttribute(
     attribute: .useDataProtectionKeychain
   )
 
-  @objc public static func keychainAccessGroup(name: String) -> KeychainConfiguration {
-    return KeychainConfiguration(attribute: .accessGroup(name))
+  @objc public static func keychainAccessGroup(name: String) -> KeychainAttribute {
+    return KeychainAttribute(attribute: .accessGroup(name))
   }
 }

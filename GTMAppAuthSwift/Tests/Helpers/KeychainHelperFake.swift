@@ -21,11 +21,11 @@ class KeychainHelperFake: KeychainHelper {
   var useDataProtectionKeychain = false
   var passwordStore = [String: Data]()
   let accountName = "OauthTest"
-  let keychainConfigurations: Set<KeychainConfiguration>
+  let keychainAttributes: Set<KeychainAttribute>
   var generatedKeychainQuery: [String: Any]?
 
-  required init(keychainConfigurations: Set<KeychainConfiguration>) {
-    self.keychainConfigurations = keychainConfigurations
+  required init(keychainAttributes: Set<KeychainAttribute>) {
+    self.keychainAttributes = keychainAttributes
   }
 
   func keychainQuery(forService service: String) -> [String : Any] {
@@ -35,7 +35,7 @@ class KeychainHelperFake: KeychainHelper {
       kSecAttrService as String: service,
     ]
 
-    keychainConfigurations.forEach { configuration in
+    keychainAttributes.forEach { configuration in
       switch configuration.attribute {
       case .useDataProtectionKeychain:
         query[configuration.attribute.keyName] = kCFBooleanTrue
