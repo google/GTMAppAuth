@@ -48,7 +48,7 @@ static NSString *const kClientID = @"YOUR_CLIENT.apps.googleusercontent.com";
         'oauthredirect' here to help disambiguate from any other use of this scheme.
  */
 static NSString *const kRedirectURI =
-    @"com.googleusercontent.apps.YOUR_CLIENT";
+    @"com.googleusercontent.apps.YOUR_CLIENT:/oauthredirect";
 
 /*! @brief @c NSCoding key for the authState property.
  */
