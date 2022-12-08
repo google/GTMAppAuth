@@ -22,7 +22,7 @@ class KeychainStoreTests: XCTestCase {
   private let keychainHelper = KeychainHelperFake(keychainAttributes: [])
   private lazy var keychainStore: KeychainStore = {
     return KeychainStore(
-      credentialItemName: Constants.testKeychainItemName,
+      itemName: Constants.testKeychainItemName,
       keychainHelper: keychainHelper
     )
   }()
@@ -48,7 +48,7 @@ class KeychainStoreTests: XCTestCase {
       keychainAttributes: useDataProtectionAttributeSet
     )
     let store = KeychainStore(
-      credentialItemName: Constants.testKeychainItemName,
+      itemName: Constants.testKeychainItemName,
       keychainHelper: fakeWithDataProtection
     )
     try store.save(authState: authState)
@@ -75,7 +75,7 @@ class KeychainStoreTests: XCTestCase {
       keychainAttributes: accessGroupAttributeSet
     )
     let store = KeychainStore(
-      credentialItemName: Constants.testKeychainItemName,
+      itemName: Constants.testKeychainItemName,
       keychainHelper: fakeWithAccessGroup
     )
     try store.save(authState: authState)
@@ -111,7 +111,7 @@ class KeychainStoreTests: XCTestCase {
       keychainAttributes: accessGroupAttributeSet
     )
     let store = KeychainStore(
-      credentialItemName: Constants.testKeychainItemName,
+      itemName: Constants.testKeychainItemName,
       keychainHelper: fakeWithDataProtectionAndAccessGroup
     )
     try store.save(authState: authState)
@@ -151,11 +151,11 @@ class KeychainStoreTests: XCTestCase {
       keychainAttributes: useDataProtectionAttributeSet
     )
     let store = KeychainStore(
-      credentialItemName: Constants.testKeychainItemName,
+      itemName: Constants.testKeychainItemName,
       keychainHelper: fakeWithDataProtection
     )
     // Use `try?` to "throw away" the error since we are testing the keychain query and not the call
-    _ = try? store.authState(forItemName: Constants.testKeychainItemName)
+    _ = try? store.retrieveAuthState()
     guard let testQuery = fakeWithDataProtection.generatedKeychainQuery as? [String: AnyHashable]
     else {
       XCTFail("`fakeWithDataProtection` missing keychain query attributes")
@@ -179,11 +179,11 @@ class KeychainStoreTests: XCTestCase {
       keychainAttributes: accessGroupAttributeSet
     )
     let store = KeychainStore(
-      credentialItemName: Constants.testKeychainItemName,
+      itemName: Constants.testKeychainItemName,
       keychainHelper: fakeWithAccessGroup
     )
     // Use `try?` to "throw away" the error since we are testing the keychain query and not the call
-    _ = try? store.authState(forItemName: Constants.testKeychainItemName)
+    _ = try? store.retrieveAuthState()
     guard let testQuery = fakeWithAccessGroup.generatedKeychainQuery as? [String: AnyHashable]
     else {
       XCTFail("`fakeWithAccessGroup` missing keychain query attributes")
@@ -216,11 +216,11 @@ class KeychainStoreTests: XCTestCase {
       keychainAttributes: accessGroupAttributeSet
     )
     let store = KeychainStore(
-      credentialItemName: Constants.testKeychainItemName,
+      itemName: Constants.testKeychainItemName,
       keychainHelper: fakeWithDataProtectionAndAccessGroup
     )
     // Use `try?` to "throw away" the error since we are testing the keychain query and not the call
-    _ = try? store.authState(forItemName: Constants.testKeychainItemName)
+    _ = try? store.retrieveAuthState()
     guard let testQuery = fakeWithDataProtectionAndAccessGroup.generatedKeychainQuery
             as? [String: AnyHashable] else {
       XCTFail("`fakeWithDataProtectionAndAccessGroup` missing keychain query attributes")
@@ -257,7 +257,7 @@ class KeychainStoreTests: XCTestCase {
       keychainAttributes: useDataProtectionAttributeSet
     )
     let store = KeychainStore(
-      credentialItemName: Constants.testKeychainItemName,
+      itemName: Constants.testKeychainItemName,
       keychainHelper: fakeWithDataProtection
     )
     // Use `try?` to "throw away" the error since we are testing the keychain query and not the call
@@ -285,7 +285,7 @@ class KeychainStoreTests: XCTestCase {
       keychainAttributes: accessGroupAttributeSet
     )
     let store = KeychainStore(
-      credentialItemName: Constants.testKeychainItemName,
+      itemName: Constants.testKeychainItemName,
       keychainHelper: fakeWithAccessGroup
     )
     // Use `try?` to "throw away" the error since we are testing the keychain query and not the call
@@ -322,7 +322,7 @@ class KeychainStoreTests: XCTestCase {
       keychainAttributes: accessGroupAttributeSet
     )
     let store = KeychainStore(
-      credentialItemName: Constants.testKeychainItemName,
+      itemName: Constants.testKeychainItemName,
       keychainHelper: fakeWithDataProtectionAndAccessGroup
     )
     // Use `try?` to "throw away" the error since we are testing the keychain query and not the call
@@ -359,9 +359,7 @@ class KeychainStoreTests: XCTestCase {
 
   func testSaveAndReadAuthorization() throws {
     try keychainStore.save(authState: authState)
-    let expectedAuthorization = try keychainStore.authState(
-      forItemName: Constants.testKeychainItemName
-    )
+    let expectedAuthorization = try keychainStore.retrieveAuthState()
     XCTAssertEqual(
       expectedAuthorization.authState.isAuthorized,
       authState.authState.isAuthorized
@@ -388,7 +386,7 @@ class KeychainStoreTests: XCTestCase {
   func testReadAuthorizationForItemName() throws {
     let anotherItemName = "anotherItemName"
     try keychainStore.save(authState: authState, forItemName: anotherItemName)
-    let expectedAuthorization = try keychainStore.authState(forItemName: anotherItemName)
+    let expectedAuthorization = try keychainStore.retrieveAuthState(forItemName: anotherItemName)
 
     XCTAssertEqual(
       expectedAuthorization.authState.isAuthorized,
@@ -403,7 +401,7 @@ class KeychainStoreTests: XCTestCase {
   func testSaveAuthorizationForItemName() throws {
     let anotherItemName = "anotherItemName"
     try keychainStore.save(authState: authState, forItemName: anotherItemName)
-    let expectedAuthorization = try keychainStore.authState(forItemName: anotherItemName)
+    let expectedAuthorization = try keychainStore.retrieveAuthState(forItemName: anotherItemName)
     XCTAssertEqual(
       expectedAuthorization.authState.isAuthorized,
       authState.authState.isAuthorized
@@ -425,7 +423,7 @@ class KeychainStoreTests: XCTestCase {
   func testReadPasswordNoService() throws {
     try keychainStore.save(authState: authState)
 
-    XCTAssertThrowsError(try keychainStore.authState(forItemName: "")) { thrownError in
+    XCTAssertThrowsError(try keychainStore.retrieveAuthState(forItemName: "")) { thrownError in
       XCTAssertEqual(thrownError as? KeychainStore.Error, .noService)
     }
   }
@@ -449,7 +447,7 @@ class KeychainStoreTests: XCTestCase {
 
   func testPasswordNotFoundError() {
     XCTAssertThrowsError(
-      try keychainStore.authState(forItemName: Constants.testKeychainItemName)
+      try keychainStore.retrieveAuthState(forItemName: Constants.testKeychainItemName)
     ) { thrownError in
       XCTAssertEqual(
         thrownError as? KeychainStore.Error,

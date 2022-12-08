@@ -31,7 +31,7 @@ class AuthStateTests: XCTestCase {
   private let keychainHelper = KeychainHelperFake(keychainAttributes: [])
   private var keychainStore: KeychainStore {
     KeychainStore(
-      credentialItemName: Constants.testKeychainItemName,
+      itemName: Constants.testKeychainItemName,
       keychainHelper: keychainHelper
     )
   }
@@ -332,7 +332,7 @@ class AuthStateTests: XCTestCase {
 
   func testReadAuthorization() throws {
     try keychainStore.save(authState: authState, forItemName: Constants.testKeychainItemName)
-    let savedAuth = try keychainStore.authState(forItemName: Constants.testKeychainItemName)
+    let savedAuth = try keychainStore.retrieveAuthState(forItemName: Constants.testKeychainItemName)
     XCTAssertEqual(savedAuth.authState.isAuthorized, authState.authState.isAuthorized)
     XCTAssertEqual(savedAuth.serviceProvider, authState.serviceProvider)
     XCTAssertEqual(savedAuth.userID, authState.userID)
@@ -344,7 +344,7 @@ class AuthStateTests: XCTestCase {
   func testReadAuthorizationThrowsError() {
     let missingItemName = "missingItemName"
     do {
-      _ = try keychainStore.authState(forItemName: missingItemName)
+      _ = try keychainStore.retrieveAuthState(forItemName: missingItemName)
     } catch {
       guard case
         .passwordNotFound(forItemName: let itemName) = error as? KeychainStore.Error else {

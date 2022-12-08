@@ -39,7 +39,7 @@ struct KeychainWrapper: KeychainHelper {
     return ProcessInfo().isOperatingSystemAtLeast(tenOneFive)
   }
 
-  init(keychainAttributes: Set<KeychainAttribute>) {
+  init(keychainAttributes: Set<KeychainAttribute> = []) {
     self.keychainAttributes = keychainAttributes
   }
 
