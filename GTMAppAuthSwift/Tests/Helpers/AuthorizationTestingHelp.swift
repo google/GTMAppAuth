@@ -20,12 +20,12 @@ import XCTest
 @testable import GTMAppAuthSwift
 
 /// A subclass of `GTMAppAuthFetcherAuthorization` to use in tests.
-class AuthorizationTestingHelper: GTMAppAuthFetcherAuthorization {}
+class AuthorizationTestingHelper: AuthState {}
 
 /// The delegate object passed to `AuthorizationTestingHelper`.
 class AuthorizationTestDelegate: NSObject {
   /// The authorization passed back to this delegate.
-  var passedAuthorization: GTMAppAuthFetcherAuthorization?
+  var passedAuthorization: AuthState?
   /// The request passed back to this delegate.
   var passedRequest: NSMutableURLRequest?
   /// The error passed back to this delegate.
@@ -44,15 +44,15 @@ class AuthorizationTestDelegate: NSObject {
   /// The function serving as the callback for this delegate.
   ///
   /// - Parameters:
-  ///   - authorization: The `GTMAppAuthFetcherAuthorization` authorizing the request.
+  ///   - authState: The `AuthState` authorizing the request.
   ///   - request: The request to be authorized.
   ///   - error: The `NSError?` should one arise during authorization.
   @objc func authentication(
-    _ authorization: GTMAppAuthFetcherAuthorization,
+    _ authState: AuthState,
     request: NSMutableURLRequest,
     finishedWithError error: NSError?
   ) {
-    passedAuthorization = authorization
+    passedAuthorization = authState
     passedRequest = request
     passedError = error
 
