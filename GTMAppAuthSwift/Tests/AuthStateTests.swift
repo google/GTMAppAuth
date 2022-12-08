@@ -18,38 +18,31 @@ import XCTest
 import AppAuthCore
 @testable import GTMAppAuthSwift
 
-class GTMAppAuthFetcherAuthorizationTest: XCTestCase {
-  typealias FetcherAuthError = GTMAppAuthFetcherAuthorization.Error
+class AuthStateTests: XCTestCase {
+  typealias FetcherAuthError = AuthState.Error
   private let expectationTimeout: TimeInterval = 5
   private let insecureFakeURL = URL(string: "http://fake.com")!
   private let secureFakeURL = URL(string: "https://fake.com")!
   private let authzEndpoint = URL(
     string: "https://accounts.google.com/o/oauth2/v2/auth"
   )!
-  private let tokenEndpoint = URL(
-    string: "https://www.googleapis.com/oauth2/v4/token"
-  )!
-  private let testServiceProvider = "fooProvider"
-  private let testUserID = "fooUser"
-  private let testEmail = "foo@foo.com"
-  private let testKeychainItemName = "testName"
+  private let tokenEndpoint = URL(string: "https://www.googleapis.com/oauth2/v4/token")!
+  private let alternativeTestKeychainItemName = "alternativeItemName"
   private let keychainHelper = KeychainHelperFake()
-  private var keychain: GTMKeychain {
-    GTMKeychain(keychainHelper: keychainHelper)
-  }
-  private var authorization: GTMAppAuthFetcherAuthorization {
-    GTMAppAuthFetcherAuthorization(
-      authState: OIDAuthState.testInstance(),
-      serviceProvider: testServiceProvider,
-      userID: testUserID,
-      userEmail: testEmail,
-      userEmailIsVerified: "y"
+  private var keychainStore: KeychainStore {
+    KeychainStore(
+      itemName: Constants.testKeychainItemName,
+      keychainHelper: keychainHelper
     )
   }
-
-  override func setUp() {
-    super.setUp()
-    GTMAppAuthFetcherAuthorization.keychain = keychain
+  private var authState: AuthState {
+    AuthState(
+      authState: OIDAuthState.testInstance(),
+      serviceProvider: Constants.testServiceProvider,
+      userID: Constants.testUserID,
+      userEmail: Constants.testEmail,
+      userEmailIsVerified: "y"
+    )
   }
 
   override func tearDown() {
@@ -62,7 +55,7 @@ class GTMAppAuthFetcherAuthorizationTest: XCTestCase {
     let authorizeSecureRequestExpectation = expectation(
       description: "Authorize with completion expectation"
     )
-    let authorization = GTMAppAuthFetcherAuthorization(
+    let authorization = AuthState(
       authState: OIDAuthState.testInstance()
     )
     let request = NSMutableURLRequest(url: secureFakeURL)
@@ -79,9 +72,7 @@ class GTMAppAuthFetcherAuthorizationTest: XCTestCase {
     let authorizeInsecureRequestExpectation = expectation(
       description: "Authorize with completion expectation"
     )
-    let authorization = GTMAppAuthFetcherAuthorization(
-      authState: OIDAuthState.testInstance()
-    )
+    let authorization = AuthState(authState: OIDAuthState.testInstance())
     let insecureRequest = NSMutableURLRequest(url: insecureFakeURL)
     authorization.authorizeRequest(insecureRequest) { error in
       XCTAssertNotNil(error)
@@ -92,7 +83,7 @@ class GTMAppAuthFetcherAuthorizationTest: XCTestCase {
       }
       XCTAssertEqual(
         error,
-        FetcherAuthError.cannotAuthorizeRequest(insecureRequest)
+        FetcherAuthError.cannotAuthorizeRequest(insecureRequest as URLRequest)
       )
       authorizeInsecureRequestExpectation.fulfill()
     }
@@ -106,7 +97,7 @@ class GTMAppAuthFetcherAuthorizationTest: XCTestCase {
   }
 
   func testConfigurationForGoogle() {
-    let configuration = GTMAppAuthFetcherAuthorization.configurationForGoogle()
+    let configuration = AuthState.configurationForGoogle()
     XCTAssertEqual(configuration.authorizationEndpoint, authzEndpoint)
     XCTAssertEqual(configuration.tokenEndpoint, tokenEndpoint)
     // We do not pass the below along to create upon initialization
@@ -187,7 +178,7 @@ class GTMAppAuthFetcherAuthorizationTest: XCTestCase {
       .passedError as? FetcherAuthError else {
       return XCTFail("Testing delegate did not receive the error")
     }
-    let expectedError = FetcherAuthError.cannotAuthorizeRequest(originalRequest)
+    let expectedError = FetcherAuthError.cannotAuthorizeRequest(originalRequest as URLRequest)
     XCTAssertEqual(receivedError, expectedError)
   }
 
@@ -195,9 +186,7 @@ class GTMAppAuthFetcherAuthorizationTest: XCTestCase {
     let authorizeSecureRequestExpectation = expectation(
       description: "Authorize with completion expectation"
     )
-    let authorization = GTMAppAuthFetcherAuthorization(
-      authState: OIDAuthState.testInstance()
-    )
+    let authorization = AuthState(authState: OIDAuthState.testInstance())
     let request = NSMutableURLRequest(url: secureFakeURL)
     authorization.authorizeRequest(request) { error in
       XCTAssertNil(error)
@@ -214,9 +203,7 @@ class GTMAppAuthFetcherAuthorizationTest: XCTestCase {
     let authorizeSecureRequestExpectation = expectation(
       description: "Authorize with completion expectation"
     )
-    let authorization = GTMAppAuthFetcherAuthorization(
-      authState: OIDAuthState.testInstance()
-    )
+    let authorization = AuthState(authState: OIDAuthState.testInstance())
     let request = NSMutableURLRequest(url: secureFakeURL)
     authorization.authorizeRequest(request) { error in
       XCTAssertNil(error)
@@ -230,9 +217,7 @@ class GTMAppAuthFetcherAuthorizationTest: XCTestCase {
   }
 
   func testCanAuthorize() {
-    let authorization = GTMAppAuthFetcherAuthorization(
-      authState: OIDAuthState.testInstance()
-    )
+    let authorization = AuthState(authState: OIDAuthState.testInstance())
     XCTAssertTrue(authorization.canAuthorize)
   }
 
@@ -242,14 +227,12 @@ class GTMAppAuthFetcherAuthorizationTest: XCTestCase {
       tokenResponse: nil,
       registrationResponse: OIDRegistrationResponse.testInstance()
     )
-    let authorization = GTMAppAuthFetcherAuthorization(authState: testAuthState)
+    let authorization = AuthState(authState: testAuthState)
     XCTAssertFalse(authorization.canAuthorize)
   }
 
   func testIsNotPrimeForRefresh() {
-    let authorization = GTMAppAuthFetcherAuthorization(
-      authState: OIDAuthState.testInstance()
-    )
+    let authorization = AuthState(authState: OIDAuthState.testInstance())
     XCTAssertFalse(authorization.primeForRefresh())
   }
 
@@ -259,7 +242,7 @@ class GTMAppAuthFetcherAuthorizationTest: XCTestCase {
       tokenResponse: nil,
       registrationResponse: nil
     )
-    let authorization = GTMAppAuthFetcherAuthorization(authState: testAuthState)
+    let authorization = AuthState(authState: testAuthState)
     XCTAssertTrue(authorization.primeForRefresh())
   }
 
@@ -267,9 +250,7 @@ class GTMAppAuthFetcherAuthorizationTest: XCTestCase {
     let authorizeInsecureRequestExpectation = expectation(
       description: "Authorize with completion expectation"
     )
-    let authorization = GTMAppAuthFetcherAuthorization(
-      authState: OIDAuthState.testInstance()
-    )
+    let authorization = AuthState(authState: OIDAuthState.testInstance())
     let insecureRequest = NSMutableURLRequest(url: insecureFakeURL)
     authorization.authorizeRequest(insecureRequest) { error in
       guard let nsError = error as? NSError else {
@@ -277,7 +258,7 @@ class GTMAppAuthFetcherAuthorizationTest: XCTestCase {
       }
       XCTAssertEqual(
         nsError.domain,
-        GTMAppAuthFetcherAuthorization.Error.errorDomain
+        AuthState.Error.errorDomain
       )
       guard let errorRequest = nsError.userInfo["request"] as? URLRequest else {
         return XCTFail("No `request` key in `userInfo`")
@@ -290,19 +271,13 @@ class GTMAppAuthFetcherAuthorizationTest: XCTestCase {
   }
 
   func testUserEmailIsVerified() {
-    let tAuthorization = GTMAppAuthFetcherAuthorization(
-      authState: OIDAuthState.testInstance(),
-      userEmailIsVerified: "t"
-    )
-    let trueAuthorization = GTMAppAuthFetcherAuthorization(
+    let tAuthorization = AuthState(authState: OIDAuthState.testInstance(), userEmailIsVerified: "t")
+    let trueAuthorization = AuthState(
       authState: OIDAuthState.testInstance(),
       userEmailIsVerified: "true"
     )
-    let yAuthorization = GTMAppAuthFetcherAuthorization(
-      authState: OIDAuthState.testInstance(),
-      userEmailIsVerified: "y"
-    )
-    let yesAuthorization = GTMAppAuthFetcherAuthorization(
+    let yAuthorization = AuthState(authState: OIDAuthState.testInstance(), userEmailIsVerified: "y")
+    let yesAuthorization = AuthState(
       authState: OIDAuthState.testInstance(),
       userEmailIsVerified: "yes"
     )
@@ -315,66 +290,40 @@ class GTMAppAuthFetcherAuthorizationTest: XCTestCase {
   // MARK: - Keychain Tests
 
   func testSaveAuthorization() throws {
-    try GTMAppAuthFetcherAuthorization.save(
-      authorization: authorization,
-      withItemName: testKeychainItemName
-    )
-    XCTAssertFalse(keychainHelper.useDataProtectionKeychain)
+    try keychainStore.save(authState: authState)
   }
 
-  func testSaveAuthorizationUsingDataProtectionKeychain() throws {
-    try GTMAppAuthFetcherAuthorization.save(
-      authorization: authorization,
-      withItemName: testKeychainItemName,
-      usingDataProtectionKeychain: true
-    )
-    XCTAssertTrue(keychainHelper.useDataProtectionKeychain)
+  func testSaveAuthorizationForItemName() throws {
+    try keychainStore.save(authState: authState, forItemName: alternativeTestKeychainItemName)
   }
 
   func testSaveAuthorizationThrows() {
     let emptyItemName = ""
-    let expectedError = GTMKeychainError.noService
-    XCTAssertThrowsError(try GTMAppAuthFetcherAuthorization.save(
-      authorization: authorization,
-      withItemName: emptyItemName
+    let expectedError = KeychainStore.Error.noService
+
+    XCTAssertThrowsError(try keychainStore.save(
+      authState: authState,
+      forItemName: emptyItemName
     )) { error in
-      XCTAssertEqual(error as? GTMKeychainError, expectedError)
+      XCTAssertEqual(error as? KeychainStore.Error, expectedError)
     }
   }
 
   func testRemoveAuthorization() throws {
-    try GTMAppAuthFetcherAuthorization.save(
-      authorization: authorization,
-      withItemName: testKeychainItemName
-    )
-    try GTMAppAuthFetcherAuthorization.removeAuthorization(forItemName: testKeychainItemName)
-    XCTAssertFalse(keychainHelper.useDataProtectionKeychain)
-  }
-
-  func testRemoveAuthorizationUsingDataProtectionKeychain() throws {
-    try GTMAppAuthFetcherAuthorization.save(
-      authorization: authorization,
-      withItemName: testKeychainItemName,
-      usingDataProtectionKeychain: true
-    )
-    try GTMAppAuthFetcherAuthorization.removeAuthorization(
-      forItemName: testKeychainItemName,
-      usingDataProtectionKeychain: true
-    )
-    XCTAssertTrue(keychainHelper.useDataProtectionKeychain)
+    try keychainStore.save(authState: authState)
+    try keychainStore.removeAuthState(withItemName: Constants.testKeychainItemName)
   }
 
   func testRemoveAuthorizationThrows() {
     do {
-      try GTMAppAuthFetcherAuthorization.removeAuthorization(forItemName: testKeychainItemName)
-      XCTAssertFalse(keychainHelper.useDataProtectionKeychain)
+      try keychainStore.removeAuthState(withItemName: Constants.testKeychainItemName)
     } catch {
-      guard let keychainError = error as? GTMKeychainError else {
+      guard let keychainError = error as? KeychainStore.Error else {
         return XCTFail("`error` should be of type `GTMAppAuthFetcherAuthorization.Error`")
       }
       XCTAssertEqual(
         keychainError,
-        GTMKeychainError.failedToDeletePasswordBecauseItemNotFound(
+        KeychainStore.Error.failedToDeletePasswordBecauseItemNotFound(
           itemName: Constants.testKeychainItemName
         )
       )
@@ -382,44 +331,23 @@ class GTMAppAuthFetcherAuthorizationTest: XCTestCase {
   }
 
   func testReadAuthorization() throws {
-    try GTMAppAuthFetcherAuthorization.save(
-      authorization: authorization,
-      withItemName: testKeychainItemName
-    )
-    let savedAuth = try GTMAppAuthFetcherAuthorization.authorization(forItemName: testKeychainItemName)
-    XCTAssertEqual(savedAuth.authState.isAuthorized, authorization.authState.isAuthorized)
-    XCTAssertEqual(savedAuth.serviceProvider, authorization.serviceProvider)
-    XCTAssertEqual(savedAuth.userID, authorization.userID)
-    XCTAssertEqual(savedAuth.userEmail, authorization.userEmail)
-    XCTAssertEqual(savedAuth.userEmailIsVerified, authorization.userEmailIsVerified)
+    try keychainStore.save(authState: authState, forItemName: Constants.testKeychainItemName)
+    let savedAuth = try keychainStore.retrieveAuthState(forItemName: Constants.testKeychainItemName)
+    XCTAssertEqual(savedAuth.authState.isAuthorized, authState.authState.isAuthorized)
+    XCTAssertEqual(savedAuth.serviceProvider, authState.serviceProvider)
+    XCTAssertEqual(savedAuth.userID, authState.userID)
+    XCTAssertEqual(savedAuth.userEmail, authState.userEmail)
+    XCTAssertEqual(savedAuth.userEmailIsVerified, authState.userEmailIsVerified)
     XCTAssertFalse(keychainHelper.useDataProtectionKeychain)
-  }
-
-  func testReadAuthorizationUsingDataProtectionKeychain() throws {
-    try GTMAppAuthFetcherAuthorization.save(
-      authorization: authorization,
-      withItemName: testKeychainItemName,
-      usingDataProtectionKeychain: true
-    )
-    let savedAuth = try GTMAppAuthFetcherAuthorization.authorization(
-      forItemName: testKeychainItemName,
-      usingDataProtectionKeychain: true
-    )
-    XCTAssertEqual(savedAuth.authState.isAuthorized, authorization.authState.isAuthorized)
-    XCTAssertEqual(savedAuth.serviceProvider, authorization.serviceProvider)
-    XCTAssertEqual(savedAuth.userID, authorization.userID)
-    XCTAssertEqual(savedAuth.userEmail, authorization.userEmail)
-    XCTAssertEqual(savedAuth.userEmailIsVerified, authorization.userEmailIsVerified)
-    XCTAssertTrue(keychainHelper.useDataProtectionKeychain)
   }
 
   func testReadAuthorizationThrowsError() {
     let missingItemName = "missingItemName"
     do {
-      _ = try GTMAppAuthFetcherAuthorization.authorization(forItemName: missingItemName)
+      _ = try keychainStore.retrieveAuthState(forItemName: missingItemName)
     } catch {
       guard case
-        .passwordNotFound(forItemName: let itemName) = error as? GTMKeychainError else {
+        .passwordNotFound(forItemName: let itemName) = error as? KeychainStore.Error else {
         return XCTFail(
           "`error` should be `GTMAppAuthFetcherAuthorization.Error.failedToRetrieveAuthorizationFromKeychain"
         )

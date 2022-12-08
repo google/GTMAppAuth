@@ -29,194 +29,7 @@ import GTMSessionFetcher
 ///
 /// Enables you to use AppAuth with the GTM Session Fetcher library.
 @objc(GTMAppAuthFetcherAuthorization)
-open class GTMAppAuthFetcherAuthorization: NSObject,
-                                           GTMFetcherAuthorizationProtocol,
-                                           NSSecureCoding {
-  // MARK: - Retrieving Authorizations
-
-  /// Internally scoped helper for used for setting the keychain to a fake in tests.
-  static var keychain: GTMKeychain?
-
-  /// Retrieves the saved authorization for the supplied name.
-  ///
-  /// - Parameter itemName: The `String` name for the save authorization.
-  /// - Throws: `Error.failedToConvertKeychainDataToAuthorization` if converting the authorization
-  ///   from `Data` failed.
-  /// - Note: See `GTMKeychain.swift` for ``GTMAppAuthSwift/GTMKeychainError``s indirectly thrown by
-  ///   calls to this method.
-  @objc(authorizationForItemName:error:)
-  public final class func authorization(
-    forItemName itemName: String
-  ) throws -> GTMAppAuthFetcherAuthorization {
-    let keychain = keychain ?? GTMKeychain()
-    let passwordData = try keychain.passwordData(forItemName: itemName)
-
-    if #available(macOS 10.13, iOS 11, tvOS 11, watchOS 4, *) {
-      return try modernUnarchiveAuthorization(withPasswordData: passwordData, itemName: itemName)
-    } else {
-      guard let auth = NSKeyedUnarchiver.unarchiveObject(with: passwordData)
-              as? GTMAppAuthFetcherAuthorization else {
-        throw GTMAppAuthFetcherAuthorization
-          .Error
-          .failedToConvertKeychainDataToAuthorization(forItemName: itemName)
-      }
-      return auth
-    }
-  }
-
-  /// Retrieves the saved authorization for the supplied name.
-  ///
-  /// - Parameters:
-  ///   - itemName: The `String` name for the save authorization.
-  ///   - usingDataProtectionKeychain: A `Bool` detailing whether or not to use the data protection
-  ///     keychain.
-  /// - Throws: `Error.failedToConvertKeychainDataToAuthorization` if converting the authorization
-  ///   from `Data` failed.
-  /// - Note: See `GTMKeychain.swift` for ``GTMAppAuthSwift/GTMKeychainError``s indirectly thrown by
-  ///   calls to this method.
-  @available(macOS 10.15, *)
-  @objc(authorizationForItemName:usingDataProtectionKeychain:error:)
-  public final class func authorization(
-    forItemName itemName: String,
-    usingDataProtectionKeychain: Bool
-  ) throws -> GTMAppAuthFetcherAuthorization {
-    let keychain = keychain ?? GTMKeychain()
-    let passwordData = try keychain.passwordData(
-      forItemName: itemName,
-      usingDataProtectionKeychain: usingDataProtectionKeychain
-    )
-    if #available(iOS 11, tvOS 11, watchOS 4, *) {
-      return try modernUnarchiveAuthorization(
-        withPasswordData: passwordData,
-        itemName: itemName
-      )
-    } else {
-      guard let authorization = NSKeyedUnarchiver.unarchiveObject(with: passwordData)
-              as? GTMAppAuthFetcherAuthorization else {
-        throw GTMAppAuthFetcherAuthorization
-          .Error
-          .failedToConvertKeychainDataToAuthorization(forItemName: itemName)
-      }
-      return authorization
-    }
-  }
-
-  @available(macOS 10.13, iOS 11, tvOS 11, watchOS 4, *)
-  private final class func modernUnarchiveAuthorization(
-    withPasswordData passwordData: Data,
-    itemName: String
-  ) throws -> GTMAppAuthFetcherAuthorization {
-    guard let authorization = try NSKeyedUnarchiver.unarchivedObject(
-            ofClass: GTMAppAuthFetcherAuthorization.self,
-            from: passwordData
-          ) else {
-      throw GTMAppAuthFetcherAuthorization
-        .Error
-        .failedToConvertKeychainDataToAuthorization(forItemName: itemName)
-    }
-    return authorization
-  }
-
-  // MARK: - Removing Authorizations
-
-  /// Removes the saved authorization for the supplied name.
-  ///
-  /// - Parameter itemName: The `String` name for the authorization saved in the keychain.
-  /// - Throws: `Error.failedToRemoveAuthorizationFromKeychainBecauseItemNotFound` if the item is
-  ///   not found, `Error.failedToRemoveAuthorizationFromKeychain` if some other error occurred.
-  /// - Note: See `GTMKeychain.swift` for ``GTMAppAuthSwift/GTMKeychainError``s indirectly thrown by
-  ///   calls to this method.
-  @objc(removeAuthorizationForItemName:error:)
-  public final class func removeAuthorization(forItemName itemName: String) throws {
-    let keychain = keychain ?? GTMKeychain()
-    try keychain.removePasswordFromKeychain(withItemName: itemName)
-  }
-
-  /// Removes the saved authorization for the supplied name.
-  ///
-  /// - Parameters:
-  ///   - itemName: The `String` name for the authorization saved in the keychain.
-  ///   - usingDataProtectionKeychain: A `Bool` detailing whether or not to use the data protection
-  ///     keychain.
-  /// - Throws: `Error.failedToRemoveAuthorizationFromKeychainBecauseItemNotFound` if the item is
-  ///   not found, `Error.failedToRemoveAuthorizationFromKeychain` if some other error occurred.
-  /// - Note: See `GTMKeychain.swift` for ``GTMAppAuthSwift/GTMKeychainError``s indirectly thrown by
-  ///   calls to this method.
-  @available(macOS 10.15, *)
-  @objc(removeAuthorizationForItemName:usingDataProtectionKeychain:error:)
-  public final class func removeAuthorization(
-    forItemName itemName: String,
-    usingDataProtectionKeychain: Bool
-  ) throws {
-    let keychain = keychain ?? GTMKeychain()
-    try keychain.removePasswordFromKeychain(
-      forName: itemName,
-      usingDataProtectionKeychain: usingDataProtectionKeychain
-    )
-  }
-
-  // MARK: - Saving Authorizations
-
-  /// Saves the passed authorization with the provided name.
-  ///
-  /// - Parameters:
-  ///   - authorization: An instance of `GMTAppAuthFetcherAuthorization`.
-  ///   - itemName: The `String` name for the authorization to save in the Keychain.
-  /// - Throws: An instance of `Error.failedToSaveAuthorizationToKeychain` if the save failed.
-  /// - Note: See `GTMKeychain.swift` for ``GTMAppAuthSwift/GTMKeychainError``s indirectly thrown by
-  ///   calls to this method.
-  @objc(saveAuthorization:withItemName:error:)
-  public final class func save(
-    authorization: GTMAppAuthFetcherAuthorization,
-    withItemName itemName: String
-  ) throws {
-    let keychain = keychain ?? GTMKeychain()
-    if #available(macOS 10.13, iOS 11, tvOS 11, watchOS 4, *) {
-      let authorizationData = try NSKeyedArchiver.archivedData(
-        withRootObject: authorization,
-        requiringSecureCoding: true
-      )
-      try keychain.save(passwordData: authorizationData, forItemName: itemName)
-    } else {
-      let authorizationData = NSKeyedArchiver.archivedData(withRootObject: authorization)
-      try keychain.save(passwordData: authorizationData, forItemName: itemName)
-    }
-  }
-
-  /// Saves the passed authorization with the provided name.
-  ///
-  /// - Parameters:
-  ///   - authorization: An instance of `GMTAppAuthFetcherAuthorization`.
-  ///   - itemName: The `String` name for the authorization to save in the Keychain.
-  ///   - usingDataProtectionKeychain: A `Bool` detailing whether or not to use the data protection
-  ///     keychain.
-  /// - Throws: Any error that may arise during removal.
-  /// - Note: See `GTMKeychain.swift` for ``GTMAppAuthSwift/GTMKeychainError``s indirectly thrown by
-  ///   calls to this method.
-  @available(macOS 10.15, *)
-  @objc(saveAuthorization:withItemName:usingDataProtectionKeychain:error:)
-  public final class func save(
-    authorization: GTMAppAuthFetcherAuthorization,
-    withItemName itemName: String,
-    usingDataProtectionKeychain: Bool
-  ) throws {
-    let authorizationData: Data
-    let keychain = keychain ?? GTMKeychain()
-    if #available(iOS 11, tvOS 11, watchOS 4, *) {
-      authorizationData = try NSKeyedArchiver.archivedData(
-        withRootObject: authorization,
-        requiringSecureCoding: true
-      )
-    } else {
-      authorizationData = NSKeyedArchiver.archivedData(withRootObject: authorization)
-    }
-    try keychain.save(
-      passwordData: authorizationData,
-      forItemName: itemName,
-      usingDataProtectionKeychain: usingDataProtectionKeychain
-    )
-  }
-
+open class AuthState: NSObject, GTMFetcherAuthorizationProtocol, NSSecureCoding {
   /// The AppAuth authentication state.
   @objc public let authState: OIDAuthState
 
@@ -253,9 +66,8 @@ open class GTMAppAuthFetcherAuthorization: NSObject,
   /// bearer token unencrypted.
   @objc public var shouldAuthorizeAllRequests = false
 
-  /// Delegate of the `GTMAppAuthFetcherAuthorization` used to supply additional parameters on token
-  /// refresh.
-  @objc public weak var tokenRefreshDelegate: GTMAppAuthFetcherAuthorizationTokenRefreshDelegate?
+  /// Delegate of the `AuthState` used to supply additional parameters on token refresh.
+  @objc public weak var tokenRefreshDelegate: AuthStateTokenRefreshDelegate?
 
   /// The fetcher service.
   @objc public weak var fetcherService: GTMSessionFetcherServiceProtocol? = nil
@@ -263,7 +75,7 @@ open class GTMAppAuthFetcherAuthorization: NSObject,
   private let serialAuthArgsQueue = DispatchQueue(label: "com.google.gtmappauth")
   private var authorizationArgs = [AuthorizationArguments]()
 
-  /// Creates a new `GTMAppAuthFetcherAuthorization` using the given `OIDAuthState` from AppAuth.
+  /// Creates a new `AuthState` using the given `OIDAuthState` from AppAuth.
   ///
   /// - Parameters:
   ///   - authState: The authorization state.
@@ -278,7 +90,7 @@ open class GTMAppAuthFetcherAuthorization: NSObject,
     )
   }
 
-  /// Creates a new `GTMAppAuthFetcherAuthorization` using the given `OIDAuthState` from AppAuth.
+  /// Creates a new `AuthState` using the given `OIDAuthState` from AppAuth.
   ///
   /// - Parameters:
   ///   - authState: The authorization state.
@@ -296,7 +108,6 @@ open class GTMAppAuthFetcherAuthorization: NSObject,
   ) {
     self.authState = authState
     self.serviceProvider = serviceProvider
-
     if let idToken = authState.lastTokenResponse?.idToken ??
         authState.lastAuthorizationResponse.idToken,
        let claims = OIDIDToken(
@@ -314,39 +125,38 @@ open class GTMAppAuthFetcherAuthorization: NSObject,
   }
 
   // MARK: - Secure Coding
-
   @objc public static let supportsSecureCoding = true
 
   @objc public func encode(with coder: NSCoder) {
-    coder.encode(authState, forKey: GTMAppAuthFetcherAuthorization.authStateKey)
-    coder.encode(serviceProvider, forKey: GTMAppAuthFetcherAuthorization.serviceProviderKey)
-    coder.encode(userID, forKey: GTMAppAuthFetcherAuthorization.userIDKey)
-    coder.encode(userEmail, forKey: GTMAppAuthFetcherAuthorization.userEmailKey)
-    coder.encode(_userEmailIsVerified, forKey: GTMAppAuthFetcherAuthorization.userEmailIsVerifiedKey)
+    coder.encode(authState, forKey: AuthState.authStateKey)
+    coder.encode(serviceProvider, forKey: AuthState.serviceProviderKey)
+    coder.encode(userID, forKey: AuthState.userIDKey)
+    coder.encode(userEmail, forKey: AuthState.userEmailKey)
+    coder.encode(_userEmailIsVerified, forKey: AuthState.userEmailIsVerifiedKey)
   }
 
   @objc public required convenience init?(coder: NSCoder) {
     guard let authState = coder.decodeObject(
       of: OIDAuthState.self,
-      forKey: GTMAppAuthFetcherAuthorization.authStateKey
+      forKey: AuthState.authStateKey
     ) else {
       return nil
     }
     let serviceProvider = coder.decodeObject(
       of: NSString.self,
-      forKey: GTMAppAuthFetcherAuthorization.serviceProviderKey
+      forKey: AuthState.serviceProviderKey
     ) as String?
     let userID = coder.decodeObject(
       of: NSString.self,
-      forKey: GTMAppAuthFetcherAuthorization.userIDKey
+      forKey: AuthState.userIDKey
     ) as String?
     let userEmail = coder.decodeObject(
       of: NSString.self,
-      forKey: GTMAppAuthFetcherAuthorization.userEmailKey
+      forKey: AuthState.userEmailKey
     ) as String?
     let _userEmailIsVerified = coder.decodeObject(
       of: NSString.self,
-      forKey: GTMAppAuthFetcherAuthorization.userEmailIsVerifiedKey
+      forKey: AuthState.userEmailIsVerifiedKey
     ) as String?
 
     self.init(
@@ -368,7 +178,7 @@ open class GTMAppAuthFetcherAuthorization: NSObject,
   ///   - handler: The block that is called after authorizing the request is attempted. If `error`
   ///     is non-nil, the authorization failed. Errors in the domain `OIDOAuthTokenErrorDomain`
   ///     indicate that the authorization itself is invalid, and will need to be re-obtained from
-  ///     the user. `GTMAppAuthFetcherAuthorization.Error` indicate another unrecoverable error.
+  ///     the user. `KeychainStore.Error` and `AuthState.Error` indicate other unrecoverable errors.
   ///     Errors in other domains may indicate a transitive error condition such as a network error,
   ///     and typically you do not need to reauthenticate the user on such errors.
   ///
@@ -407,14 +217,12 @@ open class GTMAppAuthFetcherAuthorization: NSObject,
     )
     authorizeRequest(withArguments: arguments)
   }
-
   private func authorizeRequest(withArguments args: AuthorizationArguments) {
     serialAuthArgsQueue.sync {
       authorizationArgs.append(args)
     }
     let additionalRefreshParameters = tokenRefreshDelegate?
       .additionalRefreshParameters(authorization: self)
-
     let authStateAction = {
       (accessToken: String?, idToken: String?, error: Swift.Error?) in
       self.serialAuthArgsQueue.sync { [weak self] in
@@ -440,24 +248,22 @@ open class GTMAppAuthFetcherAuthorization: NSObject,
     let requestURL = request.url
     let scheme = requestURL?.scheme
     let isAuthorizableRequest = requestURL == nil
-      || scheme?.caseInsensitiveCompare("https") == .orderedSame
-      || requestURL?.isFileURL ?? false
-      || shouldAuthorizeAllRequests
-
+    || scheme?.caseInsensitiveCompare("https") == .orderedSame
+    || requestURL?.isFileURL ?? false
+    || shouldAuthorizeAllRequests
     if !isAuthorizableRequest {
       //
-      #if DEBUG
+#if DEBUG
       print(
-"""
-Request (\(request)) is not https, a local file, or nil. It may be insecure.
-"""
+  """
+  Request (\(request)) is not https, a local file, or nil. It may be insecure.
+  """
       )
-      #endif
+#endif
     }
-
     if isAuthorizableRequest,
-        let accessToken = accessToken,
-        !accessToken.isEmpty {
+       let accessToken = accessToken,
+       !accessToken.isEmpty {
       request.setValue(
         "Bearer \(accessToken)",
         forHTTPHeaderField: "Authorization"
@@ -465,11 +271,10 @@ Request (\(request)) is not https, a local file, or nil. It may be insecure.
       // `request` is authorized even if previous refreshes produced an error
       args.error = nil
     } else if accessToken?.isEmpty ?? true {
-      args.error = Error.accessTokenEmptyForRequest(request)
+      args.error = Error.accessTokenEmptyForRequest(request as URLRequest)
     } else {
-      args.error = Error.cannotAuthorizeRequest(request)
+      args.error = Error.cannotAuthorizeRequest(request as URLRequest)
     }
-
     let callbackQueue = fetcherService?.callbackQueue ?? DispatchQueue.main
     callbackQueue.async { [weak self] in
       guard let self = self else { return }
@@ -502,7 +307,7 @@ Request (\(request)) is not https, a local file, or nil. It may be insecure.
     typealias DelegateCallback = @convention(c) (
       NSObject,
       Selector,
-      GTMAppAuthFetcherAuthorization,
+      AuthState,
       NSMutableURLRequest,
       NSError?
     ) -> Void
@@ -622,15 +427,15 @@ extension AuthorizationArguments {
   }
 }
 
-/// Delegate of the GTMAppAuthFetcherAuthorization used to supply additional parameters on token
-/// refresh.
-@objc public protocol GTMAppAuthFetcherAuthorizationTokenRefreshDelegate: NSObjectProtocol {
+/// Delegate of the `AuthState` used to supply additional parameters on token refresh.
+@objc(GTMAuthStateTokenRefreshDelegate)
+public protocol AuthStateTokenRefreshDelegate: NSObjectProtocol {
   func additionalRefreshParameters(
-    authorization: GTMAppAuthFetcherAuthorization
+    authorization: AuthState
   ) -> [String: String]?
 }
 
-public extension GTMAppAuthFetcherAuthorization {
+public extension AuthState {
   // MARK: - Keys
 
   static let authStateKey = "authState"
@@ -643,12 +448,10 @@ public extension GTMAppAuthFetcherAuthorization {
 
   /// Errors that may arise while authorizing a request or saving a request to the keychain.
   enum Error: Swift.Error, Equatable, CustomNSError {
-    case cannotAuthorizeRequest(NSURLRequest)
-    case accessTokenEmptyForRequest(NSURLRequest)
+    case cannotAuthorizeRequest(URLRequest)
+    case accessTokenEmptyForRequest(URLRequest)
     case failedToConvertKeychainDataToAuthorization(forItemName: String)
-
     public static let errorDomain: String = "GTMAppAuthFetcherAuthorizationErrorDomain"
-
     public var errorUserInfo: [String : Any] {
       switch self {
       case .cannotAuthorizeRequest(let request):
