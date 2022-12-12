@@ -23,7 +23,7 @@ class OAuth2AuthStateCompatibilityTests: XCTestCase {
   private lazy var testPersistenceString: String = {
     return "access_token=\(Constants.testAccessToken)&refresh_token=\(Constants.testRefreshToken)&scope=\(Constants.testScope2)&serviceProvider=\(Constants.testServiceProvider)&userEmail=foo%40foo.com&userEmailIsVerified=y&userID=\(Constants.testUserID)"
   }()
-  private let keychainHelper = KeychainHelperFake()
+  private let keychainHelper = KeychainHelperFake(keychainAttributes: [])
   private lazy var keychainStore: KeychainStore = {
     return KeychainStore(
       itemName: Constants.testKeychainItemName,
@@ -55,12 +55,13 @@ class OAuth2AuthStateCompatibilityTests: XCTestCase {
     XCTAssertEqual(response, testPersistenceString)
   }
 
-  func testSaveGTMOAuth2Authorization() throws {
+  func testSaveOAuth2Authorization() throws {
     try keychainStore.saveWithGTMOAuth2Format(forAuthorization: expectedAuthorization)
   }
 
   func testSaveGTMOAuth2AuthorizationThrowsError() {
-    keychainStore.itemName = ""
+    let emptyItemName = ""
+    keychainStore.itemName = emptyItemName
     XCTAssertThrowsError(
       try keychainStore.saveWithGTMOAuth2Format(forAuthorization: expectedAuthorization)
     ) { thrownError in
@@ -71,12 +72,12 @@ class OAuth2AuthStateCompatibilityTests: XCTestCase {
     }
   }
 
-  func testRemoveGTMOAuth2Authorization() throws {
+  func testRemoveOAuth2Authorization() throws {
     try keychainStore.saveWithGTMOAuth2Format(forAuthorization: expectedAuthorization)
     try keychainStore.removeAuthState()
   }
 
-  func testRemoveGTMOAuth2AuthorizationThrowsError() {
+  func testRemoveOAuth2AuthorizationThrowsError() {
     XCTAssertThrowsError(
       try keychainStore.removeAuthState()
     ) { thrownError in
@@ -130,8 +131,6 @@ class OAuth2AuthStateCompatibilityTests: XCTestCase {
 
   func testAuthorizeFromKeychainForPersistenceStringFailedWithBadURI() {
     let badURI = ""
-
-    let oauth2Compatibility = OAuth2AuthStateCompatibility()
     XCTAssertThrowsError(
       try oauth2Compatibility.authState(
         forPersistenceString: testPersistenceString,

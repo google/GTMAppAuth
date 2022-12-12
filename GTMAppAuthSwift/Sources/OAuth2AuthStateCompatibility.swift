@@ -48,7 +48,7 @@ let oobString = "urn:ietf:wg:oauth:2.0:oob"
 /// The methods of this class are capable of serializing and deserializing auth objects in a way
 /// compatible with the serialization in `GTMOAuth2ViewControllerTouch` and
 /// `GTMOAuth2WindowController` in GTMOAuth2.
-@objc(GTMOAuth2AuthStateCompatibility)
+@objc(GTMOAuth2KeychainCompatibility)
 public final class OAuth2AuthStateCompatibility: NSObject {
   // MARK: - OAuth2 Utilities
 
