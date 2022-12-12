@@ -30,16 +30,53 @@ import GTMSessionFetcher
 @objc(GTMKeychainStore)
 public final class KeychainStore: NSObject {
   private var keychainHelper: KeychainHelper
-  // Needed for `AuthStateStore` and listed here because extensions cannot add stored properties
   @objc public var itemName: String
+  /// Attributes that configure the behavior of the keychain.
+  @objc public let keychainAttributes: Set<KeychainAttribute>
+
+  /// An initializer for testing to create an instance of this keychain wrapper with a given helper.
+  ///
+  /// - Parameters:
+  ///   - itemName: The `String` name for the credential to store in the keychain.
+  ///   - keychainAttributes: A `Set` of `KeychainAttribute` to use with the keychain.
+  @objc public convenience init(
+    itemName: String,
+    keychainAttributes: Set<KeychainAttribute>
+  ) {
+    let keychain = KeychainWrapper(keychainAttributes: keychainAttributes)
+    self.init(
+      itemName: itemName,
+      keychainAttributes: keychainAttributes,
+      keychainHelper: keychain
+    )
+  }
 
   /// An initializer for testing to create an instance of this keychain wrapper with a given helper.
   ///
   /// - Parameters:
   ///   - itemName: The `String` name for the credential to store in the keychain.
   ///   - keychainHelper: An instance conforming to `KeychainHelper`.
-  init(itemName: String, keychainHelper: KeychainHelper) {
+  convenience init(itemName: String, keychainHelper: KeychainHelper) {
+    self.init(
+      itemName: itemName,
+      keychainAttributes: [],
+      keychainHelper: keychainHelper
+    )
+  }
+
+  /// An initializer for testing to create an instance of this keychain wrapper with a given helper.
+  ///
+  /// - Parameters:
+  ///   - itemName: The `String` name for the credential to store in the keychain.
+  ///   - keychainAttributes: A `Set` of `KeychainAttribute` to use with the keychain.
+  ///   - keychainHelper: An instance conforming to `KeychainHelper`.
+  init(
+    itemName: String,
+    keychainAttributes: Set<KeychainAttribute>,
+    keychainHelper: KeychainHelper
+  ) {
     self.itemName = itemName
+    self.keychainAttributes = keychainAttributes
     self.keychainHelper = keychainHelper
     super.init()
   }

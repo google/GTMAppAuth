@@ -28,7 +28,7 @@ class AuthStateTests: XCTestCase {
   )!
   private let tokenEndpoint = URL(string: "https://www.googleapis.com/oauth2/v4/token")!
   private let alternativeTestKeychainItemName = "alternativeItemName"
-  private let keychainHelper = KeychainHelperFake()
+  private let keychainHelper = KeychainHelperFake(keychainAttributes: [])
   private var keychainStore: KeychainStore {
     KeychainStore(
       itemName: Constants.testKeychainItemName,

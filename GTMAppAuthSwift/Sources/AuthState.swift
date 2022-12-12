@@ -66,7 +66,8 @@ open class AuthState: NSObject, GTMFetcherAuthorizationProtocol, NSSecureCoding 
   /// bearer token unencrypted.
   @objc public var shouldAuthorizeAllRequests = false
 
-  /// Delegate of the `AuthState` used to supply additional parameters on token refresh.
+  /// Delegate of the `GTMAppAuthFetcherAuthorization` used to supply additional parameters on token
+  /// refresh.
   @objc public weak var tokenRefreshDelegate: AuthStateTokenRefreshDelegate?
 
   /// The fetcher service.
