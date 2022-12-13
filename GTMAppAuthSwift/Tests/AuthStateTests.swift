@@ -16,6 +16,7 @@
 
 import XCTest
 import AppAuthCore
+import TestHelpers
 @testable import GTMAppAuthSwift
 
 class AuthStateTests: XCTestCase {
@@ -31,16 +32,16 @@ class AuthStateTests: XCTestCase {
   private let keychainHelper = KeychainHelperFake(keychainAttributes: [])
   private var keychainStore: KeychainStore {
     KeychainStore(
-      itemName: Constants.testKeychainItemName,
+      itemName: TestingConstants.testKeychainItemName,
       keychainHelper: keychainHelper
     )
   }
   private var authState: AuthState {
     AuthState(
       authState: OIDAuthState.testInstance(),
-      serviceProvider: Constants.testServiceProvider,
-      userID: Constants.testUserID,
-      userEmail: Constants.testEmail,
+      serviceProvider: TestingConstants.testServiceProvider,
+      userID: TestingConstants.testUserID,
+      userEmail: TestingConstants.testEmail,
       userEmailIsVerified: "y"
     )
   }
@@ -311,12 +312,12 @@ class AuthStateTests: XCTestCase {
 
   func testRemoveAuthorization() throws {
     try keychainStore.save(authState: authState)
-    try keychainStore.removeAuthState(withItemName: Constants.testKeychainItemName)
+    try keychainStore.removeAuthState(withItemName: TestingConstants.testKeychainItemName)
   }
 
   func testRemoveAuthorizationThrows() {
     do {
-      try keychainStore.removeAuthState(withItemName: Constants.testKeychainItemName)
+      try keychainStore.removeAuthState(withItemName: TestingConstants.testKeychainItemName)
     } catch {
       guard let keychainError = error as? KeychainStore.Error else {
         return XCTFail("`error` should be of type `GTMAppAuthFetcherAuthorization.Error`")
@@ -324,15 +325,15 @@ class AuthStateTests: XCTestCase {
       XCTAssertEqual(
         keychainError,
         KeychainStore.Error.failedToDeletePasswordBecauseItemNotFound(
-          itemName: Constants.testKeychainItemName
+          itemName: TestingConstants.testKeychainItemName
         )
       )
     }
   }
 
   func testReadAuthorization() throws {
-    try keychainStore.save(authState: authState, forItemName: Constants.testKeychainItemName)
-    let savedAuth = try keychainStore.retrieveAuthState(forItemName: Constants.testKeychainItemName)
+    try keychainStore.save(authState: authState, forItemName: TestingConstants.testKeychainItemName)
+    let savedAuth = try keychainStore.retrieveAuthState(forItemName: TestingConstants.testKeychainItemName)
     XCTAssertEqual(savedAuth.authState.isAuthorized, authState.authState.isAuthorized)
     XCTAssertEqual(savedAuth.serviceProvider, authState.serviceProvider)
     XCTAssertEqual(savedAuth.userID, authState.userID)

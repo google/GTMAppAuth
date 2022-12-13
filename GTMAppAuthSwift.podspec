@@ -40,6 +40,7 @@ requests with AppAuth.
     }
     unit_tests.source_files = [
       "GTMAppAuthSwift/Tests/*.swift",
+      "SwiftToObjCAPITests/*.[mh]",
     ]
     unit_tests.requires_app_host = false
   end

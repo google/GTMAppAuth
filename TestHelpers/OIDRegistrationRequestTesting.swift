@@ -17,16 +17,16 @@
 import AppAuthCore
 
 /// Protocol for creating a test instance of `OIDRegistrationRequest` with a configuration.
-protocol RegistrationRequestTesting: Testing {
+@objc public protocol RegistrationRequestTesting: Testing {
   static func testInstance(configuration: OIDServiceConfiguration) -> Self
 }
 
-extension OIDRegistrationRequest: RegistrationRequestTesting {
-  static func testInstance() -> Self {
+@objc extension OIDRegistrationRequest: RegistrationRequestTesting {
+  public static func testInstance() -> Self {
     testInstance(configuration: OIDServiceConfiguration.testInstance())
   }
 
-  static func testInstance(configuration: OIDServiceConfiguration) -> Self {
+  public static func testInstance(configuration: OIDServiceConfiguration) -> Self {
     return OIDRegistrationRequest(
       configuration: configuration,
       redirectURIs: [],

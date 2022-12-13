@@ -29,10 +29,11 @@ import GTMSessionFetcher
 /// A helper providing a concrete implementation for saving and loading auth data to the keychain.
 @objc(GTMKeychainStore)
 public final class KeychainStore: NSObject {
-  private var keychainHelper: KeychainHelper
+  private let keychainHelper: KeychainHelper
+  /// The name for the item to save in, retrieve, or remove from the keychain.
   @objc public var itemName: String
   /// Attributes that configure the behavior of the keychain.
-  @objc public let keychainAttributes: Set<KeychainAttribute>
+  @objc public var keychainAttributes: Set<KeychainAttribute>
 
   /// An initializer for testing to create an instance of this keychain wrapper with a given helper.
   ///
@@ -56,7 +57,7 @@ public final class KeychainStore: NSObject {
   /// - Parameters:
   ///   - itemName: The `String` name for the credential to store in the keychain.
   ///   - keychainHelper: An instance conforming to `KeychainHelper`.
-  convenience init(itemName: String, keychainHelper: KeychainHelper) {
+  @objc public convenience init(itemName: String, keychainHelper: KeychainHelper) {
     self.init(
       itemName: itemName,
       keychainAttributes: [],
@@ -70,7 +71,7 @@ public final class KeychainStore: NSObject {
   ///   - itemName: The `String` name for the credential to store in the keychain.
   ///   - keychainAttributes: A `Set` of `KeychainAttribute` to use with the keychain.
   ///   - keychainHelper: An instance conforming to `KeychainHelper`.
-  init(
+  @objc public init(
     itemName: String,
     keychainAttributes: Set<KeychainAttribute>,
     keychainHelper: KeychainHelper
@@ -298,6 +299,50 @@ public extension KeychainStore {
       case .failedToSetPassword(forItemName: let itemName):
         return ["itemName": itemName]
       }
+    }
+
+    public var errorCode: Int {
+      return ErrorCode(keychainStoreError: self).rawValue
+    }
+  }
+}
+
+/// Error codes associated with cases from `KeychainStore.Error`.
+@objc(GTMKeychainStoreErrorCode)
+public enum ErrorCode: Int {
+  case unhandled
+  case passwordNotFound
+  case noService
+  case unexpectedPasswordData
+  case failedToCreateResponseStringFromAuthorization
+  case failedToConvertRedirectURItoURL
+  case failedToConvertAuthorizationToData
+  case failedToDeletePassword
+  case failedToDeletePasswordBecauseItemNotFound
+  case failedToSetPassword
+
+  init(keychainStoreError: KeychainStore.Error) {
+    switch keychainStoreError {
+    case .unhandled:
+      self = .unhandled
+    case .passwordNotFound:
+      self = .passwordNotFound
+    case .noService:
+      self = .noService
+    case .unexpectedPasswordData:
+      self = .unexpectedPasswordData
+    case .failedToCreateResponseStringFromAuthorization:
+      self = .failedToCreateResponseStringFromAuthorization
+    case .failedToConvertRedirectURItoURL:
+      self = .failedToConvertRedirectURItoURL
+    case .failedToConvertAuthorizationToData:
+      self = .failedToConvertAuthorizationToData
+    case .failedToDeletePassword:
+      self = .failedToDeletePassword
+    case .failedToDeletePasswordBecauseItemNotFound:
+      self = .failedToDeletePasswordBecauseItemNotFound
+    case .failedToSetPassword:
+      self = .failedToSetPassword
     }
   }
 }

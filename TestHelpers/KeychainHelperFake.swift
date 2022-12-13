@@ -17,18 +17,19 @@
 import Foundation
 @testable import GTMAppAuthSwift
 
-class KeychainHelperFake: KeychainHelper {
-  var useDataProtectionKeychain = false
-  var passwordStore = [String: Data]()
-  let accountName = "OauthTest"
-  let keychainAttributes: Set<KeychainAttribute>
-  var generatedKeychainQuery: [String: Any]?
+@objc(GTMKeychainHelperFake)
+public class KeychainHelperFake: NSObject, KeychainHelper {
+  @objc public var useDataProtectionKeychain = false
+  @objc public var passwordStore = [String: Data]()
+  @objc public let accountName = "OauthTest"
+  @objc public let keychainAttributes: Set<KeychainAttribute>
+  @objc public var generatedKeychainQuery: [String: Any]?
 
-  required init(keychainAttributes: Set<KeychainAttribute>) {
+  @objc public required init(keychainAttributes: Set<KeychainAttribute>) {
     self.keychainAttributes = keychainAttributes
   }
 
-  func keychainQuery(forService service: String) -> [String : Any] {
+  @objc public func keychainQuery(forService service: String) -> [String : Any] {
     var query: [String: Any] = [
       kSecClass as String: kSecClassGenericPassword,
       kSecAttrAccount as String : accountName,
@@ -47,7 +48,7 @@ class KeychainHelperFake: KeychainHelper {
     return query
   }
 
-  func password(forService service: String) throws -> String {
+  @objc public func password(forService service: String) throws -> String {
     guard !service.isEmpty else { throw KeychainStore.Error.noService }
 
     let passwordData = try passwordData(forService: service)
@@ -57,7 +58,7 @@ class KeychainHelperFake: KeychainHelper {
     return password
   }
 
-  func passwordData(forService service: String) throws -> Data {
+  @objc public func passwordData(forService service: String) throws -> Data {
     guard !service.isEmpty else { throw KeychainStore.Error.noService }
 
     generatedKeychainQuery = keychainQuery(forService: service)
@@ -67,7 +68,7 @@ class KeychainHelperFake: KeychainHelper {
     return passwordData
   }
 
-  func removePassword(forService service: String) throws {
+  @objc public func removePassword(forService service: String) throws {
     guard !service.isEmpty else { throw KeychainStore.Error.noService }
 
     generatedKeychainQuery = keychainQuery(forService: service)
@@ -76,7 +77,7 @@ class KeychainHelperFake: KeychainHelper {
     }
   }
 
-  func setPassword(
+  @objc public func setPassword(
     _ password: String,
     forService service: String,
     accessibility: CFTypeRef
@@ -95,7 +96,11 @@ class KeychainHelperFake: KeychainHelper {
     try setPassword(data: passwordData, forService: service, accessibility: nil)
   }
 
-  func setPassword(data: Data, forService service: String, accessibility: CFTypeRef?) throws {
+  @objc public func setPassword(
+    data: Data,
+    forService service: String,
+    accessibility: CFTypeRef?
+  ) throws {
     guard !service.isEmpty else { throw KeychainStore.Error.noService }
     generatedKeychainQuery = keychainQuery(forService: service)
     passwordStore.updateValue(data, forKey: service + accountName)
