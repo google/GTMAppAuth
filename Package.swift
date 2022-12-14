@@ -72,7 +72,7 @@ let package = Package(
         "AppAuthCore",
         "GTMAppAuthSwift"
       ],
-      path: "TestHelpers"
+      path: "GTMAppAuthSwift/Tests/Helpers"
     ),
     .testTarget(
       name: "GTMAppAuthSwiftTests",
@@ -80,7 +80,7 @@ let package = Package(
         "GTMAppAuthSwift",
         "TestHelpers"
       ],
-      path: "GTMAppAuthSwift/Tests"
+      path: "GTMAppAuthSwift/Tests/Unit"
     ),
     .testTarget(
       name: "swift-objc-interop-tests",
@@ -88,7 +88,7 @@ let package = Package(
         "GTMAppAuthSwift",
         "TestHelpers"
       ],
-      path: "SwiftToObjCAPITests"
+      path: "GTMAppAuthSwift/Tests/ObjCIntegration"
     )
   ]
 )
