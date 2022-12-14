@@ -165,6 +165,25 @@
   XCTAssertEqual(error.code, GTMKeychainStoreErrorCodePasswordNotFound);
 }
 
+- (void)testRetrieveAuthorizationForCustomItemName {
+  NSError *error;
+  NSString *customItemName = @"customItemName";
+  self.keychainStore.itemName = customItemName;
+  [self.keychainStore saveWithAuthState:self.authorization forItemName:customItemName error:&error];
+  XCTAssertNil(error);
+
+  GTMAppAuthFetcherAuthorization *retrievedAuth =
+      [self.keychainStore retrieveAuthStateAndReturnError:&error];
+  XCTAssertNotNil(retrievedAuth);
+  XCTAssertNotNil(retrievedAuth);
+  XCTAssertEqual(retrievedAuth.authState.isAuthorized,
+                 self.authorization.authState.isAuthorized);
+  XCTAssertEqualObjects(retrievedAuth.serviceProvider, self.authorization.serviceProvider);
+  XCTAssertEqualObjects(retrievedAuth.userID, self.authorization.userID);
+  XCTAssertEqualObjects(retrievedAuth.userEmail, self.authorization.userEmail);
+  XCTAssertEqual(retrievedAuth.userEmailIsVerified, self.authorization.userEmailIsVerified);
+}
+
 - (void)testRemoveAuthorization {
   NSError *error;
   [self.keychainStore saveWithAuthState:self.authorization error:&error];
@@ -172,6 +191,17 @@
 
   [self.keychainStore removeAuthStateAndReturnError:&error];
   XCTAssertNil(error);
+}
+
+- (void)testRemoveAuthorizationForMissingItemNameThrowsError {
+  NSError *error;
+  NSString *missingItemName = @"missingItemName";
+  [self.keychainStore saveWithAuthState:self.authorization error:&error];
+  XCTAssertNil(error);
+
+  [self.keychainStore removeAuthStateWithItemName:missingItemName error:&error];
+  XCTAssertNotNil(error);
+  XCTAssertEqual(error.code, GTMKeychainStoreErrorCodeFailedToDeletePasswordBecauseItemNotFound);
 }
 
 - (void)testKeychainStoreAttributes {
