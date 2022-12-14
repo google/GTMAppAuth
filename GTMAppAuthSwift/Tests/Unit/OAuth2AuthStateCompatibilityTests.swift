@@ -149,8 +149,6 @@ class OAuth2AuthStateCompatibilityTests: XCTestCase {
   }
 
   func testAuthorizeFromKeychainForPersistenceString() throws {
-    try keychainStore.saveWithGTMOAuth2Format(forAuthorization: expectedAuthorization)
-
     let testPersistAuth = try oauth2Compatibility.authState(
       forPersistenceString: testPersistenceString,
       tokenURL: TestingConstants.testTokenURL,

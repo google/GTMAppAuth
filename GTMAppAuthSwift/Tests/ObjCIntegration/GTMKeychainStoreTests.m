@@ -39,6 +39,7 @@
       [[GTMKeychainStore alloc] initWithItemName:[GTMTestingConstants testKeychainItemName]
                               keychainAttributes:emptyKeychainAttributes
                                   keychainHelper:fakeKeychain];
+  [super setUp];
 }
 
 - (void)testInitWithItemName {

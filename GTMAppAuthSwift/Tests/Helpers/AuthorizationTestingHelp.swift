@@ -24,7 +24,8 @@ import XCTest
 public class AuthorizationTestingHelper: AuthState {}
 
 /// The delegate object passed to `AuthorizationTestingHelper`.
-@objc public class AuthorizationTestDelegate: NSObject {
+@objc(GTMAuthorizationTestDelegate)
+public class AuthorizationTestDelegate: NSObject {
   /// The authorization passed back to this delegate.
   @objc public var passedAuthorization: AuthState?
   /// The request passed back to this delegate.
