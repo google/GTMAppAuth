@@ -16,22 +16,23 @@
 
 import XCTest
 import AppAuthCore
+import TestHelpers
 @testable import GTMAppAuthSwift
 
 class KeychainStoreTests: XCTestCase {
   private let keychainHelper = KeychainHelperFake(keychainAttributes: [])
   private lazy var keychainStore: KeychainStore = {
     return KeychainStore(
-      itemName: Constants.testKeychainItemName,
+      itemName: TestingConstants.testKeychainItemName,
       keychainHelper: keychainHelper
     )
   }()
   private var authState: AuthState {
     AuthState(
       authState: OIDAuthState.testInstance(),
-      serviceProvider: Constants.testServiceProvider,
-      userID: Constants.testUserID,
-      userEmail: Constants.testEmail,
+      serviceProvider: TestingConstants.testServiceProvider,
+      userID: TestingConstants.testUserID,
+      userEmail: TestingConstants.testEmail,
       userEmailIsVerified: "y"
     )
   }
@@ -48,7 +49,7 @@ class KeychainStoreTests: XCTestCase {
       keychainAttributes: useDataProtectionAttributeSet
     )
     let store = KeychainStore(
-      itemName: Constants.testKeychainItemName,
+      itemName: TestingConstants.testKeychainItemName,
       keychainHelper: fakeWithDataProtection
     )
     try store.save(authState: authState)
@@ -61,7 +62,7 @@ class KeychainStoreTests: XCTestCase {
     let comparisonQuery = comparisonKeychainQuery(
       withAttributes: useDataProtectionAttributeSet,
       accountName: fakeWithDataProtection.accountName,
-      service: Constants.testKeychainItemName
+      service: TestingConstants.testKeychainItemName
     )
     XCTAssertEqual(testQuery, comparisonQuery)
   }
@@ -75,7 +76,7 @@ class KeychainStoreTests: XCTestCase {
       keychainAttributes: accessGroupAttributeSet
     )
     let store = KeychainStore(
-      itemName: Constants.testKeychainItemName,
+      itemName: TestingConstants.testKeychainItemName,
       keychainHelper: fakeWithAccessGroup
     )
     try store.save(authState: authState)
@@ -88,7 +89,7 @@ class KeychainStoreTests: XCTestCase {
     let comparisonQuery = comparisonKeychainQuery(
       withAttributes: accessGroupAttributeSet,
       accountName: fakeWithAccessGroup.accountName,
-      service: Constants.testKeychainItemName
+      service: TestingConstants.testKeychainItemName
     )
     XCTAssertEqual(testQuery, comparisonQuery)
 
@@ -111,7 +112,7 @@ class KeychainStoreTests: XCTestCase {
       keychainAttributes: accessGroupAttributeSet
     )
     let store = KeychainStore(
-      itemName: Constants.testKeychainItemName,
+      itemName: TestingConstants.testKeychainItemName,
       keychainHelper: fakeWithDataProtectionAndAccessGroup
     )
     try store.save(authState: authState)
@@ -124,7 +125,7 @@ class KeychainStoreTests: XCTestCase {
     let comparisonQuery = comparisonKeychainQuery(
       withAttributes: accessGroupAttributeSet,
       accountName: fakeWithDataProtectionAndAccessGroup.accountName,
-      service: Constants.testKeychainItemName
+      service: TestingConstants.testKeychainItemName
     )
     XCTAssertEqual(testQuery, comparisonQuery)
 
@@ -151,7 +152,7 @@ class KeychainStoreTests: XCTestCase {
       keychainAttributes: useDataProtectionAttributeSet
     )
     let store = KeychainStore(
-      itemName: Constants.testKeychainItemName,
+      itemName: TestingConstants.testKeychainItemName,
       keychainHelper: fakeWithDataProtection
     )
     // Use `try?` to "throw away" the error since we are testing the keychain query and not the call
@@ -165,7 +166,7 @@ class KeychainStoreTests: XCTestCase {
     let comparisonQuery = comparisonKeychainQuery(
       withAttributes: useDataProtectionAttributeSet,
       accountName: fakeWithDataProtection.accountName,
-      service: Constants.testKeychainItemName
+      service: TestingConstants.testKeychainItemName
     )
     XCTAssertEqual(testQuery, comparisonQuery)
   }
@@ -179,7 +180,7 @@ class KeychainStoreTests: XCTestCase {
       keychainAttributes: accessGroupAttributeSet
     )
     let store = KeychainStore(
-      itemName: Constants.testKeychainItemName,
+      itemName: TestingConstants.testKeychainItemName,
       keychainHelper: fakeWithAccessGroup
     )
     // Use `try?` to "throw away" the error since we are testing the keychain query and not the call
@@ -193,7 +194,7 @@ class KeychainStoreTests: XCTestCase {
     let comparisonQuery = comparisonKeychainQuery(
       withAttributes: accessGroupAttributeSet,
       accountName: fakeWithAccessGroup.accountName,
-      service: Constants.testKeychainItemName
+      service: TestingConstants.testKeychainItemName
     )
     XCTAssertEqual(testQuery, comparisonQuery)
 
@@ -216,7 +217,7 @@ class KeychainStoreTests: XCTestCase {
       keychainAttributes: accessGroupAttributeSet
     )
     let store = KeychainStore(
-      itemName: Constants.testKeychainItemName,
+      itemName: TestingConstants.testKeychainItemName,
       keychainHelper: fakeWithDataProtectionAndAccessGroup
     )
     // Use `try?` to "throw away" the error since we are testing the keychain query and not the call
@@ -230,7 +231,7 @@ class KeychainStoreTests: XCTestCase {
     let comparisonQuery = comparisonKeychainQuery(
       withAttributes: accessGroupAttributeSet,
       accountName: fakeWithDataProtectionAndAccessGroup.accountName,
-      service: Constants.testKeychainItemName
+      service: TestingConstants.testKeychainItemName
     )
     XCTAssertEqual(testQuery, comparisonQuery)
 
@@ -257,7 +258,7 @@ class KeychainStoreTests: XCTestCase {
       keychainAttributes: useDataProtectionAttributeSet
     )
     let store = KeychainStore(
-      itemName: Constants.testKeychainItemName,
+      itemName: TestingConstants.testKeychainItemName,
       keychainHelper: fakeWithDataProtection
     )
     // Use `try?` to "throw away" the error since we are testing the keychain query and not the call
@@ -271,7 +272,7 @@ class KeychainStoreTests: XCTestCase {
     let comparisonQuery = comparisonKeychainQuery(
       withAttributes: useDataProtectionAttributeSet,
       accountName: fakeWithDataProtection.accountName,
-      service: Constants.testKeychainItemName
+      service: TestingConstants.testKeychainItemName
     )
     XCTAssertEqual(testQuery, comparisonQuery)
   }
@@ -285,7 +286,7 @@ class KeychainStoreTests: XCTestCase {
       keychainAttributes: accessGroupAttributeSet
     )
     let store = KeychainStore(
-      itemName: Constants.testKeychainItemName,
+      itemName: TestingConstants.testKeychainItemName,
       keychainHelper: fakeWithAccessGroup
     )
     // Use `try?` to "throw away" the error since we are testing the keychain query and not the call
@@ -299,7 +300,7 @@ class KeychainStoreTests: XCTestCase {
     let comparisonQuery = comparisonKeychainQuery(
       withAttributes: accessGroupAttributeSet,
       accountName: fakeWithAccessGroup.accountName,
-      service: Constants.testKeychainItemName
+      service: TestingConstants.testKeychainItemName
     )
     XCTAssertEqual(testQuery, comparisonQuery)
 
@@ -322,7 +323,7 @@ class KeychainStoreTests: XCTestCase {
       keychainAttributes: accessGroupAttributeSet
     )
     let store = KeychainStore(
-      itemName: Constants.testKeychainItemName,
+      itemName: TestingConstants.testKeychainItemName,
       keychainHelper: fakeWithDataProtectionAndAccessGroup
     )
     // Use `try?` to "throw away" the error since we are testing the keychain query and not the call
@@ -336,7 +337,7 @@ class KeychainStoreTests: XCTestCase {
     let comparisonQuery = comparisonKeychainQuery(
       withAttributes: accessGroupAttributeSet,
       accountName: fakeWithDataProtectionAndAccessGroup.accountName,
-      service: Constants.testKeychainItemName
+      service: TestingConstants.testKeychainItemName
     )
     XCTAssertEqual(testQuery, comparisonQuery)
 
@@ -440,18 +441,18 @@ class KeychainStoreTests: XCTestCase {
     XCTAssertThrowsError(try keychainStore.removeAuthState()) { thrownError in
       XCTAssertEqual(
         thrownError as? KeychainStore.Error,
-        .failedToDeletePasswordBecauseItemNotFound(itemName: Constants.testKeychainItemName)
+        .failedToDeletePasswordBecauseItemNotFound(itemName: TestingConstants.testKeychainItemName)
       )
     }
   }
 
   func testPasswordNotFoundError() {
     XCTAssertThrowsError(
-      try keychainStore.retrieveAuthState(forItemName: Constants.testKeychainItemName)
+      try keychainStore.retrieveAuthState(forItemName: TestingConstants.testKeychainItemName)
     ) { thrownError in
       XCTAssertEqual(
         thrownError as? KeychainStore.Error,
-        .passwordNotFound(forItemName: Constants.testKeychainItemName)
+        .passwordNotFound(forItemName: TestingConstants.testKeychainItemName)
       )
     }
   }

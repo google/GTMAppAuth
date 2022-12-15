@@ -39,7 +39,8 @@ requests with AppAuth.
       :macos => osx_deployment_target,
     }
     unit_tests.source_files = [
-      "GTMAppAuthSwift/Tests/*.swift",
+      "GTMAppAuthSwift/Tests/Unit/*.swift",
+      "GTMAppAuthSwift/Tests/ObjCIntegration/*.[mh]",
     ]
     unit_tests.requires_app_host = false
   end

@@ -17,48 +17,50 @@
 import Foundation
 
 /// A protocol for creating a test instance of `Self`.
-protocol Testing {
+@objc(GTMTesting)
+public protocol Testing {
   static func testInstance() -> Self
 }
 
 // MARK: - Constants
 
-struct Constants {
-  static let testAccessToken = "access_token"
-  static let accessTokenExpiresIn = 3600
-  static let testRefreshToken = "refresh_token"
-  static let serverAuthCode = "server_auth_code"
+@objc(GTMTestingConstants)
+public class TestingConstants: NSObject {
+  @objc public static let testAccessToken = "access_token"
+  @objc public static let accessTokenExpiresIn = 3600
+  @objc public static let testRefreshToken = "refresh_token"
+  @objc public static let serverAuthCode = "server_auth_code"
 
-  static let alg = "RS256"
-  static let kid = "alkjdfas"
-  static let typ = "JWT"
-  static let userID = "123456789"
-  static let hostedDomain = "fakehosteddomain.com"
-  static let issuer = "https://test.com"
-  static let audience = "audience"
-  static let IDTokenExpires = 1000
-  static let issuedAt = 0
+  @objc public static let alg = "RS256"
+  @objc public static let kid = "alkjdfas"
+  @objc public static let typ = "JWT"
+  @objc public static let userID = "123456789"
+  @objc public static let hostedDomain = "fakehosteddomain.com"
+  @objc public static let issuer = "https://test.com"
+  @objc public static let audience = "audience"
+  @objc public static let IDTokenExpires = 1000
+  @objc public static let issuedAt = 0
 
-  static let fatNameKey = "name";
-  static let fatGivenNameKey = "given_name"
-  static let fatFamilyNameKey = "family_name"
-  static let fatPictureURLKey = "picture"
+  @objc public static let fatNameKey = "name";
+  @objc public static let fatGivenNameKey = "given_name"
+  @objc public static let fatFamilyNameKey = "family_name"
+  @objc public static let fatPictureURLKey = "picture"
 
-  static let fatName = "fake username"
-  static let fatGivenName = "fake"
-  static let fatFamilyName = "username"
-  static let fatPictureURL = "fake_user_picture_url"
-
-  static let testClientID = "87654321.googleusercontent.com"
-  static let testScope1 = "email"
-  static let testScope2 = "profile"
-  static let testCodeVerifier = "codeVerifier"
-  static let testPassword = "foo"
-  static let testKeychainItemName = "testName"
-  static let testServiceProvider = "fooProvider"
-  static let testUserID = "123456789"
-  static let testEmail = "foo@foo.com"
-  static let testClientSecret = "fooSecret"
-  static let testTokenURL: URL = URL(string: "https://testTokenURL.com")!
-  static let testRedirectURI = "https://testRedirectURI.com"
+  @objc public static let fatName = "fake username"
+  @objc public static let fatGivenName = "fake"
+  @objc public static let fatFamilyName = "username"
+  @objc public static let fatPictureURL = "fake_user_picture_url"
+  
+  @objc public static let testClientID = "87654321.googleusercontent.com"
+  @objc public static let testScope1 = "email"
+  @objc public static let testScope2 = "profile"
+  @objc public static let testCodeVerifier = "codeVerifier"
+  @objc public static let testPassword = "foo"
+  @objc public static let testKeychainItemName = "testName"
+  @objc public static let testServiceProvider = "fooProvider"
+  @objc public static let testUserID = "123456789"
+  @objc public static let testEmail = "foo@foo.com"
+  @objc public static let testClientSecret = "fooSecret"
+  @objc public static let testTokenURL: URL = URL(string: "https://testTokenURL.com")!
+  @objc public static let testRedirectURI = "https://testRedirectURI.com"
 }

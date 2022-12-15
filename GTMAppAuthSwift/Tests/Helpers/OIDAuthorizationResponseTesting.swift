@@ -18,22 +18,22 @@ import AppAuthCore
 
 /// Create a testing instance of `OIDAuthorizationResponse` taking arguments for additional
 /// parameters and an error description.
-protocol AuthorizationResponseTesting: Testing {
+@objc public protocol AuthorizationResponseTesting: Testing {
   static func testInstance(
     additionalParameters: [String: String]?,
     errorDescription: String?
   ) -> Self
 }
 
-extension OIDAuthorizationResponse: AuthorizationResponseTesting {
-  static func testInstance() -> Self {
+@objc extension OIDAuthorizationResponse: AuthorizationResponseTesting {
+  @objc public static func testInstance() -> Self {
     return testInstance(
       additionalParameters: nil,
       errorDescription: nil
     )
   }
 
-  static func testInstance(
+  @objc public static func testInstance(
     additionalParameters: [String : String]?,
     errorDescription: String?
   ) -> Self {

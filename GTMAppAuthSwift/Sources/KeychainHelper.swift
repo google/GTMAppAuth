@@ -17,7 +17,8 @@
 import Foundation
 
 /// A protocol defining the helper API for interacting with the Keychain.
-protocol KeychainHelper {
+@objc(GTMKeychainHelper)
+public protocol KeychainHelper {
   var accountName: String { get }
   var keychainAttributes: Set<KeychainAttribute> { get }
   init(keychainAttributes: Set<KeychainAttribute>)
@@ -30,7 +31,7 @@ protocol KeychainHelper {
 }
 
 /// An internally scoped keychain helper.
-struct KeychainWrapper: KeychainHelper {
+final class KeychainWrapper: KeychainHelper {
   let accountName = "OAuth"
   let keychainAttributes: Set<KeychainAttribute>
   @available(macOS 10.15, *)

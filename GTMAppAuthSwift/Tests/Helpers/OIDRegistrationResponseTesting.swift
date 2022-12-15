@@ -18,22 +18,22 @@ import AppAuthCore
 
 /// Protocol for creating a test instance of `OIDRegistrationResponse` with a request and
 /// parameters.
-protocol RegistrationResponseTesting: Testing {
+@objc public protocol RegistrationResponseTesting: Testing {
   static func testInstance(
     request: OIDRegistrationRequest,
     parameters: [String: String]
   ) -> Self
 }
 
-extension OIDRegistrationResponse: RegistrationResponseTesting {
-  static func testInstance() -> Self {
+@objc extension OIDRegistrationResponse: RegistrationResponseTesting {
+  public static func testInstance() -> Self {
     return testInstance(
       request: OIDRegistrationRequest.testInstance(),
       parameters: [:]
     )
   }
 
-  static func testInstance(
+  public static func testInstance(
     request: OIDRegistrationRequest,
     parameters: [String: String]
   ) -> Self {

@@ -66,10 +66,29 @@ let package = Package(
         .linkedFramework("Security"),
       ]
     ),
+    .target(
+      name: "TestHelpers",
+      dependencies: [
+        "AppAuthCore",
+        "GTMAppAuthSwift"
+      ],
+      path: "GTMAppAuthSwift/Tests/Helpers"
+    ),
     .testTarget(
       name: "GTMAppAuthSwiftTests",
-      dependencies: ["GTMAppAuthSwift"],
-      path: "GTMAppAuthSwift/Tests"
+      dependencies: [
+        "GTMAppAuthSwift",
+        "TestHelpers"
+      ],
+      path: "GTMAppAuthSwift/Tests/Unit"
+    ),
+    .testTarget(
+      name: "swift-objc-interop-tests",
+      dependencies: [
+        "GTMAppAuthSwift",
+        "TestHelpers"
+      ],
+      path: "GTMAppAuthSwift/Tests/ObjCIntegration"
     )
   ]
 )

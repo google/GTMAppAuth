@@ -17,8 +17,8 @@
 import AppAuthCore
 
 /// Extension for creating a test instance of `OIDServiceConfiguration`.
-extension OIDServiceConfiguration: Testing {
-  static func testInstance() -> Self {
+@objc extension OIDServiceConfiguration: Testing {
+  public static func testInstance() -> Self {
     return OIDServiceConfiguration(
       authorizationEndpoint: URL(string: "https://test.com/auth")!,
       tokenEndpoint: URL(string: "https://test.com/token")!
