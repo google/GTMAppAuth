@@ -16,6 +16,7 @@
 
 #import <XCTest/XCTest.h>
 
+@import AppAuthCore;
 @import GTMAppAuthSwift;
 @import TestHelpers;
 
