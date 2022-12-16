@@ -85,6 +85,7 @@ let package = Package(
     .testTarget(
       name: "swift-objc-interop-tests",
       dependencies: [
+        "AppAuthCore",
         "GTMAppAuthSwift",
         "TestHelpers"
       ],
