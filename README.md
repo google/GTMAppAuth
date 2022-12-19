@@ -39,8 +39,7 @@ To configure GTMAppAuth with the OAuth endpoints for Google, you can use the
 convenience method:
 
 ```objc
-OIDServiceConfiguration *configuration =
-    [GTMAppAuthFetcherAuthorization configurationForGoogle];
+OIDServiceConfiguration *configuration = [GTMAuthSession configurationForGoogle];
 ```
 
 Alternatively, you can configure GTMAppAuth by specifying the endpoints
@@ -95,7 +94,7 @@ property to store the authorization state:
 
 ```objc
 // property of the containing class
-@property(nonatomic, nullable) GTMAppAuthFetcherAuthorization *authorization;
+@property(nonatomic, nullable) GTMAuthSession *authSession;
 ```
 
 Then, initiate the authorization request. By using the
@@ -119,16 +118,13 @@ self.appDelegate.currentAuthorizationFlow =
         callback:^(OIDAuthState *_Nullable authState,
                    NSError *_Nullable error) {
   if (authState) {
-    // Creates the GTMAppAuthFetcherAuthorization from the OIDAuthState.
-    GTMAppAuthFetcherAuthorization *authorization =
-        [[GTMAppAuthFetcherAuthorization alloc] initWithAuthState:authState];
-
-    self.authorization = authorization;
+    // Creates a GTMAuthState from the OIDAuthState.
+    self.authSession = [[GTMAuthSession alloc] initWithAuthState:authState];
     NSLog(@"Got authorization tokens. Access token: %@",
           authState.lastTokenResponse.accessToken);
   } else {
     NSLog(@"Authorization error: %@", [error localizedDescription]);
-    self.authorization = nil;
+    self.authSession = nil;
   }
 }];
 ```
@@ -190,7 +186,7 @@ tokens following the Session Fetcher pattern, which you can do like so:
 // Creates a GTMSessionFetcherService with the authorization.
 // Normally you would save this service object and re-use it for all REST API calls.
 GTMSessionFetcherService *fetcherService = [[GTMSessionFetcherService alloc] init];
-fetcherService.authorizer = self.authorization;
+fetcherService.authorizer = self.authSession;
 
 // Creates a fetcher for the API call.
 NSURL *userinfoEndpoint = [NSURL URLWithString:@"https://www.googleapis.com/oauth2/v3/userinfo"];
@@ -200,7 +196,7 @@ GTMSessionFetcher *fetcher = [fetcherService fetcherWithURL:userinfoEndpoint];
   if (error) {
     // OIDOAuthTokenErrorDomain indicates an issue with the authorization.
     if ([error.domain isEqual:OIDOAuthTokenErrorDomain]) {
-      self.authorization = nil;
+      self.authSession = nil;
       NSLog(@"Authorization error during token refresh, clearing state. %@",
             error);
     // Other errors are assumed transient.
@@ -228,26 +224,37 @@ GTMSessionFetcher *fetcher = [fetcherService fetcherWithURL:userinfoEndpoint];
 
 ### Saving to the Keychain
 
-You can easily save `GTMAppAuthFetcherAuthorization` instances to the Keychain using
-the included `GTMAppAuthFetcherAuthorization+Keychain` category.
+You can easily save `GTMAuthSession` instances to the Keychain using the `GTMKeychainStore` class.
 
 ```objc
-// Save to Keychain
-[GTMAppAuthFetcherAuthorization saveAuthorization:_authorization
-                                toKeychainForName:kGTMAppAuthExampleAuthorizerKey];
+// Create a GIDKeychainStore instance
+GIDKeychainStore *keychainStore =
+    [[GIDKeychainStore alloc] initWithItemName:kGTMAppAuthExampleAuthorizerKey];
+    
+NSError *error;
 
-// Restore from Keychain
-GTMAppAuthFetcherAuthorization* authorization =
-    [GTMAppAuthFetcherAuthorization authorizationFromKeychainForName:kGTMAppAuthExampleAuthorizerKey];
+// Save to Keychain
+[keychainStore saveWithAuthSession:self.authSession error:&error];
+if (error) {
+  // Handle error
+}
+
+// Retrieve from Keychain
+self.authSession = [keychainStore retrieveAuthSessionAndReturnError:&error];
+if (error) {
+  // Handle error
+}
 
 // Remove from Keychain
-[GTMAppAuthFetcherAuthorization
-    removeAuthorizationFromKeychainForName:kGTMAppAuthExampleAuthorizerKey];
+[keychainStore removeAuthSessionAndReturnError:&error];
+if (error) {
+  // Handle error
+}
 ```
 
 #### Keychain Storage
 
-`GTMAppAuthFetcherAuthorization` instances are stored using Keychain items of the
+With `GTMKeychainStore`, by default, `GTMAuthSession` instances are stored using Keychain items of the
 [`kSecClassGenericPassword`](https://developer.apple.com/documentation/security/ksecclassgenericpassword?language=objc)
 class with a [`kSecAttrAccount`](https://developer.apple.com/documentation/security/ksecattraccount?language=objc)
 value of "OAuth" and a developer supplied value for [`kSecAttrService`](https://developer.apple.com/documentation/security/ksecattrservice?language=objc).
@@ -260,7 +267,7 @@ key is set to
 [`kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly`](https://developer.apple.com/documentation/security/ksecattraccessibleafterfirstunlockthisdeviceonly?language=objc)
 in order to allow background access after initial device unlock following a
 restart.  A [keyed archive](https://developer.apple.com/documentation/foundation/nskeyedarchiver?language=objc)
-representation of the relevant `GTMAppAuthFetcherAuthorization` instance is supplied as the value for
+representation of the relevant `GTMAuthSession` instance is supplied as the value for
 [`kSecValueData`](https://developer.apple.com/documentation/security/ksecvaluedata?language=objc)
 and this is encrypted and stored by
 [Keychain Services](https://developer.apple.com/documentation/security/keychain_services?language=objc).
