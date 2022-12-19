@@ -79,6 +79,8 @@ public final class KeychainStore: NSObject {
     self.itemName = itemName
     self.keychainAttributes = keychainAttributes
     self.keychainHelper = keychainHelper
+
+    NSKeyedUnarchiver.setClass(AuthState.self, forClassName: "GTMAppAuthFetcherAuthorization")
     super.init()
   }
 
