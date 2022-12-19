@@ -108,7 +108,7 @@ static NSString *const kExampleAuthorizerKey = @"authorization";
   [self updateUI];
 }
 
-/*! @brief Saves the @c GTMAppAuthFetcherAuthorization to @c NSUSerDefaults.
+/*! @brief Saves the @c GTMAuthState to @c NSUSerDefaults.
  */
 - (void)saveState {
   NSError *error;
@@ -122,11 +122,11 @@ static NSString *const kExampleAuthorizerKey = @"authorization";
   }
 }
 
-/*! @brief Loads the @c GTMAppAuthFetcherAuthorization from @c NSUSerDefaults.
+/*! @brief Loads the @c GTMAuthState from @c NSUSerDefaults.
  */
 - (void)loadState {
   NSError *error;
-  GTMAppAuthFetcherAuthorization *authorization =
+  GTMAuthState *authorization =
       [self.keychainStore retrieveAuthStateAndReturnError:&error];
   if (error) {
     NSLog(@"Error loading state: %@", error);
@@ -134,7 +134,7 @@ static NSString *const kExampleAuthorizerKey = @"authorization";
   [self setGtmAuthorization:authorization];
 }
 
-- (void)setGtmAuthorization:(GTMAppAuthFetcherAuthorization*)authorization {
+- (void)setGtmAuthorization:(GTMAuthState*)authorization {
   if ([_authorization isEqual:authorization]) {
     return;
   }
@@ -206,8 +206,7 @@ static NSString *const kExampleAuthorizerKey = @"authorization";
                             callback:^(OIDAuthState *_Nullable authState,
                                        NSError *_Nullable error) {
       if (authState) {
-        GTMAppAuthFetcherAuthorization *authorization =
-          [[GTMAppAuthFetcherAuthorization alloc] initWithAuthState:authState];
+        GTMAuthState *authorization = [[GTMAuthState alloc] initWithAuthState:authState];
 
         [self setGtmAuthorization:authorization];
         [self logMessage:@"Got authorization tokens. Access token: %@",

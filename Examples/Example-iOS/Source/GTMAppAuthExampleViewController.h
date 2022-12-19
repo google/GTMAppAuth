@@ -18,7 +18,7 @@
 #import <UIKit/UIKit.h>
 
 @class OIDAuthState;
-@class GTMAppAuthFetcherAuthorization;
+@class GTMAuthState;
 @class OIDServiceConfiguration;
 
 NS_ASSUME_NONNULL_BEGIN
@@ -34,7 +34,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /*! @brief The authorization state.
  */
-@property(nonatomic, nullable) GTMAppAuthFetcherAuthorization *authorization;
+@property(nonatomic, nullable) GTMAuthState *authorization;
 
 /*! @brief Authorization code flow using @c OIDAuthState automatic code exchanges.
     @param sender IBAction sender.
