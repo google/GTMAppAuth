@@ -39,7 +39,7 @@ static NSString *const kIssuer = @"https://accounts.google.com";
         https://console.developers.google.com/apis/credentials?project=_
         The client should be registered with the "iOS" type.
  */
-static NSString *const kClientID = @"687389107077-8qr6dh8fr4uaja89sdr5ieqb7mep04qv.apps.googleusercontent.com";
+static NSString *const kClientID = @"YOUR_CLIENT.apps.googleusercontent.com";
 
 /*! @brief The OAuth redirect URI for the client @c kClientID.
     @discussion With Google, the scheme of the redirect URI is the reverse DNS notation of the
@@ -48,7 +48,7 @@ static NSString *const kClientID = @"687389107077-8qr6dh8fr4uaja89sdr5ieqb7mep04
         'oauthredirect' here to help disambiguate from any other use of this scheme.
  */
 static NSString *const kRedirectURI =
-    @"com.googleusercontent.apps.687389107077-8qr6dh8fr4uaja89sdr5ieqb7mep04qv:/oauthredirect";
+    @"com.googleusercontent.apps.YOUR_CLIENT:/oauthredirect";
 
 /*! @brief @c NSCoding key for the authState property.
  */
