@@ -1,3 +1,14 @@
+# 3.0.0
+
+- GTMAppAuth has been translated to Swift. ([#190](https://github.com/google/GTMAppAuth/pull/190))
+- Improved API surface. ([#203](https://github.com/google/GTMAppAuth/pull/203))
+  - `GTMAppAuthFetcherAuthorization` renamed `GTMAuthState`.
+  - `GTMAuthStateStore` protocol introduced.
+  - `GTMKeychainStore` class conforming to `GTMAuthStateStore` provides keychain storage of `GTMAuthState` objects as well as GTMOAuth2 compatibility.
+    - Added the ability to specify a keychain access group.
+  - Error handling.
+- Unit tests added. ([#190](https://github.com/google/GTMAppAuth/pull/190), [#202](https://github.com/google/GTMAppAuth/pull/202))
+
 # 2.0.0
 
 * Updated the GTMSessionFetcher dependency to allow 3.x versions. ([#192](https://github.com/google/GTMAppAuth/pull/192))
