@@ -40,14 +40,14 @@
 }
 
 - (void)testInitWithOIDAuthState {
-  GTMAppAuthFetcherAuthorization *authorization =
-  [[GTMAppAuthFetcherAuthorization alloc] initWithAuthState:[OIDAuthState testInstance]];
+  GTMAuthState *authorization =
+  [[GTMAuthState alloc] initWithAuthState:[OIDAuthState testInstance]];
   XCTAssertNotNil(authorization);
 }
 
 - (void)testDesignatedInitializer {
-  GTMAppAuthFetcherAuthorization *authorization =
-  [[GTMAppAuthFetcherAuthorization alloc] initWithAuthState:OIDAuthState.testInstance
+  GTMAuthState *authorization =
+  [[GTMAuthState alloc] initWithAuthState:OIDAuthState.testInstance
                                             serviceProvider:GTMTestingConstants.testServiceProvider
                                                      userID:GTMTestingConstants.testUserID
                                                   userEmail:GTMTestingConstants.testEmail
@@ -62,10 +62,10 @@
 
 - (void)testAuthorizeSecureRequestWithCompletion {
   XCTestExpectation *authRequestExpectation =
-  [[XCTestExpectation alloc] initWithDescription:@"Authorize with completion"];
+      [[XCTestExpectation alloc] initWithDescription:@"Authorize with completion"];
 
-  GTMAppAuthFetcherAuthorization *authorization =
-  [[GTMAppAuthFetcherAuthorization alloc] initWithAuthState:OIDAuthState.testInstance];
+  GTMAuthState *authorization =
+      [[GTMAuthState alloc] initWithAuthState:OIDAuthState.testInstance];
   NSMutableURLRequest *secureRequest = [NSMutableURLRequest requestWithURL:self.secureURL];
 
   [authorization authorizeRequest:secureRequest completionHandler:^(NSError * _Nullable error) {
@@ -80,17 +80,17 @@
 
 - (void)testAuthorizeSecureRequestWithDelegate {
   XCTestExpectation *delegateExpectation =
-  [[XCTestExpectation alloc] initWithDescription:@"Authorize with delegate"];
+      [[XCTestExpectation alloc] initWithDescription:@"Authorize with delegate"];
 
-  GTMAppAuthFetcherAuthorization *authorization =
-  [[GTMAppAuthFetcherAuthorization alloc] initWithAuthState:OIDAuthState.testInstance];
+  GTMAuthState *authorization =
+      [[GTMAuthState alloc] initWithAuthState:OIDAuthState.testInstance];
   NSMutableURLRequest *secureRequest = [NSMutableURLRequest requestWithURL:self.secureURL];
 
   OIDAuthState *authState = OIDAuthState.testInstance;
   GTMAuthorizationTestingHelper *originalAuthorization =
-  [[GTMAuthorizationTestingHelper alloc] initWithAuthState:authState];
+      [[GTMAuthorizationTestingHelper alloc] initWithAuthState:authState];
   GTMAuthorizationTestDelegate *testingDelegate =
-  [[GTMAuthorizationTestDelegate alloc] initWithExpectation:delegateExpectation];
+      [[GTMAuthorizationTestDelegate alloc] initWithExpectation:delegateExpectation];
 
   NSMutableURLRequest *originalRequest = [[NSMutableURLRequest alloc] initWithURL:self.secureURL];
   [originalAuthorization authorizeRequest:originalRequest
@@ -108,10 +108,10 @@
 
 - (void)testStopAuthorization {
   XCTestExpectation *authorizeSecureRequestExpectation =
-  [self expectationWithDescription:@"Authorize with completion expectation"];
+      [self expectationWithDescription:@"Authorize with completion expectation"];
 
-  GTMAppAuthFetcherAuthorization *authorization =
-      [[GTMAppAuthFetcherAuthorization alloc] initWithAuthState:OIDAuthState.testInstance];
+  GTMAuthState *authorization =
+      [[GTMAuthState alloc] initWithAuthState:OIDAuthState.testInstance];
   NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:self.secureURL];
 
   [authorization authorizeRequest:request completionHandler:^(NSError * _Nullable error) {
@@ -130,8 +130,8 @@
   XCTestExpectation *authorizeSecureRequestExpectation =
   [self expectationWithDescription:@"Authorize with completion expectation"];
 
-  GTMAppAuthFetcherAuthorization *authorization =
-      [[GTMAppAuthFetcherAuthorization alloc] initWithAuthState:OIDAuthState.testInstance];
+  GTMAuthState *authorization =
+      [[GTMAuthState alloc] initWithAuthState:OIDAuthState.testInstance];
   NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:self.secureURL];
 
   [authorization authorizeRequest:request completionHandler:^(NSError * _Nullable error) {
@@ -147,15 +147,15 @@
 }
 
 - (void)testIsAuthorizedRequest {
-  GTMAppAuthFetcherAuthorization *authorization =
-      [[GTMAppAuthFetcherAuthorization alloc] initWithAuthState:OIDAuthState.testInstance];
+  GTMAuthState *authorization =
+      [[GTMAuthState alloc] initWithAuthState:OIDAuthState.testInstance];
   NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:self.secureURL];
   XCTAssertFalse([authorization isAuthorizedRequest:request]);
 }
 
 - (void)testCanAuthorizeRequest {
-  GTMAppAuthFetcherAuthorization *authorization =
-      [[GTMAppAuthFetcherAuthorization alloc] initWithAuthState:OIDAuthState.testInstance];
+  GTMAuthState *authorization =
+      [[GTMAuthState alloc] initWithAuthState:OIDAuthState.testInstance];
   XCTAssertTrue([authorization canAuthorize]);
 }
 
@@ -164,14 +164,14 @@
       [OIDAuthState testInstanceWithAuthorizationResponse:nil
                                             tokenResponse:nil
                                      registrationResponse:OIDRegistrationResponse.testInstance];
-  GTMAppAuthFetcherAuthorization *authorization =
-      [[GTMAppAuthFetcherAuthorization alloc] initWithAuthState:testAuthState];
+  GTMAuthState *authorization =
+      [[GTMAuthState alloc] initWithAuthState:testAuthState];
   XCTAssertFalse([authorization canAuthorize]);
 }
 
 - (void)testIsNotPrimeForRefresh {
-  GTMAppAuthFetcherAuthorization *authorization =
-      [[GTMAppAuthFetcherAuthorization alloc] initWithAuthState:OIDAuthState.testInstance];
+  GTMAuthState *authorization =
+      [[GTMAuthState alloc] initWithAuthState:OIDAuthState.testInstance];
   XCTAssertFalse([authorization primeForRefresh]);
 }
 
@@ -180,13 +180,13 @@
       [OIDAuthState testInstanceWithAuthorizationResponse:nil
                                             tokenResponse:nil
                                      registrationResponse:OIDRegistrationResponse.testInstance];
-  GTMAppAuthFetcherAuthorization *authorization =
-      [[GTMAppAuthFetcherAuthorization alloc] initWithAuthState:testAuthState];
+  GTMAuthState *authorization =
+      [[GTMAuthState alloc] initWithAuthState:testAuthState];
   XCTAssertTrue([authorization primeForRefresh]);
 }
 
 - (void)testConfigurationForGoogle {
-  OIDServiceConfiguration *configuration = [GTMAppAuthFetcherAuthorization configurationForGoogle];
+  OIDServiceConfiguration *configuration = [GTMAuthState configurationForGoogle];
   XCTAssertNotNil(configuration);
   XCTAssertEqualObjects(configuration.authorizationEndpoint, self.googleAuthzEndpoint);
   XCTAssertEqualObjects(configuration.tokenEndpoint, self.tokenEndpoint);
