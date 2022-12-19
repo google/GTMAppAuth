@@ -18,7 +18,7 @@ import AppAuthCore
 
 /// A protocol to help create test instances of `OIDAuthState` with various
 /// arguments.
-protocol AuthStateTesting: Testing {
+@objc public protocol AuthStateTesting: Testing {
   static func testInstance(idToken: String) -> Self
   static func testInstance(tokenResponse: OIDTokenResponse) -> Self
   static func testInstance(
@@ -28,21 +28,21 @@ protocol AuthStateTesting: Testing {
   ) -> Self
 }
 
-extension OIDAuthState: AuthStateTesting {
-  static func testInstance() -> Self {
+@objc extension OIDAuthState: AuthStateTesting {
+  public static func testInstance() -> Self {
     return OIDAuthState(
       authorizationResponse: OIDAuthorizationResponse.testInstance(),
       tokenResponse: OIDTokenResponse.testInstance()
     ) as! Self
   }
 
-  static func testInstance(idToken: String) -> Self {
+  public static func testInstance(idToken: String) -> Self {
     return testInstance(
       tokenResponse: OIDTokenResponse.testInstance(idToken: idToken)
     )
   }
 
-  static func testInstance(tokenResponse: OIDTokenResponse) -> Self {
+  public static func testInstance(tokenResponse: OIDTokenResponse) -> Self {
     return testInstance(
       authorizationResponse: OIDAuthorizationResponse.testInstance(),
       tokenResponse: tokenResponse,
@@ -50,7 +50,7 @@ extension OIDAuthState: AuthStateTesting {
     )
   }
 
-  static func testInstance(
+  public static func testInstance(
     authorizationResponse: OIDAuthorizationResponse?,
     tokenResponse: OIDTokenResponse?,
     registrationResponse: OIDRegistrationResponse?

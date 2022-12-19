@@ -17,59 +17,92 @@
 import Foundation
 @testable import GTMAppAuthSwift
 
-class KeychainHelperFake: KeychainHelper {
-  var useDataProtectionKeychain = false
-  var passwordStore = [String: Data]()
-  let accountName = "OauthTest"
+@objc(GTMKeychainHelperFake)
+public class KeychainHelperFake: NSObject, KeychainHelper {
+  @objc public var useDataProtectionKeychain = false
+  @objc public var passwordStore = [String: Data]()
+  @objc public let accountName = "OauthTest"
+  @objc public let keychainAttributes: Set<KeychainAttribute>
+  @objc public var generatedKeychainQuery: [String: Any]?
 
-  func password(forService service: String) throws -> String {
-    guard !service.isEmpty else { throw GTMKeychainError.noService }
+  @objc public required init(keychainAttributes: Set<KeychainAttribute>) {
+    self.keychainAttributes = keychainAttributes
+  }
+
+  @objc public func keychainQuery(forService service: String) -> [String : Any] {
+    var query: [String: Any] = [
+      kSecClass as String: kSecClassGenericPassword,
+      kSecAttrAccount as String : accountName,
+      kSecAttrService as String: service,
+    ]
+
+    keychainAttributes.forEach { configuration in
+      switch configuration.attribute {
+      case .useDataProtectionKeychain:
+        query[configuration.attribute.keyName] = kCFBooleanTrue
+      case .accessGroup(let name):
+        query[configuration.attribute.keyName] = name
+      }
+    }
+
+    return query
+  }
+
+  @objc public func password(forService service: String) throws -> String {
+    guard !service.isEmpty else { throw KeychainStore.Error.noService }
 
     let passwordData = try passwordData(forService: service)
     guard let password = String(data: passwordData, encoding: .utf8) else {
-      throw GTMKeychainError.passwordNotFound(forItemName: service)
+      throw KeychainStore.Error.passwordNotFound(forItemName: service)
     }
     return password
   }
 
-  func passwordData(forService service: String) throws -> Data {
-    guard !service.isEmpty else { throw GTMKeychainError.noService }
+  @objc public func passwordData(forService service: String) throws -> Data {
+    guard !service.isEmpty else { throw KeychainStore.Error.noService }
 
+    generatedKeychainQuery = keychainQuery(forService: service)
     guard let passwordData = passwordStore[service + accountName] else {
-      throw GTMKeychainError.passwordNotFound(forItemName: service)
+      throw KeychainStore.Error.passwordNotFound(forItemName: service)
     }
     return passwordData
   }
 
-  func removePassword(forService service: String) throws {
-    guard !service.isEmpty else { throw GTMKeychainError.noService }
+  @objc public func removePassword(forService service: String) throws {
+    guard !service.isEmpty else { throw KeychainStore.Error.noService }
 
+    generatedKeychainQuery = keychainQuery(forService: service)
     guard let _ = passwordStore.removeValue(forKey: service + accountName) else {
-      throw GTMKeychainError.failedToDeletePasswordBecauseItemNotFound(itemName: service)
+      throw KeychainStore.Error.failedToDeletePasswordBecauseItemNotFound(itemName: service)
     }
   }
 
-  func setPassword(
+  @objc public func setPassword(
     _ password: String,
     forService service: String,
     accessibility: CFTypeRef
   ) throws {
     do {
       try removePassword(forService: service)
-    } catch GTMKeychainError.failedToDeletePasswordBecauseItemNotFound {
+    } catch KeychainStore.Error.failedToDeletePasswordBecauseItemNotFound {
       // No need to throw this error since we are setting a new password
     } catch {
       throw error
     }
 
     guard let passwordData = password.data(using: .utf8) else {
-      throw GTMKeychainError.unexpectedPasswordData(forItemName: service)
+      throw KeychainStore.Error.unexpectedPasswordData(forItemName: service)
     }
     try setPassword(data: passwordData, forService: service, accessibility: nil)
   }
 
-  func setPassword(data: Data, forService service: String, accessibility: CFTypeRef?) throws {
-    guard !service.isEmpty else { throw GTMKeychainError.noService }
+  @objc public func setPassword(
+    data: Data,
+    forService service: String,
+    accessibility: CFTypeRef?
+  ) throws {
+    guard !service.isEmpty else { throw KeychainStore.Error.noService }
+    generatedKeychainQuery = keychainQuery(forService: service)
     passwordStore.updateValue(data, forKey: service + accountName)
   }
 }

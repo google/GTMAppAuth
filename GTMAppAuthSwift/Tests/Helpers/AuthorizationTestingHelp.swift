@@ -19,40 +19,42 @@ import AppAuthCore
 import XCTest
 @testable import GTMAppAuthSwift
 
-/// A subclass of `GTMAppAuthFetcherAuthorization` to use in tests.
-class AuthorizationTestingHelper: GTMAppAuthFetcherAuthorization {}
+/// A subclass of `AuthState` to use in tests.
+@objc(GTMAuthorizationTestingHelper)
+public class AuthorizationTestingHelper: AuthState {}
 
 /// The delegate object passed to `AuthorizationTestingHelper`.
-class AuthorizationTestDelegate: NSObject {
+@objc(GTMAuthorizationTestDelegate)
+public class AuthorizationTestDelegate: NSObject {
   /// The authorization passed back to this delegate.
-  var passedAuthorization: GTMAppAuthFetcherAuthorization?
+  @objc public var passedAuthorization: AuthState?
   /// The request passed back to this delegate.
-  var passedRequest: NSMutableURLRequest?
+  @objc public var passedRequest: NSMutableURLRequest?
   /// The error passed back to this delegate.
-  var passedError: NSError?
+  @objc public var passedError: NSError?
   /// The expectation needing fulfillment when this delegate receives its
   /// callback.
-  let expectation: XCTestExpectation
+  @objc public let expectation: XCTestExpectation
 
   /// An initializer creating the delegate.
   ///
   /// - Parameter expectation: The `XCTestExpectation` to be fulfilled.
-  init(expectation: XCTestExpectation) {
+  @objc public init(expectation: XCTestExpectation) {
     self.expectation = expectation
   }
 
   /// The function serving as the callback for this delegate.
   ///
   /// - Parameters:
-  ///   - authorization: The `GTMAppAuthFetcherAuthorization` authorizing the request.
+  ///   - authState: The `AuthState` authorizing the request.
   ///   - request: The request to be authorized.
   ///   - error: The `NSError?` should one arise during authorization.
-  @objc func authentication(
-    _ authorization: GTMAppAuthFetcherAuthorization,
+  @objc public func authentication(
+    _ authState: AuthState,
     request: NSMutableURLRequest,
     finishedWithError error: NSError?
   ) {
-    passedAuthorization = authorization
+    passedAuthorization = authState
     passedRequest = request
     passedError = error
 

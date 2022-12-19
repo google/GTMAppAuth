@@ -17,16 +17,16 @@
 import AppAuthCore
 
 /// Protocol for creating a test instance of `OIDTokenRequest` with additional parameters.
-protocol TokenRequestTesting: Testing {
+@objc public protocol TokenRequestTesting: Testing {
   static func testInstance(additionalParameters: [String: String]?) -> Self
 }
 
-extension OIDTokenRequest: TokenRequestTesting {
-  static func testInstance() -> Self {
+@objc extension OIDTokenRequest: TokenRequestTesting {
+  public static func testInstance() -> Self {
    testInstance(additionalParameters: nil)
   }
 
-  static func testInstance(additionalParameters: [String : String]?) -> Self {
+  public static func testInstance(additionalParameters: [String : String]?) -> Self {
     let authorizationResponse = OIDAuthorizationResponse.testInstance()
     let authorizationRequest = authorizationResponse.request
     let scopes = OIDScopeUtilities.scopesArray(

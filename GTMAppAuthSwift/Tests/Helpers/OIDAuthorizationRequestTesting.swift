@@ -16,12 +16,12 @@
 
 import AppAuthCore
 
-extension OIDAuthorizationRequest: Testing {
-  static func testInstance() -> Self {
+@objc extension OIDAuthorizationRequest: Testing {
+  public static func testInstance() -> Self {
     return OIDAuthorizationRequest(
       configuration: OIDServiceConfiguration.testInstance(),
-      clientId: Constants.testClientID,
-      scopes: [Constants.testScope1, Constants.testScope2],
+      clientId: TestingConstants.testClientID,
+      scopes: [TestingConstants.testScope1, TestingConstants.testScope2],
       redirectURL: URL(string: "http://test.com")!,
       responseType: OIDResponseTypeCode,
       additionalParameters: nil

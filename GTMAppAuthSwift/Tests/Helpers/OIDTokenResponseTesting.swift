@@ -17,7 +17,7 @@
 import AppAuthCore
 
 /// Protocol for creating a test instance of `OIDTokenResponse`.
-protocol TokenResponseTesting: Testing {
+@objc public protocol TokenResponseTesting: Testing {
   static func testInstance(idToken: String) -> Self
   static func testInstance(
     idToken: String,
@@ -27,12 +27,12 @@ protocol TokenResponseTesting: Testing {
   ) -> Self
 }
 
-extension OIDTokenResponse: TokenResponseTesting {
-  static func testInstance() -> Self {
+@objc extension OIDTokenResponse: TokenResponseTesting {
+  public static func testInstance() -> Self {
     return testInstance(idToken: idToken)
   }
 
-  static func testInstance(idToken: String) -> Self {
+  public static func testInstance(idToken: String) -> Self {
     return OIDTokenResponse.testInstance(
       idToken: idToken,
       accessToken: nil,
@@ -41,19 +41,19 @@ extension OIDTokenResponse: TokenResponseTesting {
     ) as! Self
   }
 
-  static func testInstance(
+  public static func testInstance(
     idToken: String,
     accessToken: String?,
     expires: NSNumber?,
     tokenRequest: OIDTokenRequest?
   ) -> Self {
     let parameters = [
-      "access_token": accessToken ?? Constants.testAccessToken,
-      "expires_in": expires ?? Constants.accessTokenExpiresIn as NSNumber,
+      "access_token": accessToken ?? TestingConstants.testAccessToken,
+      "expires_in": expires ?? TestingConstants.accessTokenExpiresIn as NSNumber,
       "token_type": "example_token_type",
-      "refresh_token": Constants.testRefreshToken,
-      "scope": OIDScopeUtilities.scopes(with: [Constants.testScope2]),
-      "server_code": Constants.serverAuthCode,
+      "refresh_token": TestingConstants.testRefreshToken,
+      "scope": OIDScopeUtilities.scopes(with: [TestingConstants.testScope2]),
+      "server_code": TestingConstants.serverAuthCode,
       "id_token": idToken
     ] as! [String : NSCopying & NSObjectProtocol]
 
@@ -64,14 +64,14 @@ extension OIDTokenResponse: TokenResponseTesting {
   }
 
   static var idToken: String {
-    return idToken(sub: Constants.userID, exp: Constants.IDTokenExpires, fat: false)
+    return idToken(sub: TestingConstants.userID, exp: TestingConstants.IDTokenExpires, fat: false)
   }
 
   static func idToken(sub: String, exp: Int, fat: Bool) -> String {
     let headerContents = [
-      "alg": Constants.alg,
-      "kid": Constants.kid,
-      "typ": Constants.typ,
+      "alg": TestingConstants.alg,
+      "kid": TestingConstants.kid,
+      "typ": TestingConstants.typ,
     ]
 
     // `try!` is fine here since failing is okay in the test
@@ -82,18 +82,18 @@ extension OIDTokenResponse: TokenResponseTesting {
 
     var payloadContents = [
       "sub": sub,
-      "hd": Constants.hostedDomain,
-      "iss": Constants.issuer,
-      "aud": Constants.audience,
+      "hd": TestingConstants.hostedDomain,
+      "iss": TestingConstants.issuer,
+      "aud": TestingConstants.audience,
       "exp": exp,
-      "iat": Constants.issuedAt
+      "iat": TestingConstants.issuedAt
     ] as [String : Any]
 
     if fat {
-      payloadContents[Constants.fatNameKey] = Constants.fatName
-      payloadContents[Constants.fatGivenNameKey] = Constants.fatGivenName
-      payloadContents[Constants.fatFamilyNameKey] = Constants.fatFamilyName
-      payloadContents[Constants.fatPictureURLKey] = Constants.fatPictureURL
+      payloadContents[TestingConstants.fatNameKey] = TestingConstants.fatName
+      payloadContents[TestingConstants.fatGivenNameKey] = TestingConstants.fatGivenName
+      payloadContents[TestingConstants.fatFamilyNameKey] = TestingConstants.fatFamilyName
+      payloadContents[TestingConstants.fatPictureURLKey] = TestingConstants.fatPictureURL
     }
 
     let payloadData = try! JSONSerialization.data(
