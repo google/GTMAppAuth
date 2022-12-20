@@ -331,9 +331,9 @@ class AuthStateTests: XCTestCase {
     }
   }
 
-  func testReadAuthorization() throws {
-    try keychainStore.save(authState: authState, forItemName: TestingConstants.testKeychainItemName)
-    let savedAuth = try keychainStore.retrieveAuthState(forItemName: TestingConstants.testKeychainItemName)
+  func testRetrieveAuthorization() throws {
+    try keychainStore.save(authState: authState)
+    let savedAuth = try keychainStore.retrieveAuthState()
     XCTAssertEqual(savedAuth.authState.isAuthorized, authState.authState.isAuthorized)
     XCTAssertEqual(savedAuth.serviceProvider, authState.serviceProvider)
     XCTAssertEqual(savedAuth.userID, authState.userID)
@@ -342,7 +342,20 @@ class AuthStateTests: XCTestCase {
     XCTAssertFalse(keychainHelper.useDataProtectionKeychain)
   }
 
-  func testReadAuthorizationThrowsError() {
+  func testRetrieveAuthorizationForItemName() throws {
+    try keychainStore.save(authState: authState, forItemName: alternativeTestKeychainItemName)
+    let retrievedAuth = try keychainStore.retrieveAuthState(
+      forItemName: alternativeTestKeychainItemName
+    )
+    XCTAssertEqual(retrievedAuth.authState.isAuthorized, authState.authState.isAuthorized)
+    XCTAssertEqual(retrievedAuth.serviceProvider, authState.serviceProvider)
+    XCTAssertEqual(retrievedAuth.userID, authState.userID)
+    XCTAssertEqual(retrievedAuth.userEmail, authState.userEmail)
+    XCTAssertEqual(retrievedAuth.userEmailIsVerified, authState.userEmailIsVerified)
+    XCTAssertFalse(keychainHelper.useDataProtectionKeychain)
+  }
+
+  func testRetrieveAuthorizationForMissingNameThrowsError() {
     let missingItemName = "missingItemName"
     do {
       _ = try keychainStore.retrieveAuthState(forItemName: missingItemName)

@@ -16,7 +16,7 @@
 
 import XCTest
 import AppAuthCore
-import TestHelpers
+@testable import TestHelpers
 @testable import GTMAppAuthSwift
 
 class KeychainStoreTests: XCTestCase {
@@ -455,6 +455,99 @@ class KeychainStoreTests: XCTestCase {
         .passwordNotFound(forItemName: TestingConstants.testKeychainItemName)
       )
     }
+  }
+
+  // MARK: - NSKeyed(Un)Archiver Class Name Mapping
+
+  func testKeyedArchiverClassNameMapping() throws {
+    try keychainStore.save(authState: authState)
+
+    guard let lastUsedArchiver = keychainStore.lastUsedKeyedArchiver else {
+      XCTFail("`keychainStore.save(authState:)` should create an `NSKeyedArchiver`")
+      return
+    }
+    guard let mappedClassName = lastUsedArchiver.className(for: AuthState.self) else {
+      XCTFail("`lastUsedArchiver` should have a mapped class name for `AuthState.self`")
+      return
+    }
+
+    XCTAssertEqual(mappedClassName, AuthState.legacyArchiveName)
+  }
+
+  func testKeyedUnarchiverClassNameMapping() throws {
+    try keychainStore.save(authState: authState)
+    _ = try keychainStore.retrieveAuthState() // We don't need to test the retrieved auth here
+
+    guard let lastUsedUnarchiver = keychainStore.lastUsedKeyedUnarchiver else {
+      XCTFail("`keychainStore.retrieveAuthState()` should create an `NSKeyedUnarchiver`")
+      return
+    }
+    guard let mappedClass = lastUsedUnarchiver.class(
+      forClassName: AuthState.legacyArchiveName
+    ) else {
+      XCTFail("`lastUsedUnarchiver` should have a class mapping for `AuthState.legacyArchiveName")
+      return
+    }
+
+    XCTAssertTrue(mappedClass is AuthState.Type)
+  }
+
+  func testArchivedDataAsPropertyListClassName() throws {
+    try keychainStore.save(authState: authState)
+    guard let propertyList = keychainHelper.archiveDataPropertyList as? [String: Any] else {
+      XCTFail("`keychainHelper.archiveDataPropertyList` should not be nil")
+      return
+    }
+
+    guard let objects = propertyList["$objects"] as? [Any] else {
+      XCTFail("`propertyList` should have key `\"$objects\"")
+      return
+    }
+
+    let objectMaps = objects.compactMap { $0 as? [String: String] }
+    XCTAssertTrue(objectMaps.count > 0, "`objectMaps` should not be empty")
+
+    guard let classNameMap = objectMaps.first(where: { $0["$classname"] != nil }) else {
+      XCTFail("`objectMaps` should contain a dictionary with the key \"$classname\"")
+      return
+    }
+
+    guard let className = classNameMap["$classname"] else {
+      XCTFail("There should be a classname")
+      return
+    }
+
+    XCTAssertEqual(className, AuthState.legacyArchiveName)
+  }
+
+  func testUnarchivedDataAsPropertyListClassName() throws {
+    try keychainStore.save(authState: authState)
+    _ = try keychainStore.retrieveAuthState() // We don't need to inspect the retrieved auth here
+
+    guard let propertyList = keychainHelper.unarchiveDataPropertyList as? [String: Any] else {
+      XCTFail("`keychainHelper.unarchiveDataPropertyList` should not be nil")
+      return
+    }
+
+    guard let objects = propertyList["$objects"] as? [Any] else {
+      XCTFail("`propertyList` should have key `\"$objects\"")
+      return
+    }
+
+    let objectMaps = objects.compactMap { $0 as? [String: String] }
+    XCTAssertTrue(objectMaps.count > 0, "`objectMaps` should have at least one `[String: String]`")
+
+    guard let classNameMap = objectMaps.first(where: { $0["$classname"] != nil }) else {
+      XCTFail("`objectMaps` should contain a dictionary with the key \"$classname\"")
+      return
+    }
+
+    guard let className = classNameMap["$classname"] else {
+      XCTFail("There should be a classname")
+      return
+    }
+
+    XCTAssertEqual(className, AuthState.legacyArchiveName)
   }
 }
 

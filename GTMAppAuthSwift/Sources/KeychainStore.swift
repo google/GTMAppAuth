@@ -30,6 +30,10 @@ import GTMSessionFetcher
 @objc(GTMKeychainStore)
 public final class KeychainStore: NSObject {
   private let keychainHelper: KeychainHelper
+  /// The last used `NSKeyedArchiver` used in tests to ensure that the class name mapping worked.
+  private(set) var lastUsedKeyedArchiver: NSKeyedArchiver?
+  /// The last used `NSKeyedUnarchiver` used in tests to ensure that the class name mapping worked.
+  private(set) var lastUsedKeyedUnarchiver: NSKeyedUnarchiver?
   /// The name for the item to save in, retrieve, or remove from the keychain.
   @objc public var itemName: String
   /// Attributes that configure the behavior of the keychain.
@@ -127,6 +131,7 @@ extension KeychainStore: AuthStateStore {
     // versions of this library to unarchive and archive instances of `AuthState` from new versions
     // of this library, we will archive `AuthState` using the legacy name.
     keyedArchiver.setClassName(AuthState.legacyArchiveName, for: AuthState.self)
+    lastUsedKeyedArchiver = keyedArchiver
 
     keyedArchiver.encode(authState, forKey: NSKeyedArchiveRootObjectKey)
     keyedArchiver.finishEncoding()
@@ -145,13 +150,15 @@ extension KeychainStore: AuthStateStore {
     let keyedUnarchiver: NSKeyedUnarchiver
     if #available(iOS 11.0, macOS 10.13, watchOS 4.0, tvOS 11.0, *) {
       keyedUnarchiver = try NSKeyedUnarchiver(forReadingFrom: data)
+      keyedUnarchiver.requiresSecureCoding = true
     } else {
       keyedUnarchiver = NSKeyedUnarchiver(forReadingWith: data)
+      keyedUnarchiver.requiresSecureCoding = false
     }
-    keyedUnarchiver.requiresSecureCoding = false
     // The previous name for `AuthState` was `GTMAppAuthFetcherAuthorization` and so unarchiving
     // requires mapping the name previous instances were archived under to the new name.
     keyedUnarchiver.setClass(AuthState.self, forClassName: AuthState.legacyArchiveName)
+    lastUsedKeyedUnarchiver = keyedUnarchiver
 
     return keyedUnarchiver
   }
