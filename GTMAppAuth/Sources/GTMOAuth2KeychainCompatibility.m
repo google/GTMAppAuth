@@ -308,17 +308,17 @@ static NSString *const kOOBString = @"urn:ietf:wg:oauth:2.0:oob";
 }
 
 + (NSURL *)googleTokenURL {
-  NSString *str = @"https://www.googleapis.com/oauth2/v4/token";
+  NSString *str = @"https://oauth2.googleapis.com/token";
   return (NSURL *)[NSURL URLWithString:str];
 }
 
 + (NSURL *)googleRevocationURL {
-  NSString *urlStr = @"https://accounts.google.com/o/oauth2/revoke";
+  NSString *urlStr = @"https://oauth2.googleapis.com/revoke";
   return (NSURL *)[NSURL URLWithString:urlStr];
 }
 
 + (NSURL *)googleUserInfoURL {
-  NSString *urlStr = @"https://www.googleapis.com/oauth2/v3/userinfo";
+  NSString *urlStr = @"https://openidconnect.googleapis.com/v1/userinfo";
   return (NSURL *)[NSURL URLWithString:urlStr];
 }
 

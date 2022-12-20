@@ -198,7 +198,7 @@ NSString *const GTMAppAuthFetcherAuthorizationErrorRequestKey = @"request";
   NSURL *authorizationEndpoint =
       [NSURL URLWithString:@"https://accounts.google.com/o/oauth2/v2/auth"];
   NSURL *tokenEndpoint =
-      [NSURL URLWithString:@"https://www.googleapis.com/oauth2/v4/token"];
+      [NSURL URLWithString:@"https://oauth2.googleapis.com/token"];
 
   OIDServiceConfiguration *configuration =
       [[OIDServiceConfiguration alloc] initWithAuthorizationEndpoint:authorizationEndpoint

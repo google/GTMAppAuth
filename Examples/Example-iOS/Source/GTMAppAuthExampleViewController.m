@@ -237,7 +237,7 @@ static NSString *const kExampleAuthorizerKey = @"authorization";
   fetcherService.authorizer = self.authorization;
 
   // Creates a fetcher for the API call.
-  NSURL *userinfoEndpoint = [NSURL URLWithString:@"https://www.googleapis.com/oauth2/v3/userinfo"];
+  NSURL *userinfoEndpoint = [NSURL URLWithString:@"https://openidconnect.googleapis.com/v1/userinfo"];
   GTMSessionFetcher *fetcher = [fetcherService fetcherWithURL:userinfoEndpoint];
   [fetcher beginFetchWithCompletionHandler:^(NSData *data, NSError *error) {
     // Checks for an error.
