@@ -43,10 +43,8 @@ requests with AppAuth.
       :watchos => watchos_deployment_target,
     }
     unit_tests.source_files = [
-      "GTMAppAuth/Tests/**/*.swift",
-      "GTMAppAuth/Tests/**/*.m",
+      "GTMAppAuth/Tests/Unit/*.swift",
     ]
-    unit_tests.dependency "AppAuthCore"
     unit_tests.requires_app_host = false
   end
 end
