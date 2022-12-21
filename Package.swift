@@ -29,10 +29,6 @@ let package = Package(
     .library(
       name: "GTMAppAuth",
       targets: ["GTMAppAuth"]
-    ),
-    .library(
-      name: "GTMAppAuthSwift",
-      targets: ["GTMAppAuthSwift"]
     )
   ],
   dependencies: [
@@ -47,21 +43,6 @@ let package = Package(
         "AppAuthCore"
       ],
       path: "GTMAppAuth/Sources",
-      publicHeadersPath: "Public",
-      cSettings: [
-        .headerSearchPath("../../"),
-      ],
-      linkerSettings: [
-        .linkedFramework("Security"),
-      ]
-    ),
-    .target(
-      name: "GTMAppAuthSwift",
-      dependencies: [
-        "GTMSessionFetcherCore",
-        "AppAuthCore"
-      ],
-      path: "GTMAppAuthSwift/Sources",
       linkerSettings: [
         .linkedFramework("Security"),
       ]
@@ -70,26 +51,26 @@ let package = Package(
       name: "TestHelpers",
       dependencies: [
         "AppAuthCore",
-        "GTMAppAuthSwift"
+        "GTMAppAuth"
       ],
-      path: "GTMAppAuthSwift/Tests/Helpers"
+      path: "GTMAppAuth/Tests/Helpers"
     ),
     .testTarget(
-      name: "GTMAppAuthSwiftTests",
+      name: "GTMAppAuthTests",
       dependencies: [
-        "GTMAppAuthSwift",
+        "GTMAppAuth",
         "TestHelpers"
       ],
-      path: "GTMAppAuthSwift/Tests/Unit"
+      path: "GTMAppAuth/Tests/Unit"
     ),
     .testTarget(
       name: "swift-objc-interop-tests",
       dependencies: [
         "AppAuthCore",
-        "GTMAppAuthSwift",
+        "GTMAppAuth",
         "TestHelpers"
       ],
-      path: "GTMAppAuthSwift/Tests/ObjCIntegration"
+      path: "GTMAppAuth/Tests/ObjCIntegration"
     )
   ]
 )

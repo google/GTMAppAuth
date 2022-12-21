@@ -21,7 +21,7 @@
 #import <QuartzCore/QuartzCore.h>
 
 @import AppAuth;
-@import GTMAppAuthSwift;
+@import GTMAppAuth;
 #if __has_include("GTMSessionFetcher/GTMSessionFetcher.h") // Cocoapods
 @import GTMSessionFetcher;
 #else // SPM

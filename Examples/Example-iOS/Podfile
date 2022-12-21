@@ -5,7 +5,7 @@ target 'Example-iOSForPod' do
   project 'Example-iOSForPod'
 
   # Pods for GTMAppAuth development
-  pod 'GTMAppAuthSwift', :path => '../../'
+  pod 'GTMAppAuth', :path => '../../'
 
   # In production, you would use:
   # pod 'GTMAppAuth'
