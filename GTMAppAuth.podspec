@@ -24,23 +24,27 @@ requests with AppAuth.
 
   ios_deployment_target = "10.0"
   osx_deployment_target = "10.12"
+  tvos_deployment_target = "10.0"
+  watchos_deployment_target = "6.0"
   s.ios.deployment_target = ios_deployment_target
   s.osx.deployment_target = osx_deployment_target
-  s.tvos.deployment_target = "10.0"
-  s.watchos.deployment_target = "6.0"
+  s.tvos.deployment_target = tvos_deployment_target
+  s.watchos.deployment_target = watchos_deployment_target
 
   s.framework = "Security"
-  s.dependency 'GTMSessionFetcher/Core', '>= 1.5', '< 4.0'
+  s.dependency "GTMSessionFetcher/Core", ">= 1.5", "< 4.0"
   s.dependency "AppAuth/Core", "~> 1.6"
 
   s.test_spec 'unit' do |unit_tests|
-    unit_tests.platform = {
+    unit_tests.platforms = {
       :ios => ios_deployment_target,
-      :macos => osx_deployment_target,
+      :osx => osx_deployment_target,
+      :tvos => tvos_deployment_target,
+      :watchos => watchos_deployment_target,
     }
     unit_tests.source_files = [
-      "GTMAppAuth/Tests/Unit/*.swift",
-      "GTMAppAuth/Tests/ObjCIntegration/*.[mh]",
+      "GTMAppAuth/Tests/**/*.swift",
+      "GTMAppAuth/Tests/**/*.m",
     ]
     unit_tests.requires_app_host = false
   end
