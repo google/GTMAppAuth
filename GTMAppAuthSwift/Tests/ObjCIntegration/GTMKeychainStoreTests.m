@@ -22,7 +22,7 @@
 
 @interface GTMKeychainStoreTests : XCTestCase
 
-@property (nonatomic) GTMAppAuthFetcherAuthorization *authorization;
+@property (nonatomic) GTMAuthState *authorization;
 @property (nonatomic) GTMKeychainStore *keychainStore;
 
 @end
@@ -31,7 +31,7 @@
 
 - (void)setUp {
   self.authorization =
-      [[GTMAppAuthFetcherAuthorization alloc] initWithAuthState:[OIDAuthState testInstance]];
+      [[GTMAuthState alloc] initWithAuthState:[OIDAuthState testInstance]];
 
   NSSet *emptyKeychainAttributes = [NSSet set];
   GTMKeychainHelperFake *fakeKeychain =
@@ -92,7 +92,7 @@
   XCTAssertNil(error);
 
   XCTAssertEqualObjects(newItemName, self.keychainStore.itemName);
-  GTMAppAuthFetcherAuthorization *retrievedAuth =
+  GTMAuthState *retrievedAuth =
       [self.keychainStore retrieveAuthStateForItemName:self.keychainStore.itemName error:&error];
   XCTAssertNotNil(retrievedAuth);
 
@@ -113,7 +113,7 @@
                                   error:&error];
   XCTAssertNil(error);
 
-  GTMAppAuthFetcherAuthorization *retrievedAuth =
+  GTMAuthState *retrievedAuth =
   [self.keychainStore retrieveAuthStateForItemName:customItemName error:&error];
   XCTAssertNotNil(retrievedAuth);
   XCTAssertNil(error);
@@ -143,7 +143,7 @@
   [self.keychainStore saveWithAuthState:self.authorization error:&error];
   XCTAssertNil(error);
 
-  GTMAppAuthFetcherAuthorization *testAuthorization =
+  GTMAuthState *testAuthorization =
       [self.keychainStore retrieveAuthStateAndReturnError:&error];
   XCTAssertNil(error);
 
@@ -159,7 +159,7 @@
 - (void)testRetrieveAuthorizationForMissingItemName {
   NSError *error;
   NSString *missingItemName = @"missingItemName";
-  GTMAppAuthFetcherAuthorization *missingAuth =
+  GTMAuthState *missingAuth =
       [self.keychainStore retrieveAuthStateForItemName:missingItemName error:&error];
 
   XCTAssertNil(missingAuth);
@@ -174,7 +174,7 @@
   [self.keychainStore saveWithAuthState:self.authorization forItemName:customItemName error:&error];
   XCTAssertNil(error);
 
-  GTMAppAuthFetcherAuthorization *retrievedAuth =
+  GTMAuthState *retrievedAuth =
       [self.keychainStore retrieveAuthStateAndReturnError:&error];
   XCTAssertNotNil(retrievedAuth);
   XCTAssertNotNil(retrievedAuth);
@@ -233,8 +233,8 @@
 
 - (void)testRetrieveAuthStateInGTMOAuth2Format {
   NSError *error;
-  GTMAppAuthFetcherAuthorization *expectedAuthorization =
-      [[GTMAppAuthFetcherAuthorization alloc] initWithAuthState:[OIDAuthState testInstance]
+  GTMAuthState *expectedAuthorization =
+      [[GTMAuthState alloc] initWithAuthState:[OIDAuthState testInstance]
                                                 serviceProvider:[GTMTestingConstants testServiceProvider]
                                                          userID:[GTMTestingConstants testUserID]
                                                       userEmail:[GTMTestingConstants testEmail]
@@ -243,7 +243,7 @@
                                                         error:&error];
   XCTAssertNil(error);
 
-  GTMAppAuthFetcherAuthorization *testAuth =
+  GTMAuthState *testAuth =
       [self.keychainStore retrieveAuthStateInGTMOAuth2FormatWithTokenURL:[GTMTestingConstants testTokenURL]
                                                              redirectURI:[GTMTestingConstants testRedirectURI]
                                                                 clientID:[GTMTestingConstants testClientID]

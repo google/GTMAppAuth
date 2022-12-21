@@ -22,7 +22,7 @@
 
 @interface GTMOAuth2KeychainCompatibilityTests : XCTestCase
 
-@property (nonatomic) GTMAppAuthFetcherAuthorization *expectedAuthorization;
+@property (nonatomic) GTMAuthState *expectedAuthorization;
 
 @end
 
@@ -30,7 +30,7 @@
 
 - (void)setUp {
   self.expectedAuthorization =
-      [[GTMAppAuthFetcherAuthorization alloc] initWithAuthState:OIDAuthState.testInstance
+      [[GTMAuthState alloc] initWithAuthState:OIDAuthState.testInstance
                                                 serviceProvider:GTMTestingConstants.testServiceProvider
                                                          userID:GTMTestingConstants.userID
                                                       userEmail:GTMTestingConstants.testEmail
@@ -52,7 +52,7 @@
 - (void)testAuthStateForPersistenceString {
   NSError *error;
   GTMOAuth2KeychainCompatibility *oauth2Compat = [[GTMOAuth2KeychainCompatibility alloc] init];
-  GTMAppAuthFetcherAuthorization *testPersistAuth =
+  GTMAuthState *testPersistAuth =
       [oauth2Compat authStateForPersistenceString:[self expectedPersistenceResponseString]
                                          tokenURL:GTMTestingConstants.testTokenURL
                                       redirectURI:GTMTestingConstants.testRedirectURI
@@ -79,7 +79,7 @@
 - (void)testAuthStateForPersistenceStringThrows {
   NSError *error;
   GTMOAuth2KeychainCompatibility *oauth2Compat = [[GTMOAuth2KeychainCompatibility alloc] init];
-  GTMAppAuthFetcherAuthorization *testPersistAuth =
+  GTMAuthState *testPersistAuth =
       [oauth2Compat authStateForPersistenceString:[self expectedPersistenceResponseString]
                                          tokenURL:GTMTestingConstants.testTokenURL
                                       redirectURI:@""

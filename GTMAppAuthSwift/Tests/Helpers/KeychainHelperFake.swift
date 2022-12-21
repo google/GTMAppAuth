@@ -24,6 +24,10 @@ public class KeychainHelperFake: NSObject, KeychainHelper {
   @objc public let accountName = "OauthTest"
   @objc public let keychainAttributes: Set<KeychainAttribute>
   @objc public var generatedKeychainQuery: [String: Any]?
+  /// Data generated from `NSKeyedArchiver` treated as a property list to test class name mapping.
+  private(set) var archiveDataPropertyList: Any?
+  /// Data generated from `NSKeyedUnarchiver` treated as a property list to test class name mapping.
+  private(set) var unarchiveDataPropertyList: Any?
 
   @objc public required init(keychainAttributes: Set<KeychainAttribute>) {
     self.keychainAttributes = keychainAttributes
@@ -65,6 +69,13 @@ public class KeychainHelperFake: NSObject, KeychainHelper {
     guard let passwordData = passwordStore[service + accountName] else {
       throw KeychainStore.Error.passwordNotFound(forItemName: service)
     }
+
+    // Use `try?` instead of try to avoid throwing in the ObjC integration tests and test failures
+    self.unarchiveDataPropertyList = try? PropertyListSerialization.propertyList(
+      from: passwordData,
+      format: nil
+    )
+
     return passwordData
   }
 
@@ -102,6 +113,12 @@ public class KeychainHelperFake: NSObject, KeychainHelper {
     accessibility: CFTypeRef?
   ) throws {
     guard !service.isEmpty else { throw KeychainStore.Error.noService }
+
+    // Use `try?` instead of try to avoid throwing in the ObjC integration tests and test failures
+    self.archiveDataPropertyList = try? PropertyListSerialization.propertyList(
+      from: data,
+      format: nil
+    )
     generatedKeychainQuery = keychainQuery(forService: service)
     passwordStore.updateValue(data, forKey: service + accountName)
   }

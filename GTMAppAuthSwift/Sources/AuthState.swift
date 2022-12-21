@@ -28,8 +28,11 @@ import GTMSessionFetcher
 /// An implementation of the `GTMFetcherAuthorizationProtocol` protocol for the AppAuth library.
 ///
 /// Enables you to use AppAuth with the GTM Session Fetcher library.
-@objc(GTMAppAuthFetcherAuthorization)
+@objc(GTMAuthState)
 open class AuthState: NSObject, GTMFetcherAuthorizationProtocol, NSSecureCoding {
+  /// The legacy name for this type used while archiving and unarchiving an instance.
+  static let legacyArchiveName = "GTMAppAuthFetcherAuthorization"
+
   /// The AppAuth authentication state.
   @objc public let authState: OIDAuthState
 

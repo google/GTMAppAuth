@@ -30,6 +30,10 @@ import GTMSessionFetcher
 @objc(GTMKeychainStore)
 public final class KeychainStore: NSObject {
   private let keychainHelper: KeychainHelper
+  /// The last used `NSKeyedArchiver` used in tests to ensure that the class name mapping worked.
+  private(set) var lastUsedKeyedArchiver: NSKeyedArchiver?
+  /// The last used `NSKeyedUnarchiver` used in tests to ensure that the class name mapping worked.
+  private(set) var lastUsedKeyedUnarchiver: NSKeyedUnarchiver?
   /// The name for the item to save in, retrieve, or remove from the keychain.
   @objc public var itemName: String
   /// Attributes that configure the behavior of the keychain.
@@ -79,23 +83,8 @@ public final class KeychainStore: NSObject {
     self.itemName = itemName
     self.keychainAttributes = keychainAttributes
     self.keychainHelper = keychainHelper
-    super.init()
-  }
 
-  @available(macOS 10.13, iOS 11, tvOS 11, watchOS 4, *)
-  private func modernUnarchiveAuthorization(
-    withPasswordData passwordData: Data,
-    itemName: String
-  ) throws -> AuthState {
-    guard let authorization = try NSKeyedUnarchiver.unarchivedObject(
-            ofClass: AuthState.self,
-            from: passwordData
-          ) else {
-      throw AuthState
-        .Error
-        .failedToConvertKeychainDataToAuthorization(forItemName: itemName)
-    }
-    return authorization
+    super.init()
   }
 }
 
@@ -131,20 +120,22 @@ extension KeychainStore: AuthStateStore {
   private func authorizationData(
     fromAuthorization authState: AuthState
   ) throws -> Data {
-    let authorizationData: Data
-    if #available(macOS 10.13, iOS 11, tvOS 11, watchOS 4, *) {
-      do {
-        authorizationData = try NSKeyedArchiver.archivedData(
-          withRootObject: authState,
-          requiringSecureCoding: true
-        )
-      } catch {
-        throw KeychainStore.Error.failedToConvertAuthorizationToData
-      }
+    let keyedArchiver: NSKeyedArchiver
+    if #available(iOS 11, macOS 10.13, tvOS 11.0, watchOS 4.0, *) {
+      keyedArchiver = NSKeyedArchiver(requiringSecureCoding: true)
     } else {
-      authorizationData = NSKeyedArchiver.archivedData(withRootObject: authState)
+      keyedArchiver = NSKeyedArchiver()
     }
-    return authorizationData
+
+    // The previous name for `AuthState` was `GTMAppAuthFetcherAuthorization`. To allow legacy
+    // versions of this library to unarchive and archive instances of `AuthState` from new versions
+    // of this library, we will archive `AuthState` using the legacy name.
+    keyedArchiver.setClassName(AuthState.legacyArchiveName, for: AuthState.self)
+    lastUsedKeyedArchiver = keyedArchiver
+
+    keyedArchiver.encode(authState, forKey: NSKeyedArchiveRootObjectKey)
+    keyedArchiver.finishEncoding()
+    return keyedArchiver.encodedData
   }
 
   @objc public func removeAuthState(withItemName itemName: String) throws {
@@ -155,37 +146,51 @@ extension KeychainStore: AuthStateStore {
     try keychainHelper.removePassword(forService: itemName)
   }
 
+  private func keyedUnarchiver(forData data: Data) throws -> NSKeyedUnarchiver {
+    let keyedUnarchiver: NSKeyedUnarchiver
+    if #available(iOS 11.0, macOS 10.13, watchOS 4.0, tvOS 11.0, *) {
+      keyedUnarchiver = try NSKeyedUnarchiver(forReadingFrom: data)
+      keyedUnarchiver.requiresSecureCoding = true
+    } else {
+      keyedUnarchiver = NSKeyedUnarchiver(forReadingWith: data)
+      keyedUnarchiver.requiresSecureCoding = false
+    }
+    // The previous name for `AuthState` was `GTMAppAuthFetcherAuthorization` and so unarchiving
+    // requires mapping the name previous instances were archived under to the new name.
+    keyedUnarchiver.setClass(AuthState.self, forClassName: AuthState.legacyArchiveName)
+    lastUsedKeyedUnarchiver = keyedUnarchiver
+
+    return keyedUnarchiver
+  }
+
   @objc public func retrieveAuthState(forItemName itemName: String) throws -> AuthState {
     let passwordData = try keychainHelper.passwordData(forService: itemName)
 
-    if #available(macOS 10.13, iOS 11, tvOS 11, watchOS 4, *) {
-      return try modernUnarchiveAuthorization(withPasswordData: passwordData, itemName: itemName)
-    } else {
-      guard let auth = NSKeyedUnarchiver.unarchiveObject(with: passwordData) as? AuthState else {
-        throw AuthState
-          .Error
-          .failedToConvertKeychainDataToAuthorization(forItemName: itemName)
-      }
-      return auth
+    let keyedUnarchiver = try keyedUnarchiver(forData: passwordData)
+    guard let auth = keyedUnarchiver.decodeObject(
+      of: AuthState.self,
+      forKey: NSKeyedArchiveRootObjectKey
+    ) else {
+      throw AuthState
+        .Error
+        .failedToConvertKeychainDataToAuthorization(forItemName: itemName)
     }
+    return auth
   }
 
   @objc public func retrieveAuthState() throws -> AuthState {
     let passwordData = try keychainHelper.passwordData(forService: itemName)
 
-    if #available(macOS 10.13, iOS 11, tvOS 11, watchOS 4, *) {
-      return try modernUnarchiveAuthorization(
-        withPasswordData: passwordData,
-        itemName: itemName
-      )
-    } else {
-      guard let auth = NSKeyedUnarchiver.unarchiveObject(with: passwordData) as? AuthState else {
-        throw AuthState
-          .Error
-          .failedToConvertKeychainDataToAuthorization(forItemName: itemName)
-      }
-      return auth
+    let keyedUnarchiver = try keyedUnarchiver(forData: passwordData)
+    guard let auth = keyedUnarchiver.decodeObject(
+      of: AuthState.self,
+      forKey: NSKeyedArchiveRootObjectKey
+    ) else {
+      throw AuthState
+        .Error
+        .failedToConvertKeychainDataToAuthorization(forItemName: itemName)
     }
+    return auth
   }
 
   /// Attempts to create an `AuthState` from stored data in GTMOAuth2 format.
