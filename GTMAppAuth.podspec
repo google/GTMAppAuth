@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name          = "GTMAppAuth"
-  s.version       = "1.3.0"
+  s.version       = "2.0.0"
   s.swift_version = "4.0"
   s.summary       = "Authorize GTM Session Fetcher requests with AppAuth via GTMAppAuth"
 
@@ -44,8 +44,9 @@ requests with AppAuth.
     }
     unit_tests.source_files = [
       "GTMAppAuth/Tests/Unit/*.swift",
+      'GTMAppAuth/Tests/Helpers/*.swift',
     ]
-    unit_tests.requires_app_host = false
+    unit_tests.dependency 'AppAuth/Core'
   end
 end
 

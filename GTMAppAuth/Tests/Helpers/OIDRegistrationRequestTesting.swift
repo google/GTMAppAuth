@@ -14,7 +14,13 @@
  * limitations under the License.
  */
 
+// Ensure that we import the correct dependency for both SPM and CocoaPods since
+// the latter doesn't define separate Clang modules for subspecs
+#if SWIFT_PACKAGE
 import AppAuthCore
+#else
+import AppAuth
+#endif
 
 /// Protocol for creating a test instance of `OIDRegistrationRequest` with a configuration.
 @objc public protocol RegistrationRequestTesting: Testing {

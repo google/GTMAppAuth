@@ -15,8 +15,14 @@
  */
 
 import XCTest
+// Ensure that we import the correct dependency for both SPM and CocoaPods since
+// the latter doesn't define separate Clang modules for subspecs
+#if SWIFT_PACKAGE
 import AppAuthCore
 @testable import TestHelpers
+#else
+import AppAuth
+#endif
 @testable import GTMAppAuth
 
 class KeychainStoreTests: XCTestCase {
@@ -43,6 +49,7 @@ class KeychainStoreTests: XCTestCase {
     keychainHelper.generatedKeychainQuery = nil
   }
 
+  @available(macOS 10.15, *)
   func testKeychainQueryHasDataProtectionAttributeOnSave() throws {
     let useDataProtectionAttributeSet: Set<KeychainAttribute> = [.useDataProtectionKeychain]
     let fakeWithDataProtection = KeychainHelperFake(
@@ -102,6 +109,7 @@ class KeychainStoreTests: XCTestCase {
     XCTAssertEqual(expectedGroupName, testGroupName)
   }
 
+  @available(macOS 10.15, *)
   func testKeychainQueryHasDataProtectionAndAccessGroupAttributesOnSave() throws {
     let expectedGroupName = "testGroup"
     let accessGroupAttributeSet: Set<KeychainAttribute> = [
@@ -146,6 +154,7 @@ class KeychainStoreTests: XCTestCase {
     XCTAssertEqual(testAccessGroupName, expectedGroupName)
   }
 
+  @available(macOS 10.15, *)
   func testKeychainQueryHasDataProtectionAttributeOnRead() throws {
     let useDataProtectionAttributeSet: Set<KeychainAttribute> = [.useDataProtectionKeychain]
     let fakeWithDataProtection = KeychainHelperFake(
@@ -207,6 +216,7 @@ class KeychainStoreTests: XCTestCase {
     XCTAssertEqual(expectedGroupName, testGroupName)
   }
 
+  @available(macOS 10.15, *)
   func testKeychainQueryHasDataProtectionAndAccessGroupAttributesOnRead() throws {
     let expectedGroupName = "testGroup"
     let accessGroupAttributeSet: Set<KeychainAttribute> = [
@@ -252,6 +262,7 @@ class KeychainStoreTests: XCTestCase {
     XCTAssertEqual(testAccessGroupName, expectedGroupName)
   }
 
+  @available(macOS 10.15, *)
   func testKeychainQueryHasDataProtectionAttributeOnRemove() throws {
     let useDataProtectionAttributeSet: Set<KeychainAttribute> = [.useDataProtectionKeychain]
     let fakeWithDataProtection = KeychainHelperFake(
@@ -313,6 +324,7 @@ class KeychainStoreTests: XCTestCase {
     XCTAssertEqual(expectedGroupName, testGroupName)
   }
 
+  @available(macOS 10.15, *)
   func testKeychainQueryHasDataProtectionAndAccessGroupAttributesOnRemove() throws {
     let expectedGroupName = "testGroup"
     let accessGroupAttributeSet: Set<KeychainAttribute> = [
