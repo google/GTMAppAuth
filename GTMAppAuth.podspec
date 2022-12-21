@@ -46,6 +46,7 @@ requests with AppAuth.
       "GTMAppAuth/Tests/**/*.swift",
       "GTMAppAuth/Tests/**/*.m",
     ]
+    unit_tests.dependency "AppAuthCore"
     unit_tests.requires_app_host = false
   end
 end
