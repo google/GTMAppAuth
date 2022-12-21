@@ -111,7 +111,7 @@ static NSString *const kExampleAuthorizerKey = @"authorization";
 - (void)saveState {
   NSError *error;
   if (_authorization.canAuthorize) {
-    [self.keychainStore saveWithAuthState:_authorization error:&error];
+    [self.keychainStore saveAuthState:_authorization error:&error];
   } else {
     [self.keychainStore removeAuthStateAndReturnError:&error];
   }
