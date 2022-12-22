@@ -87,10 +87,6 @@
   XCTestExpectation *delegateExpectation =
       [[XCTestExpectation alloc] initWithDescription:@"Authorize with delegate"];
 
-  GTMAuthState *authorization =
-      [[GTMAuthState alloc] initWithAuthState:OIDAuthState.testInstance];
-  NSMutableURLRequest *secureRequest = [NSMutableURLRequest requestWithURL:self.secureURL];
-
   OIDAuthState *authState = OIDAuthState.testInstance;
   GTMAuthorizationTestingHelper *originalAuthorization =
       [[GTMAuthorizationTestingHelper alloc] initWithAuthState:authState];

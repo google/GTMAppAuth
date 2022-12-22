@@ -260,7 +260,7 @@ class AuthStateTests: XCTestCase {
     let authorization = AuthState(authState: OIDAuthState.testInstance())
     let insecureRequest = NSMutableURLRequest(url: insecureFakeURL)
     authorization.authorizeRequest(insecureRequest) { error in
-      guard let nsError = error as? NSError else {
+      guard let nsError = error as NSError? else {
         return XCTFail("Could not cast error to `NSError`")
       }
       XCTAssertEqual(
