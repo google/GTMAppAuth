@@ -16,9 +16,14 @@
 
 #import <XCTest/XCTest.h>
 
+#if SWIFT_PACKAGE
 @import AppAuthCore;
-@import GTMAppAuthSwift;
 @import TestHelpers;
+#else
+@import AppAuth;
+#import "GTMAppAuth_Unit_objc_api_integration-Swift.h"
+#endif
+@import GTMAppAuth;
 
 @interface GTMOAuth2KeychainCompatibilityTests : XCTestCase
 

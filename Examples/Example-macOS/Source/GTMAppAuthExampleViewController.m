@@ -21,7 +21,7 @@
 #import <QuartzCore/QuartzCore.h>
 
 @import AppAuth;
-@import GTMAppAuthSwift;
+@import GTMAppAuth;
 #if __has_include("GTMSessionFetcher/GTMSessionFetcher.h") // Cocoapods
 @import GTMSessionFetcher;
 #else // SPM
@@ -111,7 +111,7 @@ static NSString *const kExampleAuthorizerKey = @"authorization";
 - (void)saveState {
   NSError *error;
   if (_authorization.canAuthorize) {
-    [self.keychainStore saveWithAuthState:_authorization error:&error];
+    [self.keychainStore saveAuthState:_authorization error:&error];
   } else {
     [self.keychainStore removeAuthStateAndReturnError:&error];
   }
@@ -124,8 +124,7 @@ static NSString *const kExampleAuthorizerKey = @"authorization";
  */
 - (void)loadState {
   NSError *error;
-  GTMAppAuthFetcherAuthorization* authorization =
-      [self.keychainStore retrieveAuthStateAndReturnError:&error];
+  GTMAuthState *authorization = [self.keychainStore retrieveAuthStateAndReturnError:&error];
   [self setAuthorization:authorization];
   if (error) {
     NSLog(@"Error loading state: %@", error);
@@ -163,7 +162,7 @@ static NSString *const kExampleAuthorizerKey = @"authorization";
   [self stateChanged];
 }
 
-- (void)setAuthorization:(GTMAppAuthFetcherAuthorization*)authorization {
+- (void)setAuthorization:(GTMAuthState *)authorization {
   _authorization = authorization;
  [self saveState];
  [self updateUI];
@@ -207,8 +206,7 @@ static NSString *const kExampleAuthorizerKey = @"authorization";
                             callback:^(OIDAuthState *_Nullable authState,
                                        NSError *_Nullable error) {
       if (authState) {
-        GTMAppAuthFetcherAuthorization *authorization =
-          [[GTMAppAuthFetcherAuthorization alloc] initWithAuthState:authState];
+        GTMAuthState *authorization = [[GTMAuthState alloc] initWithAuthState:authState];
         [self setAuthorization:authorization];
         [self logMessage:@"Got authorization tokens. Access token: %@",
                          authState.lastTokenResponse.accessToken];

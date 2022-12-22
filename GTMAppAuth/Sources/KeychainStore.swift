@@ -99,7 +99,8 @@ extension KeychainStore: AuthStateStore {
     self.init(itemName: itemName, keychainHelper: KeychainWrapper())
   }
 
-  @objc public func save(authState: AuthState) throws {
+  @objc(saveAuthState:error:)
+  public func save(authState: AuthState) throws {
     let authorizationData: Data = try authorizationData(fromAuthorization: authState)
     try keychainHelper.setPassword(
       data: authorizationData,
@@ -108,7 +109,8 @@ extension KeychainStore: AuthStateStore {
     )
   }
 
-  @objc public func save(authState: AuthState, forItemName itemName: String) throws {
+  @objc(saveAuthState:forItemName:error:)
+  public func save(authState: AuthState, forItemName itemName: String) throws {
     let authorizationData = try authorizationData(fromAuthorization: authState)
     try keychainHelper.setPassword(
       data: authorizationData,

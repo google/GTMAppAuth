@@ -15,9 +15,15 @@
  */
 
 import Foundation
+// Ensure that we import the correct dependency for both SPM and CocoaPods since
+// the latter doesn't define separate Clang modules for subspecs
+#if SWIFT_PACKAGE
 import AppAuthCore
+#else
+import AppAuth
+#endif
 import XCTest
-@testable import GTMAppAuthSwift
+@testable import GTMAppAuth
 
 /// A subclass of `AuthState` to use in tests.
 @objc(GTMAuthorizationTestingHelper)

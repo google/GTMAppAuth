@@ -15,7 +15,7 @@
  */
 
 import Foundation
-@testable import GTMAppAuthSwift
+@testable import GTMAppAuth
 
 @objc(GTMKeychainHelperFake)
 public class KeychainHelperFake: NSObject, KeychainHelper {

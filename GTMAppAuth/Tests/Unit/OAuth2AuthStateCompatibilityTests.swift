@@ -15,9 +15,15 @@
  */
 
 import XCTest
+// Ensure that we import the correct dependency for both SPM and CocoaPods since
+// the latter doesn't define separate Clang modules for subspecs
+#if SWIFT_PACKAGE
 import AppAuthCore
 import TestHelpers
-@testable import GTMAppAuthSwift
+#else
+import AppAuth
+#endif
+@testable import GTMAppAuth
 
 class OAuth2AuthStateCompatibilityTests: XCTestCase {
   private let oauth2Compatibility = OAuth2AuthStateCompatibility()

@@ -16,9 +16,14 @@
 
 #import <XCTest/XCTest.h>
 
+#if SWIFT_PACKAGE
 @import AppAuthCore;
-@import GTMAppAuthSwift;
 @import TestHelpers;
+#else
+@import AppAuth;
+#import "GTMAppAuth_Unit_objc_api_integration-Swift.h"
+#endif
+@import GTMAppAuth;
 
 @interface GTMAuthStateTests : XCTestCase
 
@@ -81,10 +86,6 @@
 - (void)testAuthorizeSecureRequestWithDelegate {
   XCTestExpectation *delegateExpectation =
       [[XCTestExpectation alloc] initWithDescription:@"Authorize with delegate"];
-
-  GTMAuthState *authorization =
-      [[GTMAuthState alloc] initWithAuthState:OIDAuthState.testInstance];
-  NSMutableURLRequest *secureRequest = [NSMutableURLRequest requestWithURL:self.secureURL];
 
   OIDAuthState *authState = OIDAuthState.testInstance;
   GTMAuthorizationTestingHelper *originalAuthorization =

@@ -23,7 +23,8 @@ public protocol AuthStateStore {
   ///
   /// - Parameter authState: An instance of `AuthState` to save.
   /// - Throws: Any error that may arise during the save.
-  @objc func save(authState: AuthState) throws
+  @objc(saveAuthState:error:)
+  func save(authState: AuthState) throws
 
   /// Removes the stored `AuthState`.
   ///

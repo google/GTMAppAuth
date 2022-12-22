@@ -21,7 +21,7 @@
 #import <QuartzCore/QuartzCore.h>
 
 @import AppAuth;
-@import GTMAppAuthSwift;
+@import GTMAppAuth;
 #if __has_include("GTMSessionFetcher/GTMSessionFetcher.h") // Cocoapods
 @import GTMSessionFetcher;
 #else // SPM
@@ -113,7 +113,7 @@ static NSString *const kExampleAuthorizerKey = @"authorization";
 - (void)saveState {
   NSError *error;
   if (_authorization.canAuthorize) {
-    [self.keychainStore saveWithAuthState:_authorization error:&error];
+    [self.keychainStore saveAuthState:_authorization error:&error];
   } else {
     [self.keychainStore removeAuthStateAndReturnError:&error];
   }

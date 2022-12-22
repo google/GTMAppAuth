@@ -15,9 +15,15 @@
  */
 
 import XCTest
+// Ensure that we import the correct dependency for both SPM and CocoaPods since
+// the latter doesn't define separate Clang modules for subspecs
+#if SWIFT_PACKAGE
 import AppAuthCore
 import TestHelpers
-@testable import GTMAppAuthSwift
+#else
+import AppAuth
+#endif
+@testable import GTMAppAuth
 
 class AuthStateTests: XCTestCase {
   typealias FetcherAuthError = AuthState.Error
@@ -247,14 +253,14 @@ class AuthStateTests: XCTestCase {
     XCTAssertTrue(authorization.primeForRefresh())
   }
 
-  func testAuthorizatioNSError() {
+  func testAuthorizationNSError() {
     let authorizeInsecureRequestExpectation = expectation(
       description: "Authorize with completion expectation"
     )
     let authorization = AuthState(authState: OIDAuthState.testInstance())
     let insecureRequest = NSMutableURLRequest(url: insecureFakeURL)
     authorization.authorizeRequest(insecureRequest) { error in
-      guard let nsError = error as? NSError else {
+      guard let nsError = error as NSError? else {
         return XCTFail("Could not cast error to `NSError`")
       }
       XCTAssertEqual(

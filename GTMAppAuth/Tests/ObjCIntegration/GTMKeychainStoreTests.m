@@ -16,9 +16,14 @@
 
 #import <XCTest/XCTest.h>
 
+#if SWIFT_PACKAGE
 @import AppAuthCore;
-@import GTMAppAuthSwift;
 @import TestHelpers;
+#else
+@import AppAuth;
+#import "GTMAppAuth_Unit_objc_api_integration-Swift.h"
+#endif
+@import GTMAppAuth;
 
 @interface GTMKeychainStoreTests : XCTestCase
 
@@ -77,7 +82,7 @@
 
 - (void)testSaveAuthorization {
   NSError *error;
-  [self.keychainStore saveWithAuthState:self.authorization error:&error];
+  [self.keychainStore saveAuthState:self.authorization error:&error];
   XCTAssertNil(error);
 }
 
@@ -86,9 +91,9 @@
   self.keychainStore.itemName = newItemName;
 
   NSError *error;
-  [self.keychainStore saveWithAuthState:self.authorization
-                            forItemName:newItemName
-                                  error:&error];
+  [self.keychainStore saveAuthState:self.authorization
+                        forItemName:newItemName
+                              error:&error];
   XCTAssertNil(error);
 
   XCTAssertEqualObjects(newItemName, self.keychainStore.itemName);
@@ -108,9 +113,9 @@
   NSString *customItemName = @"customItemName";
   NSError *error;
 
-  [self.keychainStore saveWithAuthState:self.authorization
-                            forItemName:customItemName
-                                  error:&error];
+  [self.keychainStore saveAuthState:self.authorization
+                        forItemName:customItemName
+                              error:&error];
   XCTAssertNil(error);
 
   GTMAuthState *retrievedAuth =
@@ -130,9 +135,9 @@
 
 - (void)testSaveAuthorizationErrorNoServiceName {
   NSError *error;
-  [self.keychainStore saveWithAuthState:self.authorization
-                            forItemName:@""
-                                  error:&error];
+  [self.keychainStore saveAuthState:self.authorization
+                        forItemName:@""
+                              error:&error];
   XCTAssertNotNil(error);
   XCTAssertEqualObjects(error.domain, @"GTMAppAuthKeychainErrorDomain");
   XCTAssertEqual(error.code, GTMKeychainStoreErrorCodeNoService);
@@ -140,7 +145,7 @@
 
 - (void)testRetrieveAuthorization {
   NSError *error;
-  [self.keychainStore saveWithAuthState:self.authorization error:&error];
+  [self.keychainStore saveAuthState:self.authorization error:&error];
   XCTAssertNil(error);
 
   GTMAuthState *testAuthorization =
@@ -171,7 +176,7 @@
   NSError *error;
   NSString *customItemName = @"customItemName";
   self.keychainStore.itemName = customItemName;
-  [self.keychainStore saveWithAuthState:self.authorization forItemName:customItemName error:&error];
+  [self.keychainStore saveAuthState:self.authorization forItemName:customItemName error:&error];
   XCTAssertNil(error);
 
   GTMAuthState *retrievedAuth =
@@ -188,7 +193,7 @@
 
 - (void)testRemoveAuthorization {
   NSError *error;
-  [self.keychainStore saveWithAuthState:self.authorization error:&error];
+  [self.keychainStore saveAuthState:self.authorization error:&error];
   XCTAssertNil(error);
 
   [self.keychainStore removeAuthStateAndReturnError:&error];
@@ -198,7 +203,7 @@
 - (void)testRemoveAuthorizationForMissingItemNameThrowsError {
   NSError *error;
   NSString *missingItemName = @"missingItemName";
-  [self.keychainStore saveWithAuthState:self.authorization error:&error];
+  [self.keychainStore saveAuthState:self.authorization error:&error];
   XCTAssertNil(error);
 
   [self.keychainStore removeAuthStateWithItemName:missingItemName error:&error];
