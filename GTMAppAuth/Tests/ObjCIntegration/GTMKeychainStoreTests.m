@@ -16,9 +16,14 @@
 
 #import <XCTest/XCTest.h>
 
+#if SWIFT_PACKAGE
 @import AppAuthCore;
-@import GTMAppAuth;
 @import TestHelpers;
+#else
+@import AppAuth;
+#import <GTMAppAuth/TestHelpers-Swift.h>
+#endif
+@import GTMAppAuth;
 
 @interface GTMKeychainStoreTests : XCTestCase
 

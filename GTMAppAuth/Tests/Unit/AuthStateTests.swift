@@ -253,7 +253,7 @@ class AuthStateTests: XCTestCase {
     XCTAssertTrue(authorization.primeForRefresh())
   }
 
-  func testAuthorizatioNSError() {
+  func testAuthorizationNSError() {
     let authorizeInsecureRequestExpectation = expectation(
       description: "Authorize with completion expectation"
     )
