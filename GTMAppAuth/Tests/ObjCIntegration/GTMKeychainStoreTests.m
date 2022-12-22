@@ -21,7 +21,7 @@
 @import TestHelpers;
 #else
 @import AppAuth;
-#import <GTMAppAuth/TestHelpers-Swift.h>
+#import "GTMAppAuth_Unit_objc_api_integration-Swift.h"
 #endif
 @import GTMAppAuth;
 

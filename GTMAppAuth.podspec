@@ -35,12 +35,6 @@ requests with AppAuth.
   s.dependency 'GTMSessionFetcher/Core', '>= 1.5', '< 4.0'
   s.dependency 'AppAuth/Core', '~> 1.6'
 
-  #s.subspec 'TestHelpers' do |helper_spec|
-  #  helper_spec.source_files = 'GTMAppAuth/Tests/Helpers/*.swift'
-  #  helper_spec.framework = 'XCTest'
-  #  helper_spec.dependency 'AppAuth/Core'
-  #end
-
   s.test_spec 'unit' do |unit_tests|
     unit_tests.platforms = {
       :ios => ios_deployment_target,
@@ -55,21 +49,19 @@ requests with AppAuth.
     unit_tests.dependency 'AppAuth/Core'
   end
 
-  #s.test_spec 'objc-api-integration' do |api_tests|
-  #  api_tests.platforms = {
-  #    :ios => ios_deployment_target,
-  #    :osx => osx_deployment_target,
-  #    :tvos => tvos_deployment_target,
-  #    :watchos => watchos_deployment_target,
-  #  }
-  #  api_tests.source_files = [
-  #    'GTMAppAuth/Tests/ObjCIntegration/*.m',
-  #  ]
-  #  api_tests.dependency 'AppAuth'
-  #  api_tests.dependency 'GTMAppAuth/TestHelpers'
-  #  api_tests.pod_target_xcconfig = {
-  #    'DEFINES_MODULE' => 'YES',
-  #  }
-  #end
+  s.test_spec 'objc-api-integration' do |api_tests|
+    api_tests.platforms = {
+      :ios => ios_deployment_target,
+      :osx => osx_deployment_target,
+      :tvos => tvos_deployment_target,
+      :watchos => watchos_deployment_target,
+    }
+    api_tests.source_files = [
+      'GTMAppAuth/Tests/ObjCIntegration/*.m',
+      'GTMAppAuth/Tests/Helpers/*.swift',
+    ]
+    api_tests.dependency 'AppAuth'
+    # api_tests.dependency 'GTMAppAuth/TestHelpers'
+  end
 end
 
