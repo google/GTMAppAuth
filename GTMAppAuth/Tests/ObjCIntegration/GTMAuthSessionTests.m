@@ -25,7 +25,7 @@
 #endif
 @import GTMAppAuth;
 
-@interface GTMAuthStateTests : XCTestCase
+@interface GTMAuthSessionTests : XCTestCase
 
 @property (nonatomic) NSURL *googleAuthzEndpoint;
 @property (nonatomic) NSURL *tokenEndpoint;
@@ -34,7 +34,7 @@
 
 @end
 
-@implementation GTMAuthStateTests
+@implementation GTMAuthSessionTests
 
 - (void)setUp {
   self.secureURL = [NSURL URLWithString:@"https://fake.com"];

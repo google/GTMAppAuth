@@ -491,7 +491,7 @@ class KeychainStoreTests: XCTestCase {
     _ = try keychainStore.retrieveAuthSession() // We don't need to test the retrieved auth here
 
     guard let lastUsedUnarchiver = keychainStore.lastUsedKeyedUnarchiver else {
-      XCTFail("`keychainStore.retrieveAuthState()` should create an `NSKeyedUnarchiver`")
+      XCTFail("`keychainStore.retrieveAuthSession()` should create an `NSKeyedUnarchiver`")
       return
     }
     guard let mappedClass = lastUsedUnarchiver.class(

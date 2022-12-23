@@ -106,7 +106,7 @@ static NSString *const kExampleAuthorizerKey = @"authorization";
   [self updateUI];
 }
 
-/*! @brief Saves the @c GTMAppAuthFetcherAuthorization to @c NSUSerDefaults.
+/*! @brief Saves the @c GTMAuthSession to the keychain.
  */
 - (void)saveState {
   NSError *error;
@@ -120,7 +120,7 @@ static NSString *const kExampleAuthorizerKey = @"authorization";
   }
 }
 
-/*! @brief Loads the @c GTMAppAuthFetcherAuthorization from @c NSUSerDefaults.
+/*! @brief Loads the @c GTMAuthSession from the keychain.
  */
 - (void)loadState {
   NSError *error;

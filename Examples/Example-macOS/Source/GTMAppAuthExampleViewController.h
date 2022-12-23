@@ -51,7 +51,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (IBAction)forceRefresh:(nullable id)sender;
 
-/*! @brief Performs a Userinfo API call using @c GTMAppAuthFetcherAuthorization.
+/*! @brief Performs a Userinfo API call using @c GTMAuthSession.
     @param sender IBAction sender.
  */
 - (IBAction)userinfo:(nullable id)sender;

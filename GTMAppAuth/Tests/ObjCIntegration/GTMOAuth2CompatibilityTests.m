@@ -81,7 +81,7 @@
   XCTAssertEqual(testPersistAuthSession.canAuthorize, self.expectedAuthSession.canAuthorize);
 }
 
-- (void)testAuthStateForPersistenceStringThrows {
+- (void)testAuthSessionForPersistenceStringThrows {
   NSError *error;
   GTMOAuth2Compatibility *gtmOAuth2Compat = [[GTMOAuth2Compatibility alloc] init];
   GTMAuthSession *testPersistAuthSession =

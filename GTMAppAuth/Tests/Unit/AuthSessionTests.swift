@@ -326,7 +326,7 @@ class AuthSessionTests: XCTestCase {
       try keychainStore.removeAuthSession(withItemName: TestingConstants.testKeychainItemName)
     } catch {
       guard let keychainError = error as? KeychainStore.Error else {
-        return XCTFail("`error` should be of type `GTMAppAuthFetcherAuthorization.Error`")
+        return XCTFail("`error` should be of type `GTMAuthSession.Error`")
       }
       XCTAssertEqual(
         keychainError,
@@ -369,7 +369,7 @@ class AuthSessionTests: XCTestCase {
       guard case
         .passwordNotFound(forItemName: let itemName) = error as? KeychainStore.Error else {
         return XCTFail(
-          "`error` should be `GTMAppAuthFetcherAuthorization.Error.failedToRetrieveAuthorizationFromKeychain"
+          "`error` should be `GTMAuthSession.Error.failedToRetrieveAuthorizationFromKeychain"
         )
       }
       XCTAssertEqual(itemName, missingItemName)

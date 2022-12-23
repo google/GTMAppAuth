@@ -108,7 +108,7 @@ static NSString *const kKeychainStoreItemName = @"authorization";
   [self updateUI];
 }
 
-/*! @brief Saves the @c GTMAuthState to @c NSUSerDefaults.
+/*! @brief Saves the @c GTMAuthSession to the keychain.
  */
 - (void)saveState {
   NSError *error;
@@ -122,7 +122,7 @@ static NSString *const kKeychainStoreItemName = @"authorization";
   }
 }
 
-/*! @brief Loads the @c GTMAuthState from @c NSUSerDefaults.
+/*! @brief Loads the @c GTMAuthSession from the keychain.
  */
 - (void)loadState {
   NSError *error;

@@ -455,7 +455,7 @@ public extension AuthSession {
     case cannotAuthorizeRequest(URLRequest)
     case accessTokenEmptyForRequest(URLRequest)
     case failedToConvertKeychainDataToAuthSession(forItemName: String)
-    public static let errorDomain: String = "GTMAppAuthFetcherAuthorizationErrorDomain"
+    public static let errorDomain: String = "GTMAuthSessionErrorDomain"
     public var errorUserInfo: [String : Any] {
       switch self {
       case .cannotAuthorizeRequest(let request):
