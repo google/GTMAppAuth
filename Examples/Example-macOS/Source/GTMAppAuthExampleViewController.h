@@ -18,7 +18,7 @@
 #import <Cocoa/Cocoa.h>
 
 @class AppDelegate;
-@class GTMAuthState;
+@class GTMAuthSession;
 @class OIDServiceConfiguration;
 
 NS_ASSUME_NONNULL_BEGIN
@@ -37,9 +37,9 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, weak, nullable) AppDelegate *appDelegate;
 
-/*! @brief The authorization state.
+/*! @brief The auth session.
  */
-@property(nonatomic, nullable) GTMAuthState *authorization;
+@property(nonatomic, nullable) GTMAuthSession *authSession;
 
 /*! @brief Authorization code flow using @c OIDAuthState automatic code exchanges.
     @param sender IBAction sender.
@@ -56,7 +56,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (IBAction)userinfo:(nullable id)sender;
 
-/*! @brief Nils the @c OIDAuthState object.
+/*! @brief Nils the @c authSession.
     @param sender IBAction sender.
  */
 - (IBAction)clearAuthState:(nullable id)sender;

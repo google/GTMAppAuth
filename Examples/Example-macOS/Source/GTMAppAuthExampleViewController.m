@@ -22,7 +22,7 @@
 
 @import AppAuth;
 @import GTMAppAuth;
-#if __has_include("GTMSessionFetcher/GTMSessionFetcher.h") // Cocoapods
+#ifdef COCOAPODS
 @import GTMSessionFetcher;
 #else // SPM
 @import GTMSessionFetcherCore;
@@ -110,10 +110,10 @@ static NSString *const kExampleAuthorizerKey = @"authorization";
  */
 - (void)saveState {
   NSError *error;
-  if (_authorization.canAuthorize) {
-    [self.keychainStore saveAuthState:_authorization error:&error];
+  if (_authSession.canAuthorize) {
+    [self.keychainStore saveAuthSession:_authSession error:&error];
   } else {
-    [self.keychainStore removeAuthStateAndReturnError:&error];
+    [self.keychainStore removeAuthSessionAndReturnError:&error];
   }
   if (error) {
     NSLog(@"Error saving state: %@", error);
@@ -124,8 +124,8 @@ static NSString *const kExampleAuthorizerKey = @"authorization";
  */
 - (void)loadState {
   NSError *error;
-  GTMAuthState *authorization = [self.keychainStore retrieveAuthStateAndReturnError:&error];
-  [self setAuthorization:authorization];
+  GTMAuthSession *authSession = [self.keychainStore retrieveAuthSessionAndReturnError:&error];
+  [self setAuthSession:authSession];
   if (error) {
     NSLog(@"Error loading state: %@", error);
   }
@@ -134,11 +134,11 @@ static NSString *const kExampleAuthorizerKey = @"authorization";
 /*! @brief Refreshes UI, typically called after the auth state changed.
  */
 - (void)updateUI {
-  _userinfoButton.enabled = [_authorization canAuthorize];
-  _forceRefreshButton.enabled = [_authorization canAuthorize];
-  _clearAuthStateButton.enabled = _authorization != nil;
+  _userinfoButton.enabled = [_authSession canAuthorize];
+  _forceRefreshButton.enabled = [_authSession canAuthorize];
+  _clearAuthStateButton.enabled = _authSession != nil;
   // dynamically changes authorize button text depending on authorized state
-  if (!_authorization) {
+  if (!_authSession) {
     _authAutoButton.title = @"Authorize";
   } else {
     _authAutoButton.title = @"Re-authorize";
@@ -149,7 +149,7 @@ static NSString *const kExampleAuthorizerKey = @"authorization";
     @param sender IBAction sender.
  */
 - (IBAction)forceRefresh:(nullable id)sender {
-  [_authorization.authState setNeedsTokenRefresh];
+  [_authSession.authState setNeedsTokenRefresh];
 }
 
 - (void)stateChanged {
@@ -162,8 +162,8 @@ static NSString *const kExampleAuthorizerKey = @"authorization";
   [self stateChanged];
 }
 
-- (void)setAuthorization:(GTMAuthState *)authorization {
-  _authorization = authorization;
+- (void)setAuthSession:(GTMAuthSession *)authSession {
+  _authSession = authSession;
  [self saveState];
  [self updateUI];
 }
@@ -185,7 +185,7 @@ static NSString *const kExampleAuthorizerKey = @"authorization";
 
     if (!configuration) {
       [self logMessage:@"Error retrieving discovery document: %@", [error localizedDescription]];
-      [self setAuthorization:nil];
+      [self setAuthSession:nil];
       return;
     }
 
@@ -206,12 +206,12 @@ static NSString *const kExampleAuthorizerKey = @"authorization";
                             callback:^(OIDAuthState *_Nullable authState,
                                        NSError *_Nullable error) {
       if (authState) {
-        GTMAuthState *authorization = [[GTMAuthState alloc] initWithAuthState:authState];
-        [self setAuthorization:authorization];
+        GTMAuthSession *authSession = [[GTMAuthSession alloc] initWithAuthState:authState];
+        [self setAuthSession:authSession];
         [self logMessage:@"Got authorization tokens. Access token: %@",
                          authState.lastTokenResponse.accessToken];
       } else {
-        [self setAuthorization:nil];
+        [self setAuthSession:nil];
         [self logMessage:@"Authorization error: %@", [error localizedDescription]];
       }
     }];
@@ -219,7 +219,7 @@ static NSString *const kExampleAuthorizerKey = @"authorization";
 }
 
 - (IBAction)clearAuthState:(nullable id)sender {
-  [self setAuthorization:nil];
+  [self setAuthSession:nil];
 }
 
 - (IBAction)clearLog:(nullable id)sender {
@@ -232,7 +232,7 @@ static NSString *const kExampleAuthorizerKey = @"authorization";
   // Creates a GTMSessionFetcherService with the authorization.
   // Normally you would save this service object and re-use it for all REST API calls.
   GTMSessionFetcherService *fetcherService = [[GTMSessionFetcherService alloc] init];
-  fetcherService.authorizer = self.authorization;
+  fetcherService.authorizer = self.authSession;
 
   // Creates a fetcher for the API call.
   NSURL *userinfoEndpoint = [NSURL URLWithString:@"https://www.googleapis.com/oauth2/v3/userinfo"];
@@ -243,7 +243,7 @@ static NSString *const kExampleAuthorizerKey = @"authorization";
     if (error) {
       // OIDOAuthTokenErrorDomain indicates an issue with the authorization.
       if ([error.domain isEqual:OIDOAuthTokenErrorDomain]) {
-        [self setAuthorization:nil];
+        [self setAuthSession:nil];
         [self logMessage:@"Authorization error during token refresh, clearing state. %@", error];
       // Other errors are assumed transient.
       } else {

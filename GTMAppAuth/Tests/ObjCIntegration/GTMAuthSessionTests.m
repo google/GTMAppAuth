@@ -45,42 +45,42 @@
 }
 
 - (void)testInitWithOIDAuthState {
-  GTMAuthState *authorization =
-  [[GTMAuthState alloc] initWithAuthState:[OIDAuthState testInstance]];
-  XCTAssertNotNil(authorization);
+  GTMAuthSession *authSession =
+      [[GTMAuthSession alloc] initWithAuthState:[OIDAuthState testInstance]];
+  XCTAssertNotNil(authSession);
 }
 
 - (void)testDesignatedInitializer {
-  GTMAuthState *authorization =
-  [[GTMAuthState alloc] initWithAuthState:OIDAuthState.testInstance
-                                            serviceProvider:GTMTestingConstants.testServiceProvider
-                                                     userID:GTMTestingConstants.testUserID
-                                                  userEmail:GTMTestingConstants.testEmail
-                                        userEmailIsVerified:@"y"];
-  XCTAssertNotNil(authorization);
-  XCTAssertTrue(authorization.authState.isAuthorized);
-  XCTAssertEqualObjects(authorization.serviceProvider, [GTMTestingConstants testServiceProvider]);
-  XCTAssertEqualObjects(authorization.userID, [GTMTestingConstants testUserID]);
-  XCTAssertEqualObjects(authorization.userEmail, [GTMTestingConstants testEmail]);
-  XCTAssertTrue(authorization.userEmailIsVerified);
+  GTMAuthSession *authSession =
+      [[GTMAuthSession alloc] initWithAuthState:OIDAuthState.testInstance
+                                serviceProvider:GTMTestingConstants.testServiceProvider
+                                         userID:GTMTestingConstants.testUserID
+                                      userEmail:GTMTestingConstants.testEmail
+                            userEmailIsVerified:@"y"];
+  XCTAssertNotNil(authSession);
+  XCTAssertTrue(authSession.authState.isAuthorized);
+  XCTAssertEqualObjects(authSession.serviceProvider, [GTMTestingConstants testServiceProvider]);
+  XCTAssertEqualObjects(authSession.userID, [GTMTestingConstants testUserID]);
+  XCTAssertEqualObjects(authSession.userEmail, [GTMTestingConstants testEmail]);
+  XCTAssertTrue(authSession.userEmailIsVerified);
 }
 
 - (void)testAuthorizeSecureRequestWithCompletion {
   XCTestExpectation *authRequestExpectation =
       [[XCTestExpectation alloc] initWithDescription:@"Authorize with completion"];
 
-  GTMAuthState *authorization =
-      [[GTMAuthState alloc] initWithAuthState:OIDAuthState.testInstance];
+  GTMAuthSession *authSession =
+      [[GTMAuthSession alloc] initWithAuthState:OIDAuthState.testInstance];
   NSMutableURLRequest *secureRequest = [NSMutableURLRequest requestWithURL:self.secureURL];
 
-  [authorization authorizeRequest:secureRequest completionHandler:^(NSError * _Nullable error) {
+  [authSession authorizeRequest:secureRequest completionHandler:^(NSError * _Nullable error) {
     XCTAssertNil(error);
     [authRequestExpectation fulfill];
   }];
 
-  XCTAssertTrue([authorization isAuthorizingRequest:secureRequest]);
+  XCTAssertTrue([authSession isAuthorizingRequest:secureRequest]);
   [self waitForExpectations:@[authRequestExpectation] timeout:self.expectationTimeout];
-  XCTAssertTrue([authorization isAuthorizedRequest:secureRequest]);
+  XCTAssertTrue([authSession isAuthorizedRequest:secureRequest]);
 }
 
 - (void)testAuthorizeSecureRequestWithDelegate {
@@ -111,18 +111,18 @@
   XCTestExpectation *authorizeSecureRequestExpectation =
       [self expectationWithDescription:@"Authorize with completion expectation"];
 
-  GTMAuthState *authorization =
-      [[GTMAuthState alloc] initWithAuthState:OIDAuthState.testInstance];
+  GTMAuthSession *authSession =
+      [[GTMAuthSession alloc] initWithAuthState:OIDAuthState.testInstance];
   NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:self.secureURL];
 
-  [authorization authorizeRequest:request completionHandler:^(NSError * _Nullable error) {
+  [authSession authorizeRequest:request completionHandler:^(NSError * _Nullable error) {
     XCTAssertNil(error);
     [authorizeSecureRequestExpectation fulfill];
   }];
 
-  XCTAssertTrue([authorization isAuthorizingRequest:request]);
-  [authorization stopAuthorization];
-  XCTAssertFalse([authorization isAuthorizingRequest:request]);
+  XCTAssertTrue([authSession isAuthorizingRequest:request]);
+  [authSession stopAuthorization];
+  XCTAssertFalse([authSession isAuthorizingRequest:request]);
   [authorizeSecureRequestExpectation fulfill];
   [self waitForExpectations:@[authorizeSecureRequestExpectation] timeout:self.expectationTimeout];
 }
@@ -131,33 +131,33 @@
   XCTestExpectation *authorizeSecureRequestExpectation =
   [self expectationWithDescription:@"Authorize with completion expectation"];
 
-  GTMAuthState *authorization =
-      [[GTMAuthState alloc] initWithAuthState:OIDAuthState.testInstance];
+  GTMAuthSession *authSession =
+      [[GTMAuthSession alloc] initWithAuthState:OIDAuthState.testInstance];
   NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:self.secureURL];
 
-  [authorization authorizeRequest:request completionHandler:^(NSError * _Nullable error) {
+  [authSession authorizeRequest:request completionHandler:^(NSError * _Nullable error) {
     XCTAssertNil(error);
     [authorizeSecureRequestExpectation fulfill];
   }];
 
-  XCTAssertTrue([authorization isAuthorizingRequest:request]);
-  [authorization stopAuthorizationForRequest:request];
-  XCTAssertFalse([authorization isAuthorizingRequest:request]);
+  XCTAssertTrue([authSession isAuthorizingRequest:request]);
+  [authSession stopAuthorizationForRequest:request];
+  XCTAssertFalse([authSession isAuthorizingRequest:request]);
   [authorizeSecureRequestExpectation fulfill];
   [self waitForExpectations:@[authorizeSecureRequestExpectation] timeout:self.expectationTimeout];
 }
 
 - (void)testIsAuthorizedRequest {
-  GTMAuthState *authorization =
-      [[GTMAuthState alloc] initWithAuthState:OIDAuthState.testInstance];
+  GTMAuthSession *authSession =
+      [[GTMAuthSession alloc] initWithAuthState:OIDAuthState.testInstance];
   NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:self.secureURL];
-  XCTAssertFalse([authorization isAuthorizedRequest:request]);
+  XCTAssertFalse([authSession isAuthorizedRequest:request]);
 }
 
 - (void)testCanAuthorizeRequest {
-  GTMAuthState *authorization =
-      [[GTMAuthState alloc] initWithAuthState:OIDAuthState.testInstance];
-  XCTAssertTrue([authorization canAuthorize]);
+  GTMAuthSession *authSession =
+      [[GTMAuthSession alloc] initWithAuthState:OIDAuthState.testInstance];
+  XCTAssertTrue([authSession canAuthorize]);
 }
 
 - (void)testCannotAuthorizeRequest {
@@ -165,15 +165,14 @@
       [OIDAuthState testInstanceWithAuthorizationResponse:nil
                                             tokenResponse:nil
                                      registrationResponse:OIDRegistrationResponse.testInstance];
-  GTMAuthState *authorization =
-      [[GTMAuthState alloc] initWithAuthState:testAuthState];
-  XCTAssertFalse([authorization canAuthorize]);
+  GTMAuthSession *authSession = [[GTMAuthSession alloc] initWithAuthState:testAuthState];
+  XCTAssertFalse([authSession canAuthorize]);
 }
 
 - (void)testIsNotPrimeForRefresh {
-  GTMAuthState *authorization =
-      [[GTMAuthState alloc] initWithAuthState:OIDAuthState.testInstance];
-  XCTAssertFalse([authorization primeForRefresh]);
+  GTMAuthSession *authSession =
+      [[GTMAuthSession alloc] initWithAuthState:OIDAuthState.testInstance];
+  XCTAssertFalse([authSession primeForRefresh]);
 }
 
 - (void)testIsPrimeForRefresh {
@@ -181,13 +180,12 @@
       [OIDAuthState testInstanceWithAuthorizationResponse:nil
                                             tokenResponse:nil
                                      registrationResponse:OIDRegistrationResponse.testInstance];
-  GTMAuthState *authorization =
-      [[GTMAuthState alloc] initWithAuthState:testAuthState];
-  XCTAssertTrue([authorization primeForRefresh]);
+  GTMAuthSession *authSession = [[GTMAuthSession alloc] initWithAuthState:testAuthState];
+  XCTAssertTrue([authSession primeForRefresh]);
 }
 
 - (void)testConfigurationForGoogle {
-  OIDServiceConfiguration *configuration = [GTMAuthState configurationForGoogle];
+  OIDServiceConfiguration *configuration = [GTMAuthSession configurationForGoogle];
   XCTAssertNotNil(configuration);
   XCTAssertEqualObjects(configuration.authorizationEndpoint, self.googleAuthzEndpoint);
   XCTAssertEqualObjects(configuration.tokenEndpoint, self.tokenEndpoint);

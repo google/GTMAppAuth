@@ -16,23 +16,23 @@
 
 import Foundation
 
-/// Represents the operations needed to provide `AuthState` storage.
-@objc(GTMAuthStateStore)
-public protocol AuthStateStore {
-  /// Saves the provided `AuthState`.
+/// Represents the operations needed to provide `AuthSession` storage.
+@objc(GTMAuthSessionStore)
+public protocol AuthSessionStore {
+  /// Saves the provided `AuthSession`.
   ///
-  /// - Parameter authState: An instance of `AuthState` to save.
+  /// - Parameter authSession: An instance of `AuthSession` to save.
   /// - Throws: Any error that may arise during the save.
-  @objc(saveAuthState:error:)
-  func save(authState: AuthState) throws
+  @objc(saveAuthSession:error:)
+  func save(authSession: AuthSession) throws
 
-  /// Removes the stored `AuthState`.
+  /// Removes the stored `AuthSession`.
   ///
   /// - Throws: Any error that may arise during the removal.
-  @objc func removeAuthState() throws
+  @objc func removeAuthSession() throws
 
-  /// Retrieves the stored `AuthState`.
+  /// Retrieves the stored `AuthSession`.
   ///
   /// - Throws: Any error that may arise during the retrieval.
-  @objc func retrieveAuthState() throws -> AuthState
+  @objc func retrieveAuthSession() throws -> AuthSession
 }

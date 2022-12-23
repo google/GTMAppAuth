@@ -27,13 +27,13 @@ import XCTest
 
 /// A subclass of `AuthState` to use in tests.
 @objc(GTMAuthorizationTestingHelper)
-public class AuthorizationTestingHelper: AuthState {}
+public class AuthorizationTestingHelper: AuthSession {}
 
 /// The delegate object passed to `AuthorizationTestingHelper`.
 @objc(GTMAuthorizationTestDelegate)
 public class AuthorizationTestDelegate: NSObject {
   /// The authorization passed back to this delegate.
-  @objc public var passedAuthorization: AuthState?
+  @objc public var passedAuthorization: AuthSession?
   /// The request passed back to this delegate.
   @objc public var passedRequest: NSMutableURLRequest?
   /// The error passed back to this delegate.
@@ -56,7 +56,7 @@ public class AuthorizationTestDelegate: NSObject {
   ///   - request: The request to be authorized.
   ///   - error: The `NSError?` should one arise during authorization.
   @objc public func authentication(
-    _ authState: AuthState,
+    _ authState: AuthSession,
     request: NSMutableURLRequest,
     finishedWithError error: NSError?
   ) {
