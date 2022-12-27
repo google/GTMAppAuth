@@ -23,7 +23,7 @@ import AppAuthCore
 import AppAuth
 #endif
 import XCTest
-@testable import GTMAppAuth
+import GTMAppAuth
 
 /// A subclass of `AuthSession` to use in tests.
 @objc(GTMAuthorizationTestingHelper)
