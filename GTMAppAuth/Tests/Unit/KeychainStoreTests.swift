@@ -33,8 +33,8 @@ class KeychainStoreTests: XCTestCase {
       keychainHelper: keychainHelper
     )
   }()
-  private var authState: AuthState {
-    AuthState(
+  private var authSession: AuthSession {
+    AuthSession(
       authState: OIDAuthState.testInstance(),
       serviceProvider: TestingConstants.testServiceProvider,
       userID: TestingConstants.testUserID,
@@ -59,7 +59,7 @@ class KeychainStoreTests: XCTestCase {
       itemName: TestingConstants.testKeychainItemName,
       keychainHelper: fakeWithDataProtection
     )
-    try store.save(authState: authState)
+    try store.save(authSession: authSession)
     guard let testQuery = fakeWithDataProtection.generatedKeychainQuery as? [String: AnyHashable]
     else {
       XCTFail("`fakeWithDataProtection` missing keychain query attributes")
@@ -86,7 +86,7 @@ class KeychainStoreTests: XCTestCase {
       itemName: TestingConstants.testKeychainItemName,
       keychainHelper: fakeWithAccessGroup
     )
-    try store.save(authState: authState)
+    try store.save(authSession: authSession)
     guard let testQuery = fakeWithAccessGroup.generatedKeychainQuery as? [String: AnyHashable]
     else {
       XCTFail("`fakeWithAccessGroup` missing keychain query attributes")
@@ -123,7 +123,7 @@ class KeychainStoreTests: XCTestCase {
       itemName: TestingConstants.testKeychainItemName,
       keychainHelper: fakeWithDataProtectionAndAccessGroup
     )
-    try store.save(authState: authState)
+    try store.save(authSession: authSession)
     guard let testQuery = fakeWithDataProtectionAndAccessGroup.generatedKeychainQuery
             as? [String: AnyHashable] else {
       XCTFail("`fakeWithDataProtectionAndAccessGroup` missing keychain query attributes")
@@ -165,7 +165,7 @@ class KeychainStoreTests: XCTestCase {
       keychainHelper: fakeWithDataProtection
     )
     // Use `try?` to "throw away" the error since we are testing the keychain query and not the call
-    _ = try? store.retrieveAuthState()
+    _ = try? store.retrieveAuthSession()
     guard let testQuery = fakeWithDataProtection.generatedKeychainQuery as? [String: AnyHashable]
     else {
       XCTFail("`fakeWithDataProtection` missing keychain query attributes")
@@ -193,7 +193,7 @@ class KeychainStoreTests: XCTestCase {
       keychainHelper: fakeWithAccessGroup
     )
     // Use `try?` to "throw away" the error since we are testing the keychain query and not the call
-    _ = try? store.retrieveAuthState()
+    _ = try? store.retrieveAuthSession()
     guard let testQuery = fakeWithAccessGroup.generatedKeychainQuery as? [String: AnyHashable]
     else {
       XCTFail("`fakeWithAccessGroup` missing keychain query attributes")
@@ -231,7 +231,7 @@ class KeychainStoreTests: XCTestCase {
       keychainHelper: fakeWithDataProtectionAndAccessGroup
     )
     // Use `try?` to "throw away" the error since we are testing the keychain query and not the call
-    _ = try? store.retrieveAuthState()
+    _ = try? store.retrieveAuthSession()
     guard let testQuery = fakeWithDataProtectionAndAccessGroup.generatedKeychainQuery
             as? [String: AnyHashable] else {
       XCTFail("`fakeWithDataProtectionAndAccessGroup` missing keychain query attributes")
@@ -273,7 +273,7 @@ class KeychainStoreTests: XCTestCase {
       keychainHelper: fakeWithDataProtection
     )
     // Use `try?` to "throw away" the error since we are testing the keychain query and not the call
-    _ = try? store.removeAuthState()
+    _ = try? store.removeAuthSession()
     guard let testQuery = fakeWithDataProtection.generatedKeychainQuery as? [String: AnyHashable]
     else {
       XCTFail("`fakeWithDataProtection` missing keychain query attributes")
@@ -301,7 +301,7 @@ class KeychainStoreTests: XCTestCase {
       keychainHelper: fakeWithAccessGroup
     )
     // Use `try?` to "throw away" the error since we are testing the keychain query and not the call
-    _ = try? store.removeAuthState()
+    _ = try? store.removeAuthSession()
     guard let testQuery = fakeWithAccessGroup.generatedKeychainQuery as? [String: AnyHashable]
     else {
       XCTFail("`fakeWithAccessGroup` missing keychain query attributes")
@@ -339,7 +339,7 @@ class KeychainStoreTests: XCTestCase {
       keychainHelper: fakeWithDataProtectionAndAccessGroup
     )
     // Use `try?` to "throw away" the error since we are testing the keychain query and not the call
-    _ = try? store.removeAuthState()
+    _ = try? store.removeAuthSession()
     guard let testQuery = fakeWithDataProtectionAndAccessGroup.generatedKeychainQuery
             as? [String: AnyHashable] else {
       XCTFail("`fakeWithDataProtectionAndAccessGroup` missing keychain query attributes")
@@ -370,87 +370,87 @@ class KeychainStoreTests: XCTestCase {
     XCTAssertEqual(testAccessGroupName, expectedGroupName)
   }
 
-  func testSaveAndReadAuthorization() throws {
-    try keychainStore.save(authState: authState)
-    let expectedAuthorization = try keychainStore.retrieveAuthState()
+  func testSaveAndReadAuthSession() throws {
+    try keychainStore.save(authSession: authSession)
+    let expectedAuthSession = try keychainStore.retrieveAuthSession()
     XCTAssertEqual(
-      expectedAuthorization.authState.isAuthorized,
-      authState.authState.isAuthorized
+      expectedAuthSession.authState.isAuthorized,
+      authSession.authState.isAuthorized
     )
-    XCTAssertEqual(expectedAuthorization.serviceProvider, authState.serviceProvider)
-    XCTAssertEqual(expectedAuthorization.userID, authState.userID)
-    XCTAssertEqual(expectedAuthorization.userEmail, authState.userEmail)
-    XCTAssertEqual(expectedAuthorization.userEmailIsVerified, authState.userEmailIsVerified)
+    XCTAssertEqual(expectedAuthSession.serviceProvider, authSession.serviceProvider)
+    XCTAssertEqual(expectedAuthSession.userID, authSession.userID)
+    XCTAssertEqual(expectedAuthSession.userEmail, authSession.userEmail)
+    XCTAssertEqual(expectedAuthSession.userEmailIsVerified, authSession.userEmailIsVerified)
   }
 
-  func testReadAuthorizationWithItemNameGivenToKeychain() throws {
-    try keychainStore.save(authState: authState)
-    let expectedAuthorization = try keychainStore.retrieveAuthState()
+  func testReadAuthSessionWithItemNameGivenToKeychain() throws {
+    try keychainStore.save(authSession: authSession)
+    let expectedAuthSession = try keychainStore.retrieveAuthSession()
     XCTAssertEqual(
-      expectedAuthorization.authState.isAuthorized,
-      authState.authState.isAuthorized
+      expectedAuthSession.authState.isAuthorized,
+      authSession.authState.isAuthorized
     )
-    XCTAssertEqual(expectedAuthorization.serviceProvider, authState.serviceProvider)
-    XCTAssertEqual(expectedAuthorization.userID, authState.userID)
-    XCTAssertEqual(expectedAuthorization.userEmail, authState.userEmail)
-    XCTAssertEqual(expectedAuthorization.userEmailIsVerified, authState.userEmailIsVerified)
+    XCTAssertEqual(expectedAuthSession.serviceProvider, authSession.serviceProvider)
+    XCTAssertEqual(expectedAuthSession.userID, authSession.userID)
+    XCTAssertEqual(expectedAuthSession.userEmail, authSession.userEmail)
+    XCTAssertEqual(expectedAuthSession.userEmailIsVerified, authSession.userEmailIsVerified)
   }
 
-  func testReadAuthorizationForItemName() throws {
+  func testReadAuthSessionForItemName() throws {
     let anotherItemName = "anotherItemName"
-    try keychainStore.save(authState: authState, forItemName: anotherItemName)
-    let expectedAuthorization = try keychainStore.retrieveAuthState(forItemName: anotherItemName)
+    try keychainStore.save(authSession: authSession, forItemName: anotherItemName)
+    let expectedAuthSession = try keychainStore.retrieveAuthSession(forItemName: anotherItemName)
 
     XCTAssertEqual(
-      expectedAuthorization.authState.isAuthorized,
-      authState.authState.isAuthorized
+      expectedAuthSession.authState.isAuthorized,
+      authSession.authState.isAuthorized
     )
-    XCTAssertEqual(expectedAuthorization.serviceProvider, authState.serviceProvider)
-    XCTAssertEqual(expectedAuthorization.userID, authState.userID)
-    XCTAssertEqual(expectedAuthorization.userEmail, authState.userEmail)
-    XCTAssertEqual(expectedAuthorization.userEmailIsVerified, authState.userEmailIsVerified)
+    XCTAssertEqual(expectedAuthSession.serviceProvider, authSession.serviceProvider)
+    XCTAssertEqual(expectedAuthSession.userID, authSession.userID)
+    XCTAssertEqual(expectedAuthSession.userEmail, authSession.userEmail)
+    XCTAssertEqual(expectedAuthSession.userEmailIsVerified, authSession.userEmailIsVerified)
   }
 
-  func testSaveAuthorizationForItemName() throws {
+  func testSaveAuthSessionForItemName() throws {
     let anotherItemName = "anotherItemName"
-    try keychainStore.save(authState: authState, forItemName: anotherItemName)
-    let expectedAuthorization = try keychainStore.retrieveAuthState(forItemName: anotherItemName)
+    try keychainStore.save(authSession: authSession, forItemName: anotherItemName)
+    let expectedAuthSession = try keychainStore.retrieveAuthSession(forItemName: anotherItemName)
     XCTAssertEqual(
-      expectedAuthorization.authState.isAuthorized,
-      authState.authState.isAuthorized
+      expectedAuthSession.authState.isAuthorized,
+      authSession.authState.isAuthorized
     )
-    XCTAssertEqual(expectedAuthorization.serviceProvider, authState.serviceProvider)
-    XCTAssertEqual(expectedAuthorization.userID, authState.userID)
-    XCTAssertEqual(expectedAuthorization.userEmail, authState.userEmail)
-    XCTAssertEqual(expectedAuthorization.userEmailIsVerified, authState.userEmailIsVerified)
+    XCTAssertEqual(expectedAuthSession.serviceProvider, authSession.serviceProvider)
+    XCTAssertEqual(expectedAuthSession.userID, authSession.userID)
+    XCTAssertEqual(expectedAuthSession.userEmail, authSession.userEmail)
+    XCTAssertEqual(expectedAuthSession.userEmailIsVerified, authSession.userEmailIsVerified)
   }
 
   func testSetPasswordNoService() {
     XCTAssertThrowsError(
-      try keychainStore.save(authState: authState, forItemName: "")
+      try keychainStore.save(authSession: authSession, forItemName: "")
     ) { thrownError in
       XCTAssertEqual(thrownError as? KeychainStore.Error, .noService)
     }
   }
 
   func testReadPasswordNoService() throws {
-    try keychainStore.save(authState: authState)
+    try keychainStore.save(authSession: authSession)
 
-    XCTAssertThrowsError(try keychainStore.retrieveAuthState(forItemName: "")) { thrownError in
+    XCTAssertThrowsError(try keychainStore.retrieveAuthSession(forItemName: "")) { thrownError in
       XCTAssertEqual(thrownError as? KeychainStore.Error, .noService)
     }
   }
 
   func testRemovePasswordNoService() throws {
-    try keychainStore.save(authState: authState)
+    try keychainStore.save(authSession: authSession)
 
-    XCTAssertThrowsError(try keychainStore.removeAuthState(withItemName: "")) { thrownError in
+    XCTAssertThrowsError(try keychainStore.removeAuthSession(withItemName: "")) { thrownError in
       XCTAssertEqual(thrownError as? KeychainStore.Error, .noService)
     }
   }
 
   func testFailedToDeletePasswordError() {
-    XCTAssertThrowsError(try keychainStore.removeAuthState()) { thrownError in
+    XCTAssertThrowsError(try keychainStore.removeAuthSession()) { thrownError in
       XCTAssertEqual(
         thrownError as? KeychainStore.Error,
         .failedToDeletePasswordBecauseItemNotFound(itemName: TestingConstants.testKeychainItemName)
@@ -460,7 +460,7 @@ class KeychainStoreTests: XCTestCase {
 
   func testPasswordNotFoundError() {
     XCTAssertThrowsError(
-      try keychainStore.retrieveAuthState(forItemName: TestingConstants.testKeychainItemName)
+      try keychainStore.retrieveAuthSession(forItemName: TestingConstants.testKeychainItemName)
     ) { thrownError in
       XCTAssertEqual(
         thrownError as? KeychainStore.Error,
@@ -472,40 +472,40 @@ class KeychainStoreTests: XCTestCase {
   // MARK: - NSKeyed(Un)Archiver Class Name Mapping
 
   func testKeyedArchiverClassNameMapping() throws {
-    try keychainStore.save(authState: authState)
+    try keychainStore.save(authSession: authSession)
 
     guard let lastUsedArchiver = keychainStore.lastUsedKeyedArchiver else {
-      XCTFail("`keychainStore.save(authState:)` should create an `NSKeyedArchiver`")
+      XCTFail("`keychainStore.save(authSession:)` should create an `NSKeyedArchiver`")
       return
     }
-    guard let mappedClassName = lastUsedArchiver.className(for: AuthState.self) else {
-      XCTFail("`lastUsedArchiver` should have a mapped class name for `AuthState.self`")
+    guard let mappedClassName = lastUsedArchiver.className(for: AuthSession.self) else {
+      XCTFail("`lastUsedArchiver` should have a mapped class name for `AuthSession.self`")
       return
     }
 
-    XCTAssertEqual(mappedClassName, AuthState.legacyArchiveName)
+    XCTAssertEqual(mappedClassName, AuthSession.legacyArchiveName)
   }
 
   func testKeyedUnarchiverClassNameMapping() throws {
-    try keychainStore.save(authState: authState)
-    _ = try keychainStore.retrieveAuthState() // We don't need to test the retrieved auth here
+    try keychainStore.save(authSession: authSession)
+    _ = try keychainStore.retrieveAuthSession() // We don't need to test the retrieved auth here
 
     guard let lastUsedUnarchiver = keychainStore.lastUsedKeyedUnarchiver else {
-      XCTFail("`keychainStore.retrieveAuthState()` should create an `NSKeyedUnarchiver`")
+      XCTFail("`keychainStore.retrieveAuthSession()` should create an `NSKeyedUnarchiver`")
       return
     }
     guard let mappedClass = lastUsedUnarchiver.class(
-      forClassName: AuthState.legacyArchiveName
+      forClassName: AuthSession.legacyArchiveName
     ) else {
-      XCTFail("`lastUsedUnarchiver` should have a class mapping for `AuthState.legacyArchiveName")
+      XCTFail("`lastUsedUnarchiver` should have a class mapping for `AuthSession.legacyArchiveName")
       return
     }
 
-    XCTAssertTrue(mappedClass is AuthState.Type)
+    XCTAssertTrue(mappedClass is AuthSession.Type)
   }
 
   func testArchivedDataAsPropertyListClassName() throws {
-    try keychainStore.save(authState: authState)
+    try keychainStore.save(authSession: authSession)
     guard let propertyList = keychainHelper.archiveDataPropertyList as? [String: Any] else {
       XCTFail("`keychainHelper.archiveDataPropertyList` should not be nil")
       return
@@ -529,12 +529,12 @@ class KeychainStoreTests: XCTestCase {
       return
     }
 
-    XCTAssertEqual(className, AuthState.legacyArchiveName)
+    XCTAssertEqual(className, AuthSession.legacyArchiveName)
   }
 
   func testUnarchivedDataAsPropertyListClassName() throws {
-    try keychainStore.save(authState: authState)
-    _ = try keychainStore.retrieveAuthState() // We don't need to inspect the retrieved auth here
+    try keychainStore.save(authSession: authSession)
+    _ = try keychainStore.retrieveAuthSession() // We don't need to inspect the retrieved auth here
 
     guard let propertyList = keychainHelper.unarchiveDataPropertyList as? [String: Any] else {
       XCTFail("`keychainHelper.unarchiveDataPropertyList` should not be nil")
@@ -559,7 +559,7 @@ class KeychainStoreTests: XCTestCase {
       return
     }
 
-    XCTAssertEqual(className, AuthState.legacyArchiveName)
+    XCTAssertEqual(className, AuthSession.legacyArchiveName)
   }
 }
 

@@ -42,37 +42,37 @@ let oauth2RefreshScopeKey = "refreshScope"
 //
 let oobString = "urn:ietf:wg:oauth:2.0:oob"
 
-/// Class to support serialization and deserialization of `AuthState` in the format used by
+/// Class to support serialization and deserialization of `AuthSession` in the format used by
 /// GTMOAuth2.
 ///
 /// The methods of this class are capable of serializing and deserializing auth objects in a way
 /// compatible with the serialization in `GTMOAuth2ViewControllerTouch` and
 /// `GTMOAuth2WindowController` in GTMOAuth2.
-@objc(GTMOAuth2KeychainCompatibility)
-public final class OAuth2AuthStateCompatibility: NSObject {
-  // MARK: - OAuth2 Utilities
+@objc(GTMOAuth2Compatibility)
+public final class GTMOAuth2Compatibility: NSObject {
+  // MARK: - GTMOAuth2 Utilities
 
-  /// Encodes the given `AuthState` in a GTMOAuth2 compatible persistence string using URL param
+  /// Encodes the given `AuthSession` in a GTMOAuth2 compatible persistence string using URL param
   /// key/value encoding.
   ///
   /// - Parameters:
-  ///   - authState: The `AuthState` to serialize in GTMOAuth2 format.
+  ///   - authSession: The `AuthSession` to serialize in GTMOAuth2 format.
   /// - Returns: A `String?` representing the GTMOAuth2 persistence representation of the
   ///   authorization object.
-  @objc(persistenceResponseStringForAuthState:)
-  public static func persistenceResponseString(forAuthState authState: AuthState) -> String? {
+  @objc(persistenceResponseStringForAuthSession:)
+  public static func persistenceResponseString(forAuthSession authSession: AuthSession) -> String? {
     // TODO: (mdmathias) Write a test for this method that ensures nil is returned.
-    let refreshToken = authState.authState.refreshToken
-    let accessToken = authState.authState.lastTokenResponse?.accessToken
+    let refreshToken = authSession.authState.refreshToken
+    let accessToken = authSession.authState.lastTokenResponse?.accessToken
 
     let dict = [
       oauth2RefreshTokenKey: refreshToken,
       oauth2AccessTokenKey: accessToken,
-      AuthState.serviceProviderKey: authState.serviceProvider,
-      AuthState.userIDKey: authState.userID,
-      AuthState.userEmailKey: authState.userEmail,
-      AuthState.userEmailIsVerifiedKey: authState._userEmailIsVerified,
-      oauth2ScopeKey: authState.authState.scope
+      AuthSession.serviceProviderKey: authSession.serviceProvider,
+      AuthSession.userIDKey: authSession.userID,
+      AuthSession.userEmailKey: authSession.userEmail,
+      AuthSession.userEmailIsVerifiedKey: authSession._userEmailIsVerified,
+      oauth2ScopeKey: authSession.authState.scope
     ]
 
     let responseString = dict
@@ -129,14 +129,14 @@ public final class OAuth2AuthStateCompatibility: NSObject {
     return passwordDictionary
   }
   
-  @objc public func authState(
+  @objc public func authSession(
     forPersistenceString persistenceString: String,
     tokenURL: URL,
     redirectURI: String,
     clientID: String,
     clientSecret: String?
-  ) throws -> AuthState {
-    let persistenceDictionary = OAuth2AuthStateCompatibility.dictionary(
+  ) throws -> AuthSession {
+    let persistenceDictionary = GTMOAuth2Compatibility.dictionary(
       fromKeychainPassword: persistenceString
     )
     guard let redirectURL = URL(string: redirectURI) else {
@@ -192,13 +192,13 @@ public final class OAuth2AuthStateCompatibility: NSObject {
     // We're not serializing the token expiry date, so the first refresh needs to be forced.
     authState.setNeedsTokenRefresh()
 
-    let authorization = AuthState(
+    let authSession = AuthSession(
       authState: authState,
-      serviceProvider: persistenceDictionary[AuthState.serviceProviderKey],
-      userID: persistenceDictionary[AuthState.userIDKey],
-      userEmail: persistenceDictionary[AuthState.userEmailKey],
-      userEmailIsVerified: persistenceDictionary[AuthState.userEmailIsVerifiedKey]
+      serviceProvider: persistenceDictionary[AuthSession.serviceProviderKey],
+      userID: persistenceDictionary[AuthSession.userIDKey],
+      userEmail: persistenceDictionary[AuthSession.userEmailKey],
+      userEmailIsVerified: persistenceDictionary[AuthSession.userEmailIsVerifiedKey]
     )
-    return authorization
+    return authSession
   }
 }

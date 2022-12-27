@@ -27,7 +27,7 @@
 
 @interface GTMKeychainStoreTests : XCTestCase
 
-@property (nonatomic) GTMAuthState *authorization;
+@property (nonatomic) GTMAuthSession *authSession;
 @property (nonatomic) GTMKeychainStore *keychainStore;
 
 @end
@@ -35,8 +35,7 @@
 @implementation GTMKeychainStoreTests
 
 - (void)setUp {
-  self.authorization =
-      [[GTMAuthState alloc] initWithAuthState:[OIDAuthState testInstance]];
+  self.authSession = [[GTMAuthSession alloc] initWithAuthState:[OIDAuthState testInstance]];
 
   NSSet *emptyKeychainAttributes = [NSSet set];
   GTMKeychainHelperFake *fakeKeychain =
@@ -82,7 +81,7 @@
 
 - (void)testSaveAuthorization {
   NSError *error;
-  [self.keychainStore saveAuthState:self.authorization error:&error];
+  [self.keychainStore saveAuthSession:self.authSession error:&error];
   XCTAssertNil(error);
 }
 
@@ -91,122 +90,119 @@
   self.keychainStore.itemName = newItemName;
 
   NSError *error;
-  [self.keychainStore saveAuthState:self.authorization
-                        forItemName:newItemName
-                              error:&error];
+  [self.keychainStore saveAuthSession:self.authSession
+                          forItemName:newItemName
+                                error:&error];
   XCTAssertNil(error);
 
   XCTAssertEqualObjects(newItemName, self.keychainStore.itemName);
-  GTMAuthState *retrievedAuth =
-      [self.keychainStore retrieveAuthStateForItemName:self.keychainStore.itemName error:&error];
-  XCTAssertNotNil(retrievedAuth);
+  GTMAuthSession *authSession =
+      [self.keychainStore retrieveAuthSessionForItemName:self.keychainStore.itemName error:&error];
+  XCTAssertNotNil(authSession);
 
-  XCTAssertEqual(retrievedAuth.authState.isAuthorized,
-                 self.authorization.authState.isAuthorized);
-  XCTAssertEqualObjects(retrievedAuth.serviceProvider, self.authorization.serviceProvider);
-  XCTAssertEqualObjects(retrievedAuth.userID, self.authorization.userID);
-  XCTAssertEqualObjects(retrievedAuth.userEmail, self.authorization.userEmail);
-  XCTAssertEqual(retrievedAuth.userEmailIsVerified, self.authorization.userEmailIsVerified);
+  XCTAssertEqual(authSession.authState.isAuthorized, self.authSession.authState.isAuthorized);
+  XCTAssertEqualObjects(authSession.serviceProvider, self.authSession.serviceProvider);
+  XCTAssertEqualObjects(authSession.userID, self.authSession.userID);
+  XCTAssertEqualObjects(authSession.userEmail, self.authSession.userEmail);
+  XCTAssertEqual(authSession.userEmailIsVerified, self.authSession.userEmailIsVerified);
 }
 
 - (void)testSavingWithCustomItemName {
   NSString *customItemName = @"customItemName";
   NSError *error;
 
-  [self.keychainStore saveAuthState:self.authorization
-                        forItemName:customItemName
-                              error:&error];
+  [self.keychainStore saveAuthSession:self.authSession
+                          forItemName:customItemName
+                                error:&error];
   XCTAssertNil(error);
 
-  GTMAuthState *retrievedAuth =
-  [self.keychainStore retrieveAuthStateForItemName:customItemName error:&error];
+  GTMAuthSession *retrievedAuth =
+  [self.keychainStore retrieveAuthSessionForItemName:customItemName error:&error];
   XCTAssertNotNil(retrievedAuth);
   XCTAssertNil(error);
 
   XCTAssertNotNil(retrievedAuth);
 
   XCTAssertEqual(retrievedAuth.authState.isAuthorized,
-                 self.authorization.authState.isAuthorized);
-  XCTAssertEqualObjects(retrievedAuth.serviceProvider, self.authorization.serviceProvider);
-  XCTAssertEqualObjects(retrievedAuth.userID, self.authorization.userID);
-  XCTAssertEqualObjects(retrievedAuth.userEmail, self.authorization.userEmail);
-  XCTAssertEqual(retrievedAuth.userEmailIsVerified, self.authorization.userEmailIsVerified);
+                 self.authSession.authState.isAuthorized);
+  XCTAssertEqualObjects(retrievedAuth.serviceProvider, self.authSession.serviceProvider);
+  XCTAssertEqualObjects(retrievedAuth.userID, self.authSession.userID);
+  XCTAssertEqualObjects(retrievedAuth.userEmail, self.authSession.userEmail);
+  XCTAssertEqual(retrievedAuth.userEmailIsVerified, self.authSession.userEmailIsVerified);
 }
 
-- (void)testSaveAuthorizationErrorNoServiceName {
+- (void)testSaveAuthSessionErrorNoServiceName {
   NSError *error;
-  [self.keychainStore saveAuthState:self.authorization
-                        forItemName:@""
-                              error:&error];
+  [self.keychainStore saveAuthSession:self.authSession
+                          forItemName:@""
+                                error:&error];
   XCTAssertNotNil(error);
   XCTAssertEqualObjects(error.domain, @"GTMAppAuthKeychainErrorDomain");
   XCTAssertEqual(error.code, GTMKeychainStoreErrorCodeNoService);
 }
 
-- (void)testRetrieveAuthorization {
+- (void)testRetrieveAuthSession {
   NSError *error;
-  [self.keychainStore saveAuthState:self.authorization error:&error];
+  [self.keychainStore saveAuthSession:self.authSession error:&error];
   XCTAssertNil(error);
 
-  GTMAuthState *testAuthorization =
-      [self.keychainStore retrieveAuthStateAndReturnError:&error];
+  GTMAuthSession *authSession = [self.keychainStore retrieveAuthSessionAndReturnError:&error];
   XCTAssertNil(error);
 
-  XCTAssertNotNil(testAuthorization);
-  XCTAssertEqual(testAuthorization.authState.isAuthorized,
-                 self.authorization.authState.isAuthorized);
-  XCTAssertEqualObjects(testAuthorization.serviceProvider, self.authorization.serviceProvider);
-  XCTAssertEqualObjects(testAuthorization.userID, self.authorization.userID);
-  XCTAssertEqualObjects(testAuthorization.userEmail, self.authorization.userEmail);
-  XCTAssertEqual(testAuthorization.userEmailIsVerified, self.authorization.userEmailIsVerified);
+  XCTAssertNotNil(authSession);
+  XCTAssertEqual(authSession.authState.isAuthorized, self.authSession.authState.isAuthorized);
+  XCTAssertEqualObjects(authSession.serviceProvider, self.authSession.serviceProvider);
+  XCTAssertEqualObjects(authSession.userID, self.authSession.userID);
+  XCTAssertEqualObjects(authSession.userEmail, self.authSession.userEmail);
+  XCTAssertEqual(authSession.userEmailIsVerified, self.authSession.userEmailIsVerified);
 }
 
-- (void)testRetrieveAuthorizationForMissingItemName {
+- (void)testRetrieveAuthSessionForMissingItemName {
   NSError *error;
   NSString *missingItemName = @"missingItemName";
-  GTMAuthState *missingAuth =
-      [self.keychainStore retrieveAuthStateForItemName:missingItemName error:&error];
+  GTMAuthSession *missingAuthSession =
+      [self.keychainStore retrieveAuthSessionForItemName:missingItemName error:&error];
 
-  XCTAssertNil(missingAuth);
+  XCTAssertNil(missingAuthSession);
   XCTAssertNotNil(error);
   XCTAssertEqual(error.code, GTMKeychainStoreErrorCodePasswordNotFound);
 }
 
-- (void)testRetrieveAuthorizationForCustomItemName {
+- (void)testRetrieveAuthSessionForCustomItemName {
   NSError *error;
   NSString *customItemName = @"customItemName";
   self.keychainStore.itemName = customItemName;
-  [self.keychainStore saveAuthState:self.authorization forItemName:customItemName error:&error];
+  [self.keychainStore saveAuthSession:self.authSession forItemName:customItemName error:&error];
   XCTAssertNil(error);
 
-  GTMAuthState *retrievedAuth =
-      [self.keychainStore retrieveAuthStateAndReturnError:&error];
-  XCTAssertNotNil(retrievedAuth);
-  XCTAssertNotNil(retrievedAuth);
-  XCTAssertEqual(retrievedAuth.authState.isAuthorized,
-                 self.authorization.authState.isAuthorized);
-  XCTAssertEqualObjects(retrievedAuth.serviceProvider, self.authorization.serviceProvider);
-  XCTAssertEqualObjects(retrievedAuth.userID, self.authorization.userID);
-  XCTAssertEqualObjects(retrievedAuth.userEmail, self.authorization.userEmail);
-  XCTAssertEqual(retrievedAuth.userEmailIsVerified, self.authorization.userEmailIsVerified);
+  GTMAuthSession *retrievedAuthSession =
+      [self.keychainStore retrieveAuthSessionAndReturnError:&error];
+  XCTAssertNotNil(retrievedAuthSession);
+  XCTAssertNotNil(retrievedAuthSession);
+  XCTAssertEqual(retrievedAuthSession.authState.isAuthorized,
+                 self.authSession.authState.isAuthorized);
+  XCTAssertEqualObjects(retrievedAuthSession.serviceProvider, self.authSession.serviceProvider);
+  XCTAssertEqualObjects(retrievedAuthSession.userID, self.authSession.userID);
+  XCTAssertEqualObjects(retrievedAuthSession.userEmail, self.authSession.userEmail);
+  XCTAssertEqual(retrievedAuthSession.userEmailIsVerified, self.authSession.userEmailIsVerified);
 }
 
-- (void)testRemoveAuthorization {
+- (void)testRemoveAuthSession {
   NSError *error;
-  [self.keychainStore saveAuthState:self.authorization error:&error];
+  [self.keychainStore saveAuthSession:self.authSession error:&error];
   XCTAssertNil(error);
 
-  [self.keychainStore removeAuthStateAndReturnError:&error];
+  [self.keychainStore removeAuthSessionAndReturnError:&error];
   XCTAssertNil(error);
 }
 
-- (void)testRemoveAuthorizationForMissingItemNameThrowsError {
+- (void)testRemoveAuthSessionForMissingItemNameThrowsError {
   NSError *error;
   NSString *missingItemName = @"missingItemName";
-  [self.keychainStore saveAuthState:self.authorization error:&error];
+  [self.keychainStore saveAuthSession:self.authSession error:&error];
   XCTAssertNil(error);
 
-  [self.keychainStore removeAuthStateWithItemName:missingItemName error:&error];
+  [self.keychainStore removeAuthSessionWithItemName:missingItemName error:&error];
   XCTAssertNotNil(error);
   XCTAssertEqual(error.code, GTMKeychainStoreErrorCodeFailedToDeletePasswordBecauseItemNotFound);
 }
@@ -229,53 +225,51 @@
   XCTAssertTrue([keychainStore.keychainAttributes containsObject:keychainAccessGroup]);
 }
 
-- (void)testSaveAuthStateInGTMOAuth2Format {
+- (void)testSaveAuthSessionInGTMOAuth2Format {
   NSError *error;
-  [self.keychainStore saveWithGTMOAuth2FormatForAuthorization:self.authorization
-                                                        error:&error];
+  [self.keychainStore saveWithGTMOAuth2FormatForAuthSession:self.authSession error:&error];
   XCTAssertNil(error);
 }
 
-- (void)testRetrieveAuthStateInGTMOAuth2Format {
+- (void)testRetrieveAuthSessionInGTMOAuth2Format {
   NSError *error;
-  GTMAuthState *expectedAuthorization =
-      [[GTMAuthState alloc] initWithAuthState:[OIDAuthState testInstance]
-                                                serviceProvider:[GTMTestingConstants testServiceProvider]
-                                                         userID:[GTMTestingConstants testUserID]
-                                                      userEmail:[GTMTestingConstants testEmail]
-                                            userEmailIsVerified:@"y"];
-  [self.keychainStore saveWithGTMOAuth2FormatForAuthorization:expectedAuthorization
-                                                        error:&error];
+  GTMAuthSession *expectedAuthSession =
+      [[GTMAuthSession alloc] initWithAuthState:[OIDAuthState testInstance]
+                                serviceProvider:[GTMTestingConstants testServiceProvider]
+                                         userID:[GTMTestingConstants testUserID]
+                                      userEmail:[GTMTestingConstants testEmail]
+                            userEmailIsVerified:@"y"];
+  [self.keychainStore saveWithGTMOAuth2FormatForAuthSession:expectedAuthSession error:&error];
   XCTAssertNil(error);
 
-  GTMAuthState *testAuth =
-      [self.keychainStore retrieveAuthStateInGTMOAuth2FormatWithTokenURL:[GTMTestingConstants testTokenURL]
-                                                             redirectURI:[GTMTestingConstants testRedirectURI]
-                                                                clientID:[GTMTestingConstants testClientID]
-                                                            clientSecret:[GTMTestingConstants testClientSecret]
-                                                                   error:&error];
+  GTMAuthSession *testAuth =
+      [self.keychainStore
+          retrieveAuthSessionInGTMOAuth2FormatWithTokenURL:[GTMTestingConstants testTokenURL]
+                                               redirectURI:[GTMTestingConstants testRedirectURI]
+                                                  clientID:[GTMTestingConstants testClientID]
+                                              clientSecret:[GTMTestingConstants testClientSecret]
+                                                     error:&error];
 
   XCTAssertNil(error);
-  XCTAssertEqualObjects(testAuth.authState.scope, expectedAuthorization.authState.scope);
+  XCTAssertEqualObjects(testAuth.authState.scope, expectedAuthSession.authState.scope);
   XCTAssertEqualObjects(testAuth.authState.lastTokenResponse.accessToken,
-                        expectedAuthorization.authState.lastTokenResponse.accessToken);
+                        expectedAuthSession.authState.lastTokenResponse.accessToken);
   XCTAssertEqualObjects(testAuth.authState.refreshToken,
-                        expectedAuthorization.authState.refreshToken);
-  XCTAssertEqual(testAuth.authState.isAuthorized, expectedAuthorization.authState.isAuthorized);
-  XCTAssertEqualObjects(testAuth.serviceProvider, expectedAuthorization.serviceProvider);
-  XCTAssertEqualObjects(testAuth.userID, expectedAuthorization.userID);
-  XCTAssertEqualObjects(testAuth.userEmail, expectedAuthorization.userEmail);
-  XCTAssertEqual(testAuth.userEmailIsVerified, expectedAuthorization.userEmailIsVerified);
-  XCTAssertEqual(testAuth.canAuthorize, expectedAuthorization.canAuthorize);
+                        expectedAuthSession.authState.refreshToken);
+  XCTAssertEqual(testAuth.authState.isAuthorized, expectedAuthSession.authState.isAuthorized);
+  XCTAssertEqualObjects(testAuth.serviceProvider, expectedAuthSession.serviceProvider);
+  XCTAssertEqualObjects(testAuth.userID, expectedAuthSession.userID);
+  XCTAssertEqualObjects(testAuth.userEmail, expectedAuthSession.userEmail);
+  XCTAssertEqual(testAuth.userEmailIsVerified, expectedAuthSession.userEmailIsVerified);
+  XCTAssertEqual(testAuth.canAuthorize, expectedAuthSession.canAuthorize);
 }
 
-- (void)testRemoveAuthStateInGTMOAuth2Format {
+- (void)testRemoveAuthSessionInGTMOAuth2Format {
   NSError *error;
-  [self.keychainStore saveWithGTMOAuth2FormatForAuthorization:self.authorization
-                                                        error:&error];
+  [self.keychainStore saveWithGTMOAuth2FormatForAuthSession:self.authSession error:&error];
   XCTAssertNil(error);
 
-  [self.keychainStore removeAuthStateAndReturnError:&error];
+  [self.keychainStore removeAuthSessionAndReturnError:&error];
   XCTAssertNil(error);
 }
 

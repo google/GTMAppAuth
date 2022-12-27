@@ -28,8 +28,8 @@ import GTMSessionFetcher
 /// An implementation of the `GTMFetcherAuthorizationProtocol` protocol for the AppAuth library.
 ///
 /// Enables you to use AppAuth with the GTM Session Fetcher library.
-@objc(GTMAuthState)
-open class AuthState: NSObject, GTMFetcherAuthorizationProtocol, NSSecureCoding {
+@objc(GTMAuthSession)
+open class AuthSession: NSObject, GTMFetcherAuthorizationProtocol, NSSecureCoding {
   /// The legacy name for this type used while archiving and unarchiving an instance.
   static let legacyArchiveName = "GTMAppAuthFetcherAuthorization"
 
@@ -69,9 +69,8 @@ open class AuthState: NSObject, GTMFetcherAuthorizationProtocol, NSSecureCoding 
   /// bearer token unencrypted.
   @objc public var shouldAuthorizeAllRequests = false
 
-  /// Delegate of the `GTMAppAuthFetcherAuthorization` used to supply additional parameters on token
-  /// refresh.
-  @objc public weak var tokenRefreshDelegate: AuthStateTokenRefreshDelegate?
+  /// Delegate of the `AuthSession` used to supply additional parameters on token refresh.
+  @objc public weak var tokenRefreshDelegate: AuthSessionTokenRefreshDelegate?
 
   /// The fetcher service.
   @objc public weak var fetcherService: GTMSessionFetcherServiceProtocol? = nil
@@ -79,7 +78,7 @@ open class AuthState: NSObject, GTMFetcherAuthorizationProtocol, NSSecureCoding 
   private let serialAuthArgsQueue = DispatchQueue(label: "com.google.gtmappauth")
   private var authorizationArgs = [AuthorizationArguments]()
 
-  /// Creates a new `AuthState` using the given `OIDAuthState` from AppAuth.
+  /// Creates a new `AuthSession` using the given `OIDAuthState` from AppAuth.
   ///
   /// - Parameters:
   ///   - authState: The authorization state.
@@ -94,7 +93,7 @@ open class AuthState: NSObject, GTMFetcherAuthorizationProtocol, NSSecureCoding 
     )
   }
 
-  /// Creates a new `AuthState` using the given `OIDAuthState` from AppAuth.
+  /// Creates a new `AuthSession` using the given `OIDAuthState` from AppAuth.
   ///
   /// - Parameters:
   ///   - authState: The authorization state.
@@ -132,35 +131,35 @@ open class AuthState: NSObject, GTMFetcherAuthorizationProtocol, NSSecureCoding 
   @objc public static let supportsSecureCoding = true
 
   @objc public func encode(with coder: NSCoder) {
-    coder.encode(authState, forKey: AuthState.authStateKey)
-    coder.encode(serviceProvider, forKey: AuthState.serviceProviderKey)
-    coder.encode(userID, forKey: AuthState.userIDKey)
-    coder.encode(userEmail, forKey: AuthState.userEmailKey)
-    coder.encode(_userEmailIsVerified, forKey: AuthState.userEmailIsVerifiedKey)
+    coder.encode(authState, forKey: AuthSession.authStateKey)
+    coder.encode(serviceProvider, forKey: AuthSession.serviceProviderKey)
+    coder.encode(userID, forKey: AuthSession.userIDKey)
+    coder.encode(userEmail, forKey: AuthSession.userEmailKey)
+    coder.encode(_userEmailIsVerified, forKey: AuthSession.userEmailIsVerifiedKey)
   }
 
   @objc public required convenience init?(coder: NSCoder) {
     guard let authState = coder.decodeObject(
       of: OIDAuthState.self,
-      forKey: AuthState.authStateKey
+      forKey: AuthSession.authStateKey
     ) else {
       return nil
     }
     let serviceProvider = coder.decodeObject(
       of: NSString.self,
-      forKey: AuthState.serviceProviderKey
+      forKey: AuthSession.serviceProviderKey
     ) as String?
     let userID = coder.decodeObject(
       of: NSString.self,
-      forKey: AuthState.userIDKey
+      forKey: AuthSession.userIDKey
     ) as String?
     let userEmail = coder.decodeObject(
       of: NSString.self,
-      forKey: AuthState.userEmailKey
+      forKey: AuthSession.userEmailKey
     ) as String?
     let _userEmailIsVerified = coder.decodeObject(
       of: NSString.self,
-      forKey: AuthState.userEmailIsVerifiedKey
+      forKey: AuthSession.userEmailIsVerifiedKey
     ) as String?
 
     self.init(
@@ -179,12 +178,12 @@ open class AuthState: NSObject, GTMFetcherAuthorizationProtocol, NSSecureCoding 
   ///
   /// - Parameters:
   ///   - request: The request to authorize.
-  ///   - handler: The block that is called after authorizing the request is attempted. If `error`
-  ///     is non-nil, the authorization failed. Errors in the domain `OIDOAuthTokenErrorDomain`
+  ///   - handler: The block that is called after authorizing the request is attempted.  If `error`
+  ///     is non-nil, the authorization failed.  Errors in the domain `OIDOAuthTokenErrorDomain`
   ///     indicate that the authorization itself is invalid, and will need to be re-obtained from
-  ///     the user. `KeychainStore.Error` and `AuthState.Error` indicate other unrecoverable errors.
-  ///     Errors in other domains may indicate a transitive error condition such as a network error,
-  ///     and typically you do not need to reauthenticate the user on such errors.
+  ///     the user.  `KeychainStore.Error` and `AuthSession.Error` indicate other unrecoverable
+  ///     errors.  Errors in other domains may indicate a transitive error condition such as a
+  ///     network error, and typically you do not need to reauthenticate the user on such errors.
   ///
   /// The completion handler is scheduled on the main thread, unless the `callbackQueue` property is
   /// set on the `fetcherService` in which case the handler is scheduled on that queue.
@@ -221,12 +220,13 @@ open class AuthState: NSObject, GTMFetcherAuthorizationProtocol, NSSecureCoding 
     )
     authorizeRequest(withArguments: arguments)
   }
+
   private func authorizeRequest(withArguments args: AuthorizationArguments) {
     serialAuthArgsQueue.sync {
       authorizationArgs.append(args)
     }
     let additionalRefreshParameters = tokenRefreshDelegate?
-      .additionalRefreshParameters(authorization: self)
+      .additionalRefreshParameters(authSession: self)
     let authStateAction = {
       (accessToken: String?, idToken: String?, error: Swift.Error?) in
       self.serialAuthArgsQueue.sync { [weak self] in
@@ -311,7 +311,7 @@ open class AuthState: NSObject, GTMFetcherAuthorizationProtocol, NSSecureCoding 
     typealias DelegateCallback = @convention(c) (
       NSObject,
       Selector,
-      AuthState,
+      AuthSession,
       NSMutableURLRequest,
       NSError?
     ) -> Void
@@ -431,15 +431,15 @@ extension AuthorizationArguments {
   }
 }
 
-/// Delegate of the `AuthState` used to supply additional parameters on token refresh.
-@objc(GTMAuthStateTokenRefreshDelegate)
-public protocol AuthStateTokenRefreshDelegate: NSObjectProtocol {
+/// Delegate of the `AuthSession` used to supply additional parameters on token refresh.
+@objc(GTMAuthSessionTokenRefreshDelegate)
+public protocol AuthSessionTokenRefreshDelegate: NSObjectProtocol {
   func additionalRefreshParameters(
-    authorization: AuthState
+    authSession: AuthSession
   ) -> [String: String]?
 }
 
-public extension AuthState {
+public extension AuthSession {
   // MARK: - Keys
 
   static let authStateKey = "authState"
@@ -454,15 +454,15 @@ public extension AuthState {
   enum Error: Swift.Error, Equatable, CustomNSError {
     case cannotAuthorizeRequest(URLRequest)
     case accessTokenEmptyForRequest(URLRequest)
-    case failedToConvertKeychainDataToAuthorization(forItemName: String)
-    public static let errorDomain: String = "GTMAppAuthFetcherAuthorizationErrorDomain"
+    case failedToConvertKeychainDataToAuthSession(forItemName: String)
+    public static let errorDomain: String = "GTMAuthSessionErrorDomain"
     public var errorUserInfo: [String : Any] {
       switch self {
       case .cannotAuthorizeRequest(let request):
         return ["request": request]
       case .accessTokenEmptyForRequest(let request):
         return ["request": request]
-      case .failedToConvertKeychainDataToAuthorization(forItemName: let name):
+      case .failedToConvertKeychainDataToAuthSession(forItemName: let name):
         return ["itemName": name]
       }
     }

@@ -25,8 +25,8 @@ import AppAuth
 #endif
 @testable import GTMAppAuth
 
-class AuthStateTests: XCTestCase {
-  typealias FetcherAuthError = AuthState.Error
+class AuthSessionTests: XCTestCase {
+  typealias FetcherAuthError = AuthSession.Error
   private let expectationTimeout: TimeInterval = 5
   private let insecureFakeURL = URL(string: "http://fake.com")!
   private let secureFakeURL = URL(string: "https://fake.com")!
@@ -42,8 +42,8 @@ class AuthStateTests: XCTestCase {
       keychainHelper: keychainHelper
     )
   }
-  private var authState: AuthState {
-    AuthState(
+  private var authSession: AuthSession {
+    AuthSession(
       authState: OIDAuthState.testInstance(),
       serviceProvider: TestingConstants.testServiceProvider,
       userID: TestingConstants.testUserID,
@@ -62,26 +62,26 @@ class AuthStateTests: XCTestCase {
     let authorizeSecureRequestExpectation = expectation(
       description: "Authorize with completion expectation"
     )
-    let authorization = AuthState(
+    let authSession = AuthSession(
       authState: OIDAuthState.testInstance()
     )
     let request = NSMutableURLRequest(url: secureFakeURL)
-    authorization.authorizeRequest(request) { error in
+    authSession.authorizeRequest(request) { error in
       XCTAssertNil(error)
       authorizeSecureRequestExpectation.fulfill()
     }
-    XCTAssertTrue(authorization.isAuthorizingRequest(request as URLRequest))
+    XCTAssertTrue(authSession.isAuthorizingRequest(request as URLRequest))
     waitForExpectations(timeout: expectationTimeout)
-    XCTAssertTrue(authorization.isAuthorizedRequest(request as URLRequest))
+    XCTAssertTrue(authSession.isAuthorizedRequest(request as URLRequest))
   }
 
   func testAuthorizeInsecureRequestWithCompletion() {
     let authorizeInsecureRequestExpectation = expectation(
       description: "Authorize with completion expectation"
     )
-    let authorization = AuthState(authState: OIDAuthState.testInstance())
+    let authSession = AuthSession(authState: OIDAuthState.testInstance())
     let insecureRequest = NSMutableURLRequest(url: insecureFakeURL)
-    authorization.authorizeRequest(insecureRequest) { error in
+    authSession.authorizeRequest(insecureRequest) { error in
       XCTAssertNotNil(error)
       guard let error = error as? FetcherAuthError else {
         return XCTFail(
@@ -95,16 +95,16 @@ class AuthStateTests: XCTestCase {
       authorizeInsecureRequestExpectation.fulfill()
     }
     XCTAssertTrue(
-      authorization.isAuthorizingRequest(insecureRequest as URLRequest)
+      authSession.isAuthorizingRequest(insecureRequest as URLRequest)
     )
     waitForExpectations(timeout: expectationTimeout)
     XCTAssertFalse(
-      authorization.isAuthorizedRequest(insecureRequest as URLRequest)
+      authSession.isAuthorizedRequest(insecureRequest as URLRequest)
     )
   }
 
   func testConfigurationForGoogle() {
-    let configuration = AuthState.configurationForGoogle()
+    let configuration = AuthSession.configurationForGoogle()
     XCTAssertEqual(configuration.authorizationEndpoint, authzEndpoint)
     XCTAssertEqual(configuration.tokenEndpoint, tokenEndpoint)
     // We do not pass the below along to create upon initialization
@@ -193,15 +193,15 @@ class AuthStateTests: XCTestCase {
     let authorizeSecureRequestExpectation = expectation(
       description: "Authorize with completion expectation"
     )
-    let authorization = AuthState(authState: OIDAuthState.testInstance())
+    let authSession = AuthSession(authState: OIDAuthState.testInstance())
     let request = NSMutableURLRequest(url: secureFakeURL)
-    authorization.authorizeRequest(request) { error in
+    authSession.authorizeRequest(request) { error in
       XCTAssertNil(error)
       authorizeSecureRequestExpectation.fulfill()
     }
-    XCTAssertTrue(authorization.isAuthorizingRequest(request as URLRequest))
-    authorization.stopAuthorization()
-    XCTAssertFalse(authorization.isAuthorizingRequest(request as URLRequest))
+    XCTAssertTrue(authSession.isAuthorizingRequest(request as URLRequest))
+    authSession.stopAuthorization()
+    XCTAssertFalse(authSession.isAuthorizingRequest(request as URLRequest))
     authorizeSecureRequestExpectation.fulfill()
     waitForExpectations(timeout: expectationTimeout)
   }
@@ -210,22 +210,22 @@ class AuthStateTests: XCTestCase {
     let authorizeSecureRequestExpectation = expectation(
       description: "Authorize with completion expectation"
     )
-    let authorization = AuthState(authState: OIDAuthState.testInstance())
+    let authSession = AuthSession(authState: OIDAuthState.testInstance())
     let request = NSMutableURLRequest(url: secureFakeURL)
-    authorization.authorizeRequest(request) { error in
+    authSession.authorizeRequest(request) { error in
       XCTAssertNil(error)
       authorizeSecureRequestExpectation.fulfill()
     }
-    XCTAssertTrue(authorization.isAuthorizingRequest(request as URLRequest))
-    authorization.stopAuthorization(for: request as URLRequest)
-    XCTAssertFalse(authorization.isAuthorizingRequest(request as URLRequest))
+    XCTAssertTrue(authSession.isAuthorizingRequest(request as URLRequest))
+    authSession.stopAuthorization(for: request as URLRequest)
+    XCTAssertFalse(authSession.isAuthorizingRequest(request as URLRequest))
     authorizeSecureRequestExpectation.fulfill()
     waitForExpectations(timeout: expectationTimeout)
   }
 
   func testCanAuthorize() {
-    let authorization = AuthState(authState: OIDAuthState.testInstance())
-    XCTAssertTrue(authorization.canAuthorize)
+    let authSession = AuthSession(authState: OIDAuthState.testInstance())
+    XCTAssertTrue(authSession.canAuthorize)
   }
 
   func testCannotAuthorize() {
@@ -234,13 +234,13 @@ class AuthStateTests: XCTestCase {
       tokenResponse: nil,
       registrationResponse: OIDRegistrationResponse.testInstance()
     )
-    let authorization = AuthState(authState: testAuthState)
-    XCTAssertFalse(authorization.canAuthorize)
+    let authSession = AuthSession(authState: testAuthState)
+    XCTAssertFalse(authSession.canAuthorize)
   }
 
   func testIsNotPrimeForRefresh() {
-    let authorization = AuthState(authState: OIDAuthState.testInstance())
-    XCTAssertFalse(authorization.primeForRefresh())
+    let authSession = AuthSession(authState: OIDAuthState.testInstance())
+    XCTAssertFalse(authSession.primeForRefresh())
   }
 
   func testIsPrimeForRefresh() {
@@ -249,23 +249,23 @@ class AuthStateTests: XCTestCase {
       tokenResponse: nil,
       registrationResponse: nil
     )
-    let authorization = AuthState(authState: testAuthState)
-    XCTAssertTrue(authorization.primeForRefresh())
+    let authSession = AuthSession(authState: testAuthState)
+    XCTAssertTrue(authSession.primeForRefresh())
   }
 
   func testAuthorizationNSError() {
     let authorizeInsecureRequestExpectation = expectation(
       description: "Authorize with completion expectation"
     )
-    let authorization = AuthState(authState: OIDAuthState.testInstance())
+    let authSession = AuthSession(authState: OIDAuthState.testInstance())
     let insecureRequest = NSMutableURLRequest(url: insecureFakeURL)
-    authorization.authorizeRequest(insecureRequest) { error in
+    authSession.authorizeRequest(insecureRequest) { error in
       guard let nsError = error as NSError? else {
         return XCTFail("Could not cast error to `NSError`")
       }
       XCTAssertEqual(
         nsError.domain,
-        AuthState.Error.errorDomain
+        AuthSession.Error.errorDomain
       )
       guard let errorRequest = nsError.userInfo["request"] as? URLRequest else {
         return XCTFail("No `request` key in `userInfo`")
@@ -278,55 +278,55 @@ class AuthStateTests: XCTestCase {
   }
 
   func testUserEmailIsVerified() {
-    let tAuthorization = AuthState(authState: OIDAuthState.testInstance(), userEmailIsVerified: "t")
-    let trueAuthorization = AuthState(
+    let tAuthSession = AuthSession(authState: OIDAuthState.testInstance(), userEmailIsVerified: "t")
+    let trueAuthSession = AuthSession(
       authState: OIDAuthState.testInstance(),
       userEmailIsVerified: "true"
     )
-    let yAuthorization = AuthState(authState: OIDAuthState.testInstance(), userEmailIsVerified: "y")
-    let yesAuthorization = AuthState(
+    let yAuthSession = AuthSession(authState: OIDAuthState.testInstance(), userEmailIsVerified: "y")
+    let yesAuthSession = AuthSession(
       authState: OIDAuthState.testInstance(),
       userEmailIsVerified: "yes"
     )
-    XCTAssertTrue(tAuthorization.userEmailIsVerified)
-    XCTAssertTrue(trueAuthorization.userEmailIsVerified)
-    XCTAssertTrue(yAuthorization.userEmailIsVerified)
-    XCTAssertTrue(yesAuthorization.userEmailIsVerified)
+    XCTAssertTrue(tAuthSession.userEmailIsVerified)
+    XCTAssertTrue(trueAuthSession.userEmailIsVerified)
+    XCTAssertTrue(yAuthSession.userEmailIsVerified)
+    XCTAssertTrue(yesAuthSession.userEmailIsVerified)
   }
 
   // MARK: - Keychain Tests
 
-  func testSaveAuthorization() throws {
-    try keychainStore.save(authState: authState)
+  func testSaveAuthSession() throws {
+    try keychainStore.save(authSession: authSession)
   }
 
-  func testSaveAuthorizationForItemName() throws {
-    try keychainStore.save(authState: authState, forItemName: alternativeTestKeychainItemName)
+  func testSaveAuthSessionForItemName() throws {
+    try keychainStore.save(authSession: authSession, forItemName: alternativeTestKeychainItemName)
   }
 
-  func testSaveAuthorizationThrows() {
+  func testSaveAuthSessionThrows() {
     let emptyItemName = ""
     let expectedError = KeychainStore.Error.noService
 
     XCTAssertThrowsError(try keychainStore.save(
-      authState: authState,
+      authSession: authSession,
       forItemName: emptyItemName
     )) { error in
       XCTAssertEqual(error as? KeychainStore.Error, expectedError)
     }
   }
 
-  func testRemoveAuthorization() throws {
-    try keychainStore.save(authState: authState)
-    try keychainStore.removeAuthState(withItemName: TestingConstants.testKeychainItemName)
+  func testRemoveAuthSession() throws {
+    try keychainStore.save(authSession: authSession)
+    try keychainStore.removeAuthSession(withItemName: TestingConstants.testKeychainItemName)
   }
 
-  func testRemoveAuthorizationThrows() {
+  func testRemoveAuthSessionThrows() {
     do {
-      try keychainStore.removeAuthState(withItemName: TestingConstants.testKeychainItemName)
+      try keychainStore.removeAuthSession(withItemName: TestingConstants.testKeychainItemName)
     } catch {
       guard let keychainError = error as? KeychainStore.Error else {
-        return XCTFail("`error` should be of type `GTMAppAuthFetcherAuthorization.Error`")
+        return XCTFail("`error` should be of type `GTMAuthSession.Error`")
       }
       XCTAssertEqual(
         keychainError,
@@ -337,39 +337,39 @@ class AuthStateTests: XCTestCase {
     }
   }
 
-  func testRetrieveAuthorization() throws {
-    try keychainStore.save(authState: authState)
-    let savedAuth = try keychainStore.retrieveAuthState()
-    XCTAssertEqual(savedAuth.authState.isAuthorized, authState.authState.isAuthorized)
-    XCTAssertEqual(savedAuth.serviceProvider, authState.serviceProvider)
-    XCTAssertEqual(savedAuth.userID, authState.userID)
-    XCTAssertEqual(savedAuth.userEmail, authState.userEmail)
-    XCTAssertEqual(savedAuth.userEmailIsVerified, authState.userEmailIsVerified)
+  func testRetrieveAuthSession() throws {
+    try keychainStore.save(authSession: authSession)
+    let savedAuthSession = try keychainStore.retrieveAuthSession()
+    XCTAssertEqual(savedAuthSession.authState.isAuthorized, authSession.authState.isAuthorized)
+    XCTAssertEqual(savedAuthSession.serviceProvider, authSession.serviceProvider)
+    XCTAssertEqual(savedAuthSession.userID, authSession.userID)
+    XCTAssertEqual(savedAuthSession.userEmail, authSession.userEmail)
+    XCTAssertEqual(savedAuthSession.userEmailIsVerified, authSession.userEmailIsVerified)
     XCTAssertFalse(keychainHelper.useDataProtectionKeychain)
   }
 
-  func testRetrieveAuthorizationForItemName() throws {
-    try keychainStore.save(authState: authState, forItemName: alternativeTestKeychainItemName)
-    let retrievedAuth = try keychainStore.retrieveAuthState(
+  func testRetrieveAuthSessionForItemName() throws {
+    try keychainStore.save(authSession: authSession, forItemName: alternativeTestKeychainItemName)
+    let retrievedAuthSession = try keychainStore.retrieveAuthSession(
       forItemName: alternativeTestKeychainItemName
     )
-    XCTAssertEqual(retrievedAuth.authState.isAuthorized, authState.authState.isAuthorized)
-    XCTAssertEqual(retrievedAuth.serviceProvider, authState.serviceProvider)
-    XCTAssertEqual(retrievedAuth.userID, authState.userID)
-    XCTAssertEqual(retrievedAuth.userEmail, authState.userEmail)
-    XCTAssertEqual(retrievedAuth.userEmailIsVerified, authState.userEmailIsVerified)
+    XCTAssertEqual(retrievedAuthSession.authState.isAuthorized, authSession.authState.isAuthorized)
+    XCTAssertEqual(retrievedAuthSession.serviceProvider, authSession.serviceProvider)
+    XCTAssertEqual(retrievedAuthSession.userID, authSession.userID)
+    XCTAssertEqual(retrievedAuthSession.userEmail, authSession.userEmail)
+    XCTAssertEqual(retrievedAuthSession.userEmailIsVerified, authSession.userEmailIsVerified)
     XCTAssertFalse(keychainHelper.useDataProtectionKeychain)
   }
 
-  func testRetrieveAuthorizationForMissingNameThrowsError() {
+  func testRetrieveAuthSessionForMissingNameThrowsError() {
     let missingItemName = "missingItemName"
     do {
-      _ = try keychainStore.retrieveAuthState(forItemName: missingItemName)
+      _ = try keychainStore.retrieveAuthSession(forItemName: missingItemName)
     } catch {
       guard case
         .passwordNotFound(forItemName: let itemName) = error as? KeychainStore.Error else {
         return XCTFail(
-          "`error` should be `GTMAppAuthFetcherAuthorization.Error.failedToRetrieveAuthorizationFromKeychain"
+          "`error` should be `GTMAuthSession.Error.failedToRetrieveAuthorizationFromKeychain"
         )
       }
       XCTAssertEqual(itemName, missingItemName)
