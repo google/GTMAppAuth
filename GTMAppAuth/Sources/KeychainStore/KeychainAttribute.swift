@@ -18,11 +18,11 @@ import Foundation
 
 @objc(GTMKeychainAttribute)
 public final class KeychainAttribute: NSObject {
-  enum Attribute {
+  public enum Attribute {
     case useDataProtectionKeychain
     case accessGroup(String)
 
-    var keyName: String {
+    public var keyName: String {
       switch self {
       case .useDataProtectionKeychain:
         return "kSecUseDataProtectionKeychain"
@@ -32,9 +32,9 @@ public final class KeychainAttribute: NSObject {
     }
   }
 
-  let attribute: Attribute
+  public let attribute: Attribute
 
-  init(attribute: Attribute) {
+  public init(attribute: Attribute) {
     self.attribute = attribute
   }
 

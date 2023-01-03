@@ -20,7 +20,7 @@ requests with AppAuth.
 
   s.source        = { :git => 'https://github.com/google/GTMAppAuth.git', :tag => s.version }
   s.prefix_header_file = false
-  s.source_files = 'GTMAppAuth/Sources/*.swift'
+  s.source_files = 'GTMAppAuth/Sources/**/*.swift'
 
   ios_deployment_target = '10.0'
   osx_deployment_target = '10.12'
@@ -43,8 +43,8 @@ requests with AppAuth.
       :watchos => watchos_deployment_target,
     }
     unit_tests.source_files = [
-      'GTMAppAuth/Tests/Unit/*.swift',
-      'GTMAppAuth/Tests/Helpers/*.swift',
+      'GTMAppAuth/Tests/Unit/**/*.swift',
+      'GTMAppAuth/Tests/Helpers/**/*.swift',
     ]
     unit_tests.dependency 'AppAuth/Core'
   end
@@ -57,8 +57,8 @@ requests with AppAuth.
       :watchos => watchos_deployment_target,
     }
     api_tests.source_files = [
-      'GTMAppAuth/Tests/ObjCIntegration/*.m',
-      'GTMAppAuth/Tests/Helpers/*.swift',
+      'GTMAppAuth/Tests/ObjCIntegration/**/*.m',
+      'GTMAppAuth/Tests/Helpers/**/*.swift',
     ]
     api_tests.dependency 'AppAuth'
     # api_tests.dependency 'GTMAppAuth/TestHelpers'

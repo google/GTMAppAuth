@@ -88,9 +88,9 @@ public final class KeychainStore: NSObject {
   }
 }
 
-// MARK: - AuthStateStore Conformance
+// MARK: - AuthSessionStore Conformance
 
-extension KeychainStore: AuthStateStore {
+extension KeychainStore: AuthSessionStore {
   /// An initializer for to create an instance of this keychain wrapper.
   ///
   /// - Parameters:
@@ -99,28 +99,28 @@ extension KeychainStore: AuthStateStore {
     self.init(itemName: itemName, keychainHelper: KeychainWrapper())
   }
 
-  @objc(saveAuthState:error:)
-  public func save(authState: AuthState) throws {
-    let authorizationData: Data = try authorizationData(fromAuthorization: authState)
+  @objc(saveAuthSession:error:)
+  public func save(authSession: AuthSession) throws {
+    let authSessionData: Data = try authSessionData(fromAuthSession: authSession)
     try keychainHelper.setPassword(
-      data: authorizationData,
+      data: authSessionData,
       forService: itemName,
       accessibility: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
     )
   }
 
-  @objc(saveAuthState:forItemName:error:)
-  public func save(authState: AuthState, forItemName itemName: String) throws {
-    let authorizationData = try authorizationData(fromAuthorization: authState)
+  @objc(saveAuthSession:forItemName:error:)
+  public func save(authSession: AuthSession, forItemName itemName: String) throws {
+    let authSessionData = try authSessionData(fromAuthSession: authSession)
     try keychainHelper.setPassword(
-      data: authorizationData,
+      data: authSessionData,
       forService: itemName,
       accessibility: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
     )
   }
 
-  private func authorizationData(
-    fromAuthorization authState: AuthState
+  private func authSessionData(
+    fromAuthSession authSession: AuthSession
   ) throws -> Data {
     let keyedArchiver: NSKeyedArchiver
     if #available(iOS 11, macOS 10.13, tvOS 11.0, watchOS 4.0, *) {
@@ -129,22 +129,22 @@ extension KeychainStore: AuthStateStore {
       keyedArchiver = NSKeyedArchiver()
     }
 
-    // The previous name for `AuthState` was `GTMAppAuthFetcherAuthorization`. To allow legacy
-    // versions of this library to unarchive and archive instances of `AuthState` from new versions
-    // of this library, we will archive `AuthState` using the legacy name.
-    keyedArchiver.setClassName(AuthState.legacyArchiveName, for: AuthState.self)
+    // The previous name for `AuthSession` was `GTMAppAuthFetcherAuthorization`. To allow legacy
+    // versions of this library to unarchive and archive instances of `AuthSession` from new
+    // versions of this library, we will archive `AuthSession` using the legacy name.
+    keyedArchiver.setClassName(AuthSession.legacyArchiveName, for: AuthSession.self)
     lastUsedKeyedArchiver = keyedArchiver
 
-    keyedArchiver.encode(authState, forKey: NSKeyedArchiveRootObjectKey)
+    keyedArchiver.encode(authSession, forKey: NSKeyedArchiveRootObjectKey)
     keyedArchiver.finishEncoding()
     return keyedArchiver.encodedData
   }
 
-  @objc public func removeAuthState(withItemName itemName: String) throws {
+  @objc public func removeAuthSession(withItemName itemName: String) throws {
     try keychainHelper.removePassword(forService: itemName)
   }
 
-  @objc public func removeAuthState() throws {
+  @objc public func removeAuthSession() throws {
     try keychainHelper.removePassword(forService: itemName)
   }
 
@@ -157,103 +157,103 @@ extension KeychainStore: AuthStateStore {
       keyedUnarchiver = NSKeyedUnarchiver(forReadingWith: data)
       keyedUnarchiver.requiresSecureCoding = false
     }
-    // The previous name for `AuthState` was `GTMAppAuthFetcherAuthorization` and so unarchiving
+    // The previous name for `AuthSession` was `GTMAppAuthFetcherAuthorization` and so unarchiving
     // requires mapping the name previous instances were archived under to the new name.
-    keyedUnarchiver.setClass(AuthState.self, forClassName: AuthState.legacyArchiveName)
+    keyedUnarchiver.setClass(AuthSession.self, forClassName: AuthSession.legacyArchiveName)
     lastUsedKeyedUnarchiver = keyedUnarchiver
 
     return keyedUnarchiver
   }
 
-  @objc public func retrieveAuthState(forItemName itemName: String) throws -> AuthState {
+  @objc public func retrieveAuthSession(forItemName itemName: String) throws -> AuthSession {
     let passwordData = try keychainHelper.passwordData(forService: itemName)
 
     let keyedUnarchiver = try keyedUnarchiver(forData: passwordData)
     guard let auth = keyedUnarchiver.decodeObject(
-      of: AuthState.self,
+      of: AuthSession.self,
       forKey: NSKeyedArchiveRootObjectKey
     ) else {
-      throw AuthState
+      throw AuthSession
         .Error
-        .failedToConvertKeychainDataToAuthorization(forItemName: itemName)
+        .failedToConvertKeychainDataToAuthSession(forItemName: itemName)
     }
     return auth
   }
 
-  @objc public func retrieveAuthState() throws -> AuthState {
+  @objc public func retrieveAuthSession() throws -> AuthSession {
     let passwordData = try keychainHelper.passwordData(forService: itemName)
 
     let keyedUnarchiver = try keyedUnarchiver(forData: passwordData)
     guard let auth = keyedUnarchiver.decodeObject(
-      of: AuthState.self,
+      of: AuthSession.self,
       forKey: NSKeyedArchiveRootObjectKey
     ) else {
-      throw AuthState
+      throw AuthSession
         .Error
-        .failedToConvertKeychainDataToAuthorization(forItemName: itemName)
+        .failedToConvertKeychainDataToAuthSession(forItemName: itemName)
     }
     return auth
   }
 
-  /// Attempts to create an `AuthState` from stored data in GTMOAuth2 format.
+  /// Attempts to create an `AuthSession` from stored data in GTMOAuth2 format.
   ///
   /// - Parameters:
   ///   - tokenURL: The OAuth token endpoint URL.
   ///   - redirectURI: The OAuth redirect URI used when obtaining the original authorization.
   ///   - clientID: The OAuth client ID.
   ///   - clientSecret: The OAuth client secret.
-  /// - Returns: An `AuthState` object.
-  /// - Throws: Any error arising from the `AuthState` creation.
-  @objc public func retrieveAuthStateInGTMOAuth2Format(
+  /// - Returns: An `AuthSession` object.
+  /// - Throws: Any error arising from the `AuthSession` creation.
+  @objc public func retrieveAuthSessionInGTMOAuth2Format(
     tokenURL: URL,
     redirectURI: String,
     clientID: String,
     clientSecret: String?
-  ) throws -> AuthState {
+  ) throws -> AuthSession {
     let password = try keychainHelper.password(forService: itemName)
-    let oauth2Compatibility = OAuth2AuthStateCompatibility()
-    let authorization = try oauth2Compatibility.authState(
+    let compatibility = GTMOAuth2Compatibility()
+    let authSession = try compatibility.authSession(
       forPersistenceString: password,
       tokenURL: tokenURL,
       redirectURI: redirectURI,
       clientID: clientID,
       clientSecret: clientSecret
     )
-    return authorization
+    return authSession
   }
 
-  /// Attempts to create a `AuthState` from data stored in a GTMOAuth2 format.
+  /// Attempts to create a `AuthSession` from data stored in a GTMOAuth2 format.
   ///
   /// Uses Google OAuth provider information.
   ///
   /// - Parameters:
   ///   - clientID: The OAuth client id.
   ///   - clientSecret: The OAuth client secret.
-  /// - Returns: An `AuthState` object, or nil.
-  /// - Throws: Any error arising from the `AuthState` creation.
-  @objc public func retrieveAuthStateForGoogleInGTMOAuth2Format(
+  /// - Returns: An `AuthSession` object, or nil.
+  /// - Throws: Any error arising from the `AuthSession` creation.
+  @objc public func retrieveAuthSessionForGoogleInGTMOAuth2Format(
     clientID: String,
     clientSecret: String
-  ) throws -> AuthState {
-    return try retrieveAuthStateInGTMOAuth2Format(
-      tokenURL: OAuth2AuthStateCompatibility.googleTokenURL,
-      redirectURI: OAuth2AuthStateCompatibility.nativeClientRedirectURI,
+  ) throws -> AuthSession {
+    return try retrieveAuthSessionInGTMOAuth2Format(
+      tokenURL: GTMOAuth2Compatibility.googleTokenURL,
+      redirectURI: GTMOAuth2Compatibility.nativeClientRedirectURI,
       clientID: clientID,
       clientSecret: clientSecret
     )
   }
 
-  /// Saves the authorization state in a GTMOAuth2 compatible manner.
+  /// Saves the `AuthSession` in a GTMOAuth2 compatible manner.
   ///
   /// - Parameters:
-  ///   - authorization: The `AuthState` to save.
+  ///   - authSession: The `AuthSession` to save.
   /// - Throws: Any error that may arise during the retrieval.
   @objc public func saveWithGTMOAuth2Format(
-    forAuthorization authorization: AuthState
+    forAuthSession authSession: AuthSession
   ) throws {
-    guard let persistence = OAuth2AuthStateCompatibility
-      .persistenceResponseString(forAuthState: authorization) else {
-      throw KeychainStore.Error.failedToCreateResponseStringFromAuthorization(authorization)
+    guard let persistence = GTMOAuth2Compatibility
+        .persistenceResponseString(forAuthSession: authSession) else {
+      throw KeychainStore.Error.failedToCreateResponseStringFromAuthSession(authSession)
     }
     try keychainHelper.setPassword(
       persistence,
@@ -272,9 +272,9 @@ public extension KeychainStore {
     /// Error thrown when there is no name for the item in the keychain.
     case noService
     case unexpectedPasswordData(forItemName: String)
-    case failedToCreateResponseStringFromAuthorization(AuthState)
+    case failedToCreateResponseStringFromAuthSession(AuthSession)
     case failedToConvertRedirectURItoURL(String)
-    case failedToConvertAuthorizationToData
+    case failedToConvertAuthSessionToData
     case failedToDeletePassword(forItemName: String)
     case failedToDeletePasswordBecauseItemNotFound(itemName: String)
     case failedToSetPassword(forItemName: String)
@@ -293,11 +293,11 @@ public extension KeychainStore {
         return [:]
       case .unexpectedPasswordData(let itemName):
         return ["itemName": itemName]
-      case .failedToCreateResponseStringFromAuthorization(let authorization):
-        return ["authorization": authorization]
+      case .failedToCreateResponseStringFromAuthSession(let authSession):
+        return ["authSession": authSession]
       case .failedToConvertRedirectURItoURL(let redirectURI):
         return ["redirectURI": redirectURI]
-      case .failedToConvertAuthorizationToData:
+      case .failedToConvertAuthSessionToData:
         return [:]
       case .failedToDeletePassword(let itemName):
         return ["itemName": itemName]
@@ -321,9 +321,9 @@ public enum ErrorCode: Int {
   case passwordNotFound
   case noService
   case unexpectedPasswordData
-  case failedToCreateResponseStringFromAuthorization
+  case failedToCreateResponseStringFromAuthSession
   case failedToConvertRedirectURItoURL
-  case failedToConvertAuthorizationToData
+  case failedToConvertAuthSessionToData
   case failedToDeletePassword
   case failedToDeletePasswordBecauseItemNotFound
   case failedToSetPassword
@@ -338,12 +338,12 @@ public enum ErrorCode: Int {
       self = .noService
     case .unexpectedPasswordData:
       self = .unexpectedPasswordData
-    case .failedToCreateResponseStringFromAuthorization:
-      self = .failedToCreateResponseStringFromAuthorization
+    case .failedToCreateResponseStringFromAuthSession:
+      self = .failedToCreateResponseStringFromAuthSession
     case .failedToConvertRedirectURItoURL:
       self = .failedToConvertRedirectURItoURL
-    case .failedToConvertAuthorizationToData:
-      self = .failedToConvertAuthorizationToData
+    case .failedToConvertAuthSessionToData:
+      self = .failedToConvertAuthSessionToData
     case .failedToDeletePassword:
       self = .failedToDeletePassword
     case .failedToDeletePasswordBecauseItemNotFound:

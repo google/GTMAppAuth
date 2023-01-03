@@ -25,8 +25,8 @@ import AppAuth
 #endif
 @testable import GTMAppAuth
 
-class OAuth2AuthStateCompatibilityTests: XCTestCase {
-  private let oauth2Compatibility = OAuth2AuthStateCompatibility()
+class GTMOAuth2CompatibilityTests: XCTestCase {
+  private let gtmOAuth2Compatibility = GTMOAuth2Compatibility()
   private lazy var testPersistenceString: String = {
     return "access_token=\(TestingConstants.testAccessToken)&refresh_token=\(TestingConstants.testRefreshToken)&scope=\(TestingConstants.testScope2)&serviceProvider=\(TestingConstants.testServiceProvider)&userEmail=foo%40foo.com&userEmailIsVerified=y&userID=\(TestingConstants.testUserID)"
   }()
@@ -37,8 +37,8 @@ class OAuth2AuthStateCompatibilityTests: XCTestCase {
       keychainHelper: keychainHelper
     )
   }()
-  private var expectedAuthorization: AuthState {
-    AuthState(
+  private var expectedAuthSession: AuthSession {
+    AuthSession(
       authState: OIDAuthState.testInstance(),
       serviceProvider: TestingConstants.testServiceProvider,
       userID: TestingConstants.testUserID,
@@ -53,8 +53,8 @@ class OAuth2AuthStateCompatibilityTests: XCTestCase {
   }
 
   func testPersistenceResponseString() {
-    let response = OAuth2AuthStateCompatibility.persistenceResponseString(
-      forAuthState: expectedAuthorization
+    let response = GTMOAuth2Compatibility.persistenceResponseString(
+      forAuthSession: expectedAuthSession
     )
     guard let response = response else {
       return XCTFail("Response shouldn't be nil")
@@ -62,15 +62,15 @@ class OAuth2AuthStateCompatibilityTests: XCTestCase {
     XCTAssertEqual(response, testPersistenceString)
   }
 
-  func testSaveOAuth2Authorization() throws {
-    try keychainStore.saveWithGTMOAuth2Format(forAuthorization: expectedAuthorization)
+  func testSaveOAuth2AuthSession() throws {
+    try keychainStore.saveWithGTMOAuth2Format(forAuthSession: expectedAuthSession)
   }
 
-  func testSaveGTMOAuth2AuthorizationThrowsError() {
+  func testSaveGTMOAuth2AuthSessionThrowsError() {
     let emptyItemName = ""
     keychainStore.itemName = emptyItemName
     XCTAssertThrowsError(
-      try keychainStore.saveWithGTMOAuth2Format(forAuthorization: expectedAuthorization)
+      try keychainStore.saveWithGTMOAuth2Format(forAuthSession: expectedAuthSession)
     ) { thrownError in
       XCTAssertEqual(
         thrownError as? KeychainStore.Error,
@@ -79,14 +79,14 @@ class OAuth2AuthStateCompatibilityTests: XCTestCase {
     }
   }
 
-  func testRemoveOAuth2Authorization() throws {
-    try keychainStore.saveWithGTMOAuth2Format(forAuthorization: expectedAuthorization)
-    try keychainStore.removeAuthState()
+  func testRemoveOAuth2AuthSession() throws {
+    try keychainStore.saveWithGTMOAuth2Format(forAuthSession: expectedAuthSession)
+    try keychainStore.removeAuthSession()
   }
 
-  func testRemoveOAuth2AuthorizationThrowsError() {
+  func testRemoveOAuth2AuthSessionhrowsError() {
     XCTAssertThrowsError(
-      try keychainStore.removeAuthState()
+      try keychainStore.removeAuthSession()
     ) { thrownError in
       XCTAssertEqual(
         thrownError as? KeychainStore.Error,
@@ -95,34 +95,34 @@ class OAuth2AuthStateCompatibilityTests: XCTestCase {
     }
   }
 
-  func testAuthorizeFromKeychainForName() throws {
-    try keychainStore.saveWithGTMOAuth2Format(forAuthorization: expectedAuthorization)
-    let testAuth = try keychainStore.retrieveAuthStateInGTMOAuth2Format(
+  func testAuthSessionFromKeychainForName() throws {
+    try keychainStore.saveWithGTMOAuth2Format(forAuthSession: expectedAuthSession)
+    let authSession = try keychainStore.retrieveAuthSessionInGTMOAuth2Format(
       tokenURL: TestingConstants.testTokenURL,
       redirectURI: TestingConstants.testRedirectURI,
       clientID: TestingConstants.testClientID,
       clientSecret: TestingConstants.testClientID
     )
 
-    XCTAssertEqual(testAuth.authState.scope, expectedAuthorization.authState.scope)
+    XCTAssertEqual(authSession.authState.scope, expectedAuthSession.authState.scope)
     XCTAssertEqual(
-      testAuth.authState.lastTokenResponse?.accessToken,
-      expectedAuthorization.authState.lastTokenResponse?.accessToken
+      authSession.authState.lastTokenResponse?.accessToken,
+      expectedAuthSession.authState.lastTokenResponse?.accessToken
     )
-    XCTAssertEqual(testAuth.authState.refreshToken, expectedAuthorization.authState.refreshToken)
-    XCTAssertEqual(testAuth.authState.isAuthorized, expectedAuthorization.authState.isAuthorized)
-    XCTAssertEqual(testAuth.serviceProvider, expectedAuthorization.serviceProvider)
-    XCTAssertEqual(testAuth.userID, expectedAuthorization.userID)
-    XCTAssertEqual(testAuth.userEmail, expectedAuthorization.userEmail)
-    XCTAssertEqual(testAuth.userEmailIsVerified, expectedAuthorization.userEmailIsVerified)
-    XCTAssertEqual(testAuth.canAuthorize, expectedAuthorization.canAuthorize)
+    XCTAssertEqual(authSession.authState.refreshToken, expectedAuthSession.authState.refreshToken)
+    XCTAssertEqual(authSession.authState.isAuthorized, expectedAuthSession.authState.isAuthorized)
+    XCTAssertEqual(authSession.serviceProvider, expectedAuthSession.serviceProvider)
+    XCTAssertEqual(authSession.userID, expectedAuthSession.userID)
+    XCTAssertEqual(authSession.userEmail, expectedAuthSession.userEmail)
+    XCTAssertEqual(authSession.userEmailIsVerified, expectedAuthSession.userEmailIsVerified)
+    XCTAssertEqual(authSession.canAuthorize, expectedAuthSession.canAuthorize)
   }
 
-  func testAuthorizeFromKeychainForNameThrowsError() throws {
-    try keychainStore.saveWithGTMOAuth2Format(forAuthorization: expectedAuthorization)
+  func testAuthSessionFromKeychainForNameThrowsError() throws {
+    try keychainStore.saveWithGTMOAuth2Format(forAuthSession: expectedAuthSession)
     let badRedirectURI = ""
     XCTAssertThrowsError(
-      _ = try keychainStore.retrieveAuthStateInGTMOAuth2Format(
+      _ = try keychainStore.retrieveAuthSessionInGTMOAuth2Format(
         tokenURL: TestingConstants.testTokenURL,
         redirectURI: badRedirectURI,
         clientID: TestingConstants.testClientID,
@@ -136,10 +136,10 @@ class OAuth2AuthStateCompatibilityTests: XCTestCase {
     }
   }
 
-  func testAuthorizeFromKeychainForPersistenceStringFailedWithBadURI() {
+  func testAuthSessionFromKeychainForPersistenceStringFailedWithBadURI() {
     let badURI = ""
     XCTAssertThrowsError(
-      try oauth2Compatibility.authState(
+      try gtmOAuth2Compatibility.authSession(
         forPersistenceString: testPersistenceString,
         tokenURL: TestingConstants.testTokenURL,
         redirectURI: badURI,
@@ -154,8 +154,8 @@ class OAuth2AuthStateCompatibilityTests: XCTestCase {
     }
   }
 
-  func testAuthorizeFromKeychainForPersistenceString() throws {
-    let testPersistAuth = try oauth2Compatibility.authState(
+  func testAuthSessionFromKeychainForPersistenceString() throws {
+    let authSession = try gtmOAuth2Compatibility.authSession(
       forPersistenceString: testPersistenceString,
       tokenURL: TestingConstants.testTokenURL,
       redirectURI: TestingConstants.testRedirectURI,
@@ -163,31 +163,31 @@ class OAuth2AuthStateCompatibilityTests: XCTestCase {
       clientSecret: TestingConstants.testClientSecret
     )
 
-    XCTAssertEqual(testPersistAuth.authState.scope, expectedAuthorization.authState.scope)
+    XCTAssertEqual(authSession.authState.scope, expectedAuthSession.authState.scope)
     XCTAssertEqual(
-      testPersistAuth.authState.lastTokenResponse?.accessToken,
-      expectedAuthorization.authState.lastTokenResponse?.accessToken
+      authSession.authState.lastTokenResponse?.accessToken,
+      expectedAuthSession.authState.lastTokenResponse?.accessToken
     )
-    XCTAssertEqual(testPersistAuth.authState.refreshToken, expectedAuthorization.authState.refreshToken)
-    XCTAssertEqual(testPersistAuth.authState.isAuthorized, expectedAuthorization.authState.isAuthorized)
-    XCTAssertEqual(testPersistAuth.serviceProvider, expectedAuthorization.serviceProvider)
-    XCTAssertEqual(testPersistAuth.userID, expectedAuthorization.userID)
-    XCTAssertEqual(testPersistAuth.userEmail, expectedAuthorization.userEmail)
-    XCTAssertEqual(testPersistAuth.userEmailIsVerified, expectedAuthorization.userEmailIsVerified)
-    XCTAssertEqual(testPersistAuth.canAuthorize, expectedAuthorization.canAuthorize)
+    XCTAssertEqual(authSession.authState.refreshToken, expectedAuthSession.authState.refreshToken)
+    XCTAssertEqual(authSession.authState.isAuthorized, expectedAuthSession.authState.isAuthorized)
+    XCTAssertEqual(authSession.serviceProvider, expectedAuthSession.serviceProvider)
+    XCTAssertEqual(authSession.userID, expectedAuthSession.userID)
+    XCTAssertEqual(authSession.userEmail, expectedAuthSession.userEmail)
+    XCTAssertEqual(authSession.userEmailIsVerified, expectedAuthSession.userEmailIsVerified)
+    XCTAssertEqual(authSession.canAuthorize, expectedAuthSession.canAuthorize)
   }
 
-  func testAuthorizeFromKeychainMatchesForNameAndPersistenceString() throws {
-    let expectedPersistAuth = try oauth2Compatibility.authState(
+  func testAuthSessionFromKeychainMatchesForNameAndPersistenceString() throws {
+    let expectedPersistAuth = try gtmOAuth2Compatibility.authSession(
       forPersistenceString: testPersistenceString,
       tokenURL: TestingConstants.testTokenURL,
       redirectURI: TestingConstants.testRedirectURI,
       clientID: TestingConstants.testClientID,
       clientSecret: TestingConstants.testClientSecret
     )
-    try keychainStore.saveWithGTMOAuth2Format(forAuthorization: expectedPersistAuth)
+    try keychainStore.saveWithGTMOAuth2Format(forAuthSession: expectedPersistAuth)
 
-    let testPersistAuth = try keychainStore.retrieveAuthStateInGTMOAuth2Format(
+    let testPersistAuth = try keychainStore.retrieveAuthSessionInGTMOAuth2Format(
       tokenURL: TestingConstants.testTokenURL,
       redirectURI: TestingConstants.testRedirectURI,
       clientID: TestingConstants.testClientID,
@@ -199,8 +199,14 @@ class OAuth2AuthStateCompatibilityTests: XCTestCase {
       testPersistAuth.authState.lastTokenResponse?.accessToken,
       expectedPersistAuth.authState.lastTokenResponse?.accessToken
     )
-    XCTAssertEqual(testPersistAuth.authState.refreshToken, expectedPersistAuth.authState.refreshToken)
-    XCTAssertEqual(testPersistAuth.authState.isAuthorized, expectedPersistAuth.authState.isAuthorized)
+    XCTAssertEqual(
+      testPersistAuth.authState.refreshToken,
+      expectedPersistAuth.authState.refreshToken
+    )
+    XCTAssertEqual(
+      testPersistAuth.authState.isAuthorized,
+      expectedPersistAuth.authState.isAuthorized
+    )
     XCTAssertEqual(testPersistAuth.serviceProvider, expectedPersistAuth.serviceProvider)
     XCTAssertEqual(testPersistAuth.userID, expectedPersistAuth.userID)
     XCTAssertEqual(testPersistAuth.userEmail, expectedPersistAuth.userEmail)
@@ -208,32 +214,32 @@ class OAuth2AuthStateCompatibilityTests: XCTestCase {
     XCTAssertEqual(testPersistAuth.canAuthorize, expectedPersistAuth.canAuthorize)
   }
 
-  func testAuthorizeFromKeychainUsingGoogleOAuthProviderInformation() throws {
-    let expectedPersistAuth = try oauth2Compatibility.authState(
+  func testAuthSessionFromKeychainUsingGoogleOAuthProviderInformation() throws {
+    let expectedPersistAuth = try gtmOAuth2Compatibility.authSession(
       forPersistenceString: testPersistenceString,
       tokenURL: TestingConstants.testTokenURL,
       redirectURI: TestingConstants.testRedirectURI,
       clientID: TestingConstants.testClientID,
       clientSecret: TestingConstants.testClientSecret
     )
-    try keychainStore.saveWithGTMOAuth2Format(forAuthorization: expectedAuthorization)
+    try keychainStore.saveWithGTMOAuth2Format(forAuthSession: expectedAuthSession)
 
-    let testAuthorization = try keychainStore.retrieveAuthStateForGoogleInGTMOAuth2Format(
+    let testAuthSession = try keychainStore.retrieveAuthSessionForGoogleInGTMOAuth2Format(
       clientID: TestingConstants.testClientID,
       clientSecret: TestingConstants.testClientSecret
     )
 
-    XCTAssertEqual(testAuthorization.authState.scope, expectedPersistAuth.authState.scope)
+    XCTAssertEqual(testAuthSession.authState.scope, expectedPersistAuth.authState.scope)
     XCTAssertEqual(
-      testAuthorization.authState.lastTokenResponse?.accessToken,
+      testAuthSession.authState.lastTokenResponse?.accessToken,
       expectedPersistAuth.authState.lastTokenResponse?.accessToken
     )
-    XCTAssertEqual(testAuthorization.authState.refreshToken, expectedPersistAuth.authState.refreshToken)
-    XCTAssertEqual(testAuthorization.authState.isAuthorized, expectedPersistAuth.authState.isAuthorized)
-    XCTAssertEqual(testAuthorization.serviceProvider, expectedPersistAuth.serviceProvider)
-    XCTAssertEqual(testAuthorization.userID, expectedPersistAuth.userID)
-    XCTAssertEqual(testAuthorization.userEmail, expectedPersistAuth.userEmail)
-    XCTAssertEqual(testAuthorization.userEmailIsVerified, expectedPersistAuth.userEmailIsVerified)
-    XCTAssertEqual(testAuthorization.canAuthorize, expectedPersistAuth.canAuthorize)
+    XCTAssertEqual(testAuthSession.authState.refreshToken, expectedPersistAuth.authState.refreshToken)
+    XCTAssertEqual(testAuthSession.authState.isAuthorized, expectedPersistAuth.authState.isAuthorized)
+    XCTAssertEqual(testAuthSession.serviceProvider, expectedPersistAuth.serviceProvider)
+    XCTAssertEqual(testAuthSession.userID, expectedPersistAuth.userID)
+    XCTAssertEqual(testAuthSession.userEmail, expectedPersistAuth.userEmail)
+    XCTAssertEqual(testAuthSession.userEmailIsVerified, expectedPersistAuth.userEmailIsVerified)
+    XCTAssertEqual(testAuthSession.canAuthorize, expectedPersistAuth.canAuthorize)
   }
 }
