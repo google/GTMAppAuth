@@ -2,11 +2,13 @@
 
 - GTMAppAuth has been translated to Swift. ([#190](https://github.com/google/GTMAppAuth/pull/190))
 - Improved API surface. ([#203](https://github.com/google/GTMAppAuth/pull/203))
-  - `GTMAppAuthFetcherAuthorization` renamed `GTMAuthSession`.
-  - `GTMAuthSessionStore` protocol introduced.
-  - `GTMKeychainStore` class conforming to `GTMAuthSessionStore` provides keychain storage of `GTMAuthSession` objects as well as GTMOAuth2 compatibility.
-    - Added the ability to specify a keychain access group.
-  - Error handling.
+  - Renamed `GTMAppAuthFetcherAuthorization` to `GTMAuthSession`.
+  - Added `GTMAuthSessionStore` protocol.
+  - Added `GTMKeychainStore` class conforming to `GTMAuthSessionStore` providing keychain storage of `GTMAuthSession` objects as well as [GTMOAuth2](https://github.com/google/gtm-oauth2) compatibility.
+    - Added the ability to specify a keychain access group rather than use the default group.
+    - Stored representation of `GTMAuthSession` objects remains unchanged from that of `GTMAppAuthFetcherAuthorization`
+      in previous versions of GTMAppAuth, allowing for backward and forward compatibilty.
+  - Significantly improved error handling.
 - Unit tests added. ([#190](https://github.com/google/GTMAppAuth/pull/190), [#202](https://github.com/google/GTMAppAuth/pull/202))
 
 # 2.0.0
