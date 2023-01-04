@@ -454,16 +454,15 @@ public extension AuthSession {
   enum Error: Swift.Error, Equatable, CustomNSError {
     case cannotAuthorizeRequest(URLRequest)
     case accessTokenEmptyForRequest(URLRequest)
-    case failedToConvertKeychainDataToAuthSession(forItemName: String)
+
     public static let errorDomain: String = "GTMAuthSessionErrorDomain"
+
     public var errorUserInfo: [String : Any] {
       switch self {
       case .cannotAuthorizeRequest(let request):
         return ["request": request]
       case .accessTokenEmptyForRequest(let request):
         return ["request": request]
-      case .failedToConvertKeychainDataToAuthSession(forItemName: let name):
-        return ["itemName": name]
       }
     }
   }
