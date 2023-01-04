@@ -5,7 +5,7 @@ target 'Example-macOSForPod' do
   project 'Example-macOSForPod'
   
   # Pods for GTMAppAuth development
-  pod 'GTMAppAuthSwift', :path => '../../'
+  pod 'GTMAppAuth', :path => '../../', :testspecs => ['unit', 'objc-api-integration']
 
   # In production, you would use:
   # pod 'GTMAppAuth'
