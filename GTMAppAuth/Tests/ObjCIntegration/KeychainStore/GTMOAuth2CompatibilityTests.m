@@ -84,7 +84,8 @@
 - (void)testAuthSessionForPersistenceStringThrows {
   NSError *error;
   GTMOAuth2Compatibility *gtmOAuth2Compat = [[GTMOAuth2Compatibility alloc] init];
-  GTMAuthSession *testPersistAuthSession =
+
+  GTMAuthSession *testPersistAuthSession __unused =
       [gtmOAuth2Compat authSessionForPersistenceString:[self expectedPersistenceResponseString]
                                               tokenURL:GTMTestingConstants.testTokenURL
                                            redirectURI:@""

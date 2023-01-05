@@ -29,7 +29,7 @@ import GTMSessionFetcher
 ///
 /// Enables you to use AppAuth with the GTM Session Fetcher library.
 @objc(GTMAuthSession)
-open class AuthSession: NSObject, GTMFetcherAuthorizationProtocol, NSSecureCoding {
+open class AuthSession: NSObject, GTMSessionFetcherAuthorizer, NSSecureCoding {
   /// The legacy name for this type used while archiving and unarchiving an instance.
   static let legacyArchiveName = "GTMAppAuthFetcherAuthorization"
 
@@ -171,7 +171,7 @@ open class AuthSession: NSObject, GTMFetcherAuthorizationProtocol, NSSecureCodin
     )
   }
 
-  // MARK: - Authorizing Requests (GTMFetcherAuthorizationProtocol)
+  // MARK: - Authorizing Requests (GTMSessionFetcherAuthorizer)
 
   /// Adds an authorization header to the given request, using the authorization state. Refreshes
   /// the access token if needed.
@@ -206,7 +206,7 @@ open class AuthSession: NSObject, GTMFetcherAuthorizationProtocol, NSSecureCodin
   /// - Parameters:
   ///   - request: The request to authorize.
   ///   - delegate: The delegate to receive the callback.
-  ///   - sel: The `Selector` to call upon the provided `delegate`.
+  ///   - selector: The `Selector` to call upon the provided `delegate`.
   @objc(authorizeRequest:delegate:didFinishSelector:)
   public func authorizeRequest(
     _ request: NSMutableURLRequest?,
