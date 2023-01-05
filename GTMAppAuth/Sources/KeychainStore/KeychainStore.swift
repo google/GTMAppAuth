@@ -173,9 +173,7 @@ extension KeychainStore: AuthSessionStore {
       of: AuthSession.self,
       forKey: NSKeyedArchiveRootObjectKey
     ) else {
-      throw AuthSession
-        .Error
-        .failedToConvertKeychainDataToAuthSession(forItemName: itemName)
+      throw Error.failedToConvertKeychainDataToAuthSession(itemName: itemName)
     }
     return auth
   }
@@ -188,9 +186,7 @@ extension KeychainStore: AuthSessionStore {
       of: AuthSession.self,
       forKey: NSKeyedArchiveRootObjectKey
     ) else {
-      throw AuthSession
-        .Error
-        .failedToConvertKeychainDataToAuthSession(forItemName: itemName)
+      throw Error.failedToConvertKeychainDataToAuthSession(itemName: itemName)
     }
     return auth
   }
@@ -275,6 +271,7 @@ public extension KeychainStore {
     case failedToCreateResponseStringFromAuthSession(AuthSession)
     case failedToConvertRedirectURItoURL(String)
     case failedToConvertAuthSessionToData
+    case failedToConvertKeychainDataToAuthSession(itemName: String)
     case failedToDeletePassword(forItemName: String)
     case failedToDeletePasswordBecauseItemNotFound(itemName: String)
     case failedToSetPassword(forItemName: String)
@@ -299,6 +296,8 @@ public extension KeychainStore {
         return ["redirectURI": redirectURI]
       case .failedToConvertAuthSessionToData:
         return [:]
+      case .failedToConvertKeychainDataToAuthSession(itemName: let itemName):
+        return ["itemName": itemName]
       case .failedToDeletePassword(let itemName):
         return ["itemName": itemName]
       case .failedToDeletePasswordBecauseItemNotFound(itemName: let itemName):
@@ -324,6 +323,7 @@ public enum ErrorCode: Int {
   case failedToCreateResponseStringFromAuthSession
   case failedToConvertRedirectURItoURL
   case failedToConvertAuthSessionToData
+  case failedToConvertKeychainDataToAuthSession
   case failedToDeletePassword
   case failedToDeletePasswordBecauseItemNotFound
   case failedToSetPassword
@@ -344,6 +344,8 @@ public enum ErrorCode: Int {
       self = .failedToConvertRedirectURItoURL
     case .failedToConvertAuthSessionToData:
       self = .failedToConvertAuthSessionToData
+    case .failedToConvertKeychainDataToAuthSession:
+      self = .failedToConvertKeychainDataToAuthSession
     case .failedToDeletePassword:
       self = .failedToDeletePassword
     case .failedToDeletePasswordBecauseItemNotFound:
