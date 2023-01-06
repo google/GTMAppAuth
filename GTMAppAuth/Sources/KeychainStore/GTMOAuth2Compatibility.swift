@@ -131,14 +131,14 @@ public final class GTMOAuth2Compatibility: NSObject {
 
   /// Creates an `AuthSession` from the provided persistence string.
   /// - Parameters:
-  ///   - persistenceString: The `String` representing the `AuthState` to create.
-  ///   - tokenURL: The `URL` to use when creating the `AuthState`.
-  ///   - redirectURI: The `String` URI to use for the `AuthState`.
-  ///   - clientID: The `String` client ID for the `AuthState`.
-  ///   - clientSecret: The optional `String` for the `AuthState`.
+  ///   - persistenceString: The `String` representing the `AuthSession` to create.
+  ///   - tokenURL: The `URL` to use when creating the `AuthSession`.
+  ///   - redirectURI: The `String` URI to use for the `AuthSession`.
+  ///   - clientID: The `String` client ID for the `AuthSession`.
+  ///   - clientSecret: The optional `String` for the `AuthSession`.
   /// - Throws: `KeychainStore.Error.failedToConvertRedirectURItoURL` if `redirectURI` cannot be
   ///   converted to a `URL`.
-  /// - Returns: An instance of `AuthState` if successful.
+  /// - Returns: An instance of `AuthSession` if successful.
   @objc public func authSession(
     forPersistenceString persistenceString: String,
     tokenURL: URL,

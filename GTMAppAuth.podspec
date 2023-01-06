@@ -61,7 +61,6 @@ requests with AppAuth.
       'GTMAppAuth/Tests/Helpers/**/*.swift',
     ]
     api_tests.dependency 'AppAuth/Core'
-    # api_tests.dependency 'GTMAppAuth/TestHelpers'
   end
 
 end
