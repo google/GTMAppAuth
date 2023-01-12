@@ -288,12 +288,14 @@ To assist the migration from GTMOAuth2 to GTMAppAuth, GTMOAuth2-compatible Keych
 GTMKeychainStore keychainStore = [[GTMKeychainStore alloc] initWithItemName:kKeychainItemName];
 
 // Retrieve from the Keychain
+NSError *error;
 GTMAuthSession *authSession =
     [keychainStore retrieveAuthSessionForGoogleInGTMOAuth2FormatWithClientID:clientID
-                                                                clientSecret:clientSecret];
+                                                                clientSecret:clientSecret
+                                                                error:&error];
 
 // Remove from the Keychain
-[keychainStore removeAuthSession];
+[keychainStore removeAuthSessionAndReturnError:&error];
 ```
 
 You can also save to GTMOAuth2 format, though this is discouraged (you
@@ -301,7 +303,7 @@ should save in GTMAppAuth format as described above).
 
 ```objc
 // Save to the Keychain
-[keychainStore saveWithGTMOAuth2FormatForAuthSession:authSession];
+[keychainStore saveWithGTMOAuth2FormatForAuthSession:authSession error:&error];
 ```
 
 ## Included Samples
@@ -321,11 +323,9 @@ your own OAuth client ID for use with the example.
 GTMAppAuth uses the browser to present the authorization request, while
 GTMOAuth2 uses an embedded web-view. Migrating to GTMAppAuth will require you
 to change how you authorize the user. Follow the instructions above to get the
-authorization.  You can then create a `GTMAppAuthFetcherAuthorization` object
-with the `initWithAuthState:authState` initializer.
-
-Once you have the `GTMAppAuthFetcherAuthorization` you can continue to make REST
-calls as before.
+authorization.  You can then create a `GTMAuthSession` object with its
+`initWithAuthState:` initializer.  Once you have a `GTMAuthSession` you can
+continue to make REST calls as before.
 
 ### Error Handling
 
@@ -346,10 +346,9 @@ data.
 
 ### OAuth Client Registration
 
-Typically, GTMOAuth2 clients are registered with Google as type "Other". This is
-correct for macOS, but on iOS clients should be registered with the type "iOS".
+Typically, GTMOAuth2 clients are registered with Google as type "Other". Instead, Apple clients should be registered with the type "iOS".
 
-If you're migrating an iOS client, in the *same project as your existing client*,
+If you're migrating an Apple client in the *same project as your existing client*,
 [register a new iOS client](https://console.developers.google.com/apis/credentials?project=_)
 to be used with GTMAppAuth.
 
@@ -377,16 +376,21 @@ The client ID used for GTMAppAuth is [different](#oauth-client-registration) to
 the one used for GTMOAuth2. In order to keep track of the different client ids
 used for new and old grants, it's recommended to migrate to the new
 serialization format, which will store that for you. 
-[GTMOAuth2-compatible serialization](#gtmoauth2-compatible-serialization) is
+[GTMOAuth2-compatible serialization](#gtmoauth2-compatibility) is
 also offered, but not fully supported.
 
-Change how you serialize your `authorization` object using the new methods
-using the following example.
+Change how you serialize your `authorization` object by using `GTMAuthSession` and `GTMKeychainStore` as follows:
 
 ```objc
+// Create an auth session from AppAuth's auth state object
+GTMAuthSession *authSession = [[GTMAuthSession alloc] initWithAuthState:authState];
+
+// Create a keychain store
+GTMKeychainStore keychainStore = [[GTMKeychainStore alloc] initWithItemName:kNewKeychainName];
+
 // Serialize to Keychain
-[GTMAppAuthFetcherAuthorization saveAuthorization:(GTMAppAuthFetcherAuthorization *)authorization
-                                toKeychainForName:kNewKeychainName];
+NSError *error;
+[keychainStore saveAuthSession:authSession error:&error];
 ```
 
 Be sure to use a *new* name for the keychain. Don't reuse your old one!
@@ -402,24 +406,28 @@ GTMOAuth2 keychain, and the new details for all other GTMAppAuth calls.
 Keychain migration example:
 
 ```objc
+// Create a keychain store
+GTMKeychainStore keychainStore = [[GTMKeychainStore alloc] initWithItemName:kNewKeychainName];
+
 // Attempt to deserialize from Keychain in GTMAppAuth format.
-id<GTMFetcherAuthorizationProtocol> authorization =
-    [GTMAppAuthFetcherAuthorization authorizationFromKeychainForName:kNewKeychainName];
+NSError *error;
+GTMAuthSesion *authSession =
+    [keychainStore retrieveAuthSessionAndReturnError:&error];
 
 // If no data found in the new format, try to deserialize data from GTMOAuth2
-if (!authorization) {
+if (!authSession) {
   // Tries to load the data serialized by GTMOAuth2 using old keychain name.
   // If you created a new client id, be sure to use the *previous* client id and secret here.
-  authorization =
-      [GTMOAuth2KeychainCompatibility authForGoogleFromKeychainForName:kPreviousKeychainName
-                                                              clientID:kPreviousClientID
-                                                          clientSecret:kPreviousClientSecret];
-  if (authorization) {
+  GTMKeychainStore oldKeychainStore = [[GTMKeychainStore alloc] initWithItemName:kPreviousKeychainName];
+  authSession =
+      [oldKeychainStore retrieveAuthSessionInGTMOAuth2FormatWithClientID:kPreviousClientID
+                                                            clientSecret:kPreviousClientSecret
+                                                            error:&error];
+  if (authSession) {
     // Remove previously stored GTMOAuth2-formatted data.
-    [GTMOAuth2KeychainCompatibility removeAuthFromKeychainForName:kPreviousKeychainName];
+    [oldKeychainStore removeAuthSessionAndReturnError:&error];
     // Serialize to Keychain in GTMAppAuth format.
-    [GTMAppAuthFetcherAuthorization saveAuthorization:(GTMAppAuthFetcherAuthorization *)authorization
-                                    toKeychainForName:kNewKeychainName];
+    [keychainStore saveAuthSession:authSession error:&error];
   }
 }
 ```
