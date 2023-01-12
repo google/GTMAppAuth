@@ -1,6 +1,6 @@
 # 3.0.0
 
-- GTMAppAuth has been translated to Swift. ([#190](https://github.com/google/GTMAppAuth/pull/190))
+- GTMAppAuth has been translated from Objective-C to Swift. ([#190](https://github.com/google/GTMAppAuth/pull/190))
 - Improved API surface. ([#203](https://github.com/google/GTMAppAuth/pull/203))
   - Renamed `GTMAppAuthFetcherAuthorization` to `GTMAuthSession`.
   - Added `GTMAuthSessionStore` protocol.
