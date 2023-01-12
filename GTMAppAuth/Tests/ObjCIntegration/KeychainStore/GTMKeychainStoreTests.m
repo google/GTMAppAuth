@@ -146,7 +146,7 @@
   [self.keychainStore saveAuthSession:self.authSession error:&error];
   XCTAssertNil(error);
 
-  GTMAuthSession *authSession = [self.keychainStore retrieveAuthSessionAndReturnError:&error];
+  GTMAuthSession *authSession = [self.keychainStore retrieveAuthSessionWithError:&error];
   XCTAssertNil(error);
 
   XCTAssertNotNil(authSession);
@@ -176,7 +176,7 @@
   XCTAssertNil(error);
 
   GTMAuthSession *retrievedAuthSession =
-      [self.keychainStore retrieveAuthSessionAndReturnError:&error];
+      [self.keychainStore retrieveAuthSessionWithError:&error];
   XCTAssertNotNil(retrievedAuthSession);
   XCTAssertNotNil(retrievedAuthSession);
   XCTAssertEqual(retrievedAuthSession.authState.isAuthorized,
@@ -192,7 +192,7 @@
   [self.keychainStore saveAuthSession:self.authSession error:&error];
   XCTAssertNil(error);
 
-  [self.keychainStore removeAuthSessionAndReturnError:&error];
+  [self.keychainStore removeAuthSessionWithError:&error];
   XCTAssertNil(error);
 }
 
@@ -269,7 +269,7 @@
   [self.keychainStore saveWithGTMOAuth2FormatForAuthSession:self.authSession error:&error];
   XCTAssertNil(error);
 
-  [self.keychainStore removeAuthSessionAndReturnError:&error];
+  [self.keychainStore removeAuthSessionWithError:&error];
   XCTAssertNil(error);
 }
 
