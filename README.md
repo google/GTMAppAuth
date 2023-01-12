@@ -118,7 +118,7 @@ self.appDelegate.currentAuthorizationFlow =
         callback:^(OIDAuthState *_Nullable authState,
                    NSError *_Nullable error) {
   if (authState) {
-    // Creates a GTMAuthState from the OIDAuthState.
+    // Creates a GTMAuthSession from the OIDAuthState.
     self.authSession = [[GTMAuthSession alloc] initWithAuthState:authState];
     NSLog(@"Got authorization tokens. Access token: %@",
           authState.lastTokenResponse.accessToken);
