@@ -282,27 +282,26 @@ to use the data protection Keychain will need to be signed in order for Keychain
 
 #### GTMOAuth2 Compatibility
 
-To assist the migration from GTMOAuth2 to GTMAppAuth, GTMOAuth2-compatible
-Keychain methods are provided in `GTMOAuth2KeychainCompatibility`.
+To assist the migration from GTMOAuth2 to GTMAppAuth, GTMOAuth2-compatible Keychain methods are provided in `GTMKeychainStore`.
 
 ```objc
-// Restore from Keychain
-GTMAppAuthFetcherAuthorization *auth =
-    [GTMOAuth2KeychainCompatibility authForGoogleFromKeychainForName:kKeychainItemName
-                                                            clientID:clientID
-                                                        clientSecret:clientSecret];
+GTMKeychainStore keychainStore = [[GTMKeychainStore alloc] initWithItemName:kKeychainItemName];
 
-// Remove from Keychain
-[GTMOAuth2KeychainCompatibility removeAuthFromKeychainForName:kKeychainItemName];
+// Retrieve from the Keychain
+GTMAuthSession *authSession =
+    [keychainStore retrieveAuthSessionForGoogleInGTMOAuth2FormatWithClientID:clientID
+                                                                clientSecret:clientSecret];
+
+// Remove from the Keychain
+[keychainStore removeAuthSession];
 ```
 
 You can also save to GTMOAuth2 format, though this is discouraged (you
 should save in GTMAppAuth format as described above).
 
 ```objc
-// Save to Keychain
-[GTMOAuth2KeychainCompatibility saveAuthToKeychainForName:kKeychainItemName
-                                           authentication:authorization];
+// Save to the Keychain
+[keychainStore saveWithGTMOAuth2FormatForAuthSession:authSession];
 ```
 
 ## Included Samples
