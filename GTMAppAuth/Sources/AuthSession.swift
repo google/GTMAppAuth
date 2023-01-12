@@ -29,7 +29,7 @@ import GTMSessionFetcher
 ///
 /// Enables you to use AppAuth with the GTM Session Fetcher library.
 @objc(GTMAuthSession)
-open class AuthSession: NSObject, GTMFetcherAuthorizationProtocol, NSSecureCoding {
+open class AuthSession: NSObject, GTMSessionFetcherAuthorizer, NSSecureCoding {
   /// The legacy name for this type used while archiving and unarchiving an instance.
   static let legacyArchiveName = "GTMAppAuthFetcherAuthorization"
 
@@ -171,7 +171,7 @@ open class AuthSession: NSObject, GTMFetcherAuthorizationProtocol, NSSecureCodin
     )
   }
 
-  // MARK: - Authorizing Requests (GTMFetcherAuthorizationProtocol)
+  // MARK: - Authorizing Requests (GTMSessionFetcherAuthorizer)
 
   /// Adds an authorization header to the given request, using the authorization state. Refreshes
   /// the access token if needed.
@@ -181,9 +181,9 @@ open class AuthSession: NSObject, GTMFetcherAuthorizationProtocol, NSSecureCodin
   ///   - handler: The block that is called after authorizing the request is attempted.  If `error`
   ///     is non-nil, the authorization failed.  Errors in the domain `OIDOAuthTokenErrorDomain`
   ///     indicate that the authorization itself is invalid, and will need to be re-obtained from
-  ///     the user.  `KeychainStore.Error` and `AuthSession.Error` indicate other unrecoverable
-  ///     errors.  Errors in other domains may indicate a transitive error condition such as a
-  ///     network error, and typically you do not need to reauthenticate the user on such errors.
+  ///     the user.  `AuthSession.Error`s indicate other unrecoverable errors. Errors in other
+  ///     domains may indicate a transitive error condition such as a network error, and typically
+  ///     you do not need to reauthenticate the user on such errors.
   ///
   /// The completion handler is scheduled on the main thread, unless the `callbackQueue` property is
   /// set on the `fetcherService` in which case the handler is scheduled on that queue.
@@ -206,7 +206,7 @@ open class AuthSession: NSObject, GTMFetcherAuthorizationProtocol, NSSecureCodin
   /// - Parameters:
   ///   - request: The request to authorize.
   ///   - delegate: The delegate to receive the callback.
-  ///   - sel: The `Selector` to call upon the provided `delegate`.
+  ///   - selector: The `Selector` to call upon the provided `delegate`.
   @objc(authorizeRequest:delegate:didFinishSelector:)
   public func authorizeRequest(
     _ request: NSMutableURLRequest?,
@@ -450,20 +450,19 @@ public extension AuthSession {
 
   // MARK: - Errors
 
-  /// Errors that may arise while authorizing a request or saving a request to the keychain.
+  /// Errors that may arise while authorizing a request.
   enum Error: Swift.Error, Equatable, CustomNSError {
     case cannotAuthorizeRequest(URLRequest)
     case accessTokenEmptyForRequest(URLRequest)
-    case failedToConvertKeychainDataToAuthSession(forItemName: String)
+
     public static let errorDomain: String = "GTMAuthSessionErrorDomain"
+
     public var errorUserInfo: [String : Any] {
       switch self {
       case .cannotAuthorizeRequest(let request):
         return ["request": request]
       case .accessTokenEmptyForRequest(let request):
         return ["request": request]
-      case .failedToConvertKeychainDataToAuthSession(forItemName: let name):
-        return ["itemName": name]
       }
     }
   }

@@ -53,15 +53,15 @@ import AppAuth
     expires: NSNumber?,
     tokenRequest: OIDTokenRequest?
   ) -> Self {
-    let parameters = [
-      "access_token": accessToken ?? TestingConstants.testAccessToken,
-      "expires_in": expires ?? TestingConstants.accessTokenExpiresIn as NSNumber,
-      "token_type": "example_token_type",
-      "refresh_token": TestingConstants.testRefreshToken,
-      "scope": OIDScopeUtilities.scopes(with: [TestingConstants.testScope2]),
-      "server_code": TestingConstants.serverAuthCode,
-      "id_token": idToken
-    ] as! [String : NSCopying & NSObjectProtocol]
+    let parameters: [String: NSObject & NSCopying] = [
+      "access_token": (accessToken ?? TestingConstants.testAccessToken) as NSString,
+      "expires_in": (expires ?? NSNumber(value: TestingConstants.accessTokenExpiresIn)),
+      "token_type": "example_token_type" as NSString,
+      "refresh_token": TestingConstants.testRefreshToken as NSString,
+      "scope": OIDScopeUtilities.scopes(with: [TestingConstants.testScope2]) as NSString,
+      "server_code": TestingConstants.serverAuthCode as NSString,
+      "id_token": idToken as NSString
+    ]
 
     return OIDTokenResponse(
       request: tokenRequest ?? OIDTokenRequest.testInstance(),
