@@ -207,8 +207,7 @@ extension KeychainStore: AuthSessionStore {
     clientSecret: String?
   ) throws -> AuthSession {
     let password = try keychainHelper.password(forService: itemName)
-    let compatibility = GTMOAuth2Compatibility()
-    let authSession = try compatibility.authSession(
+    let authSession = try GTMOAuth2Compatibility.authSession(
       forPersistenceString: password,
       tokenURL: tokenURL,
       redirectURI: redirectURI,
