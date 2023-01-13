@@ -240,13 +240,13 @@ if (error) {
 }
 
 // Retrieve from Keychain
-self.authSession = [keychainStore retrieveAuthSessionAndReturnError:&error];
+self.authSession = [keychainStore retrieveAuthSessionWithError:&error];
 if (error) {
   // Handle error
 }
 
 // Remove from Keychain
-[keychainStore removeAuthSessionAndReturnError:&error];
+[keychainStore removeAuthSessionWithError:&error];
 if (error) {
   // Handle error
 }
@@ -295,7 +295,7 @@ GTMAuthSession *authSession =
                                                                 error:&error];
 
 // Remove from the Keychain
-[keychainStore removeAuthSessionAndReturnError:&error];
+[keychainStore removeAuthSessionWithError:&error];
 ```
 
 You can also save to GTMOAuth2 format, though this is discouraged (you
@@ -412,7 +412,7 @@ GTMKeychainStore keychainStore = [[GTMKeychainStore alloc] initWithItemName:kNew
 // Attempt to deserialize from Keychain in GTMAppAuth format.
 NSError *error;
 GTMAuthSesion *authSession =
-    [keychainStore retrieveAuthSessionAndReturnError:&error];
+    [keychainStore retrieveAuthSessionWithError:&error];
 
 // If no data found in the new format, try to deserialize data from GTMOAuth2
 if (!authSession) {
@@ -425,7 +425,7 @@ if (!authSession) {
                                                             error:&error];
   if (authSession) {
     // Remove previously stored GTMOAuth2-formatted data.
-    [oldKeychainStore removeAuthSessionAndReturnError:&error];
+    [oldKeychainStore removeAuthSessionWithError:&error];
     // Serialize to Keychain in GTMAppAuth format.
     [keychainStore saveAuthSession:authSession error:&error];
   }
