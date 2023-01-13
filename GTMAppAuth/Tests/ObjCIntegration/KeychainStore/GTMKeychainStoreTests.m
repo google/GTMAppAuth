@@ -91,7 +91,7 @@
 
   NSError *error;
   [self.keychainStore saveAuthSession:self.authSession
-                          forItemName:newItemName
+                         withItemName:newItemName
                                 error:&error];
   XCTAssertNil(error);
 
@@ -112,7 +112,7 @@
   NSError *error;
 
   [self.keychainStore saveAuthSession:self.authSession
-                          forItemName:customItemName
+                         withItemName:customItemName
                                 error:&error];
   XCTAssertNil(error);
 
@@ -134,7 +134,7 @@
 - (void)testSaveAuthSessionErrorNoServiceName {
   NSError *error;
   [self.keychainStore saveAuthSession:self.authSession
-                          forItemName:@""
+                         withItemName:@""
                                 error:&error];
   XCTAssertNotNil(error);
   XCTAssertEqualObjects(error.domain, @"GTMAppAuthKeychainErrorDomain");
@@ -172,7 +172,7 @@
   NSError *error;
   NSString *customItemName = @"customItemName";
   self.keychainStore.itemName = customItemName;
-  [self.keychainStore saveAuthSession:self.authSession forItemName:customItemName error:&error];
+  [self.keychainStore saveAuthSession:self.authSession withItemName:customItemName error:&error];
   XCTAssertNil(error);
 
   GTMAuthSession *retrievedAuthSession =

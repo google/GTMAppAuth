@@ -109,7 +109,7 @@ extension KeychainStore: AuthSessionStore {
     )
   }
 
-  @objc(saveAuthSession:forItemName:error:)
+  @objc(saveAuthSession:withItemName:error:)
   public func save(authSession: AuthSession, withItemName itemName: String) throws {
     let authSessionData = try authSessionData(fromAuthSession: authSession)
     try keychainHelper.setPassword(
