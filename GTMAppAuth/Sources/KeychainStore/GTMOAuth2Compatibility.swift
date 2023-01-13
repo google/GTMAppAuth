@@ -51,7 +51,8 @@ let oobString = "urn:ietf:wg:oauth:2.0:oob"
 @objc(GTMOAuth2Compatibility)
 public final class GTMOAuth2Compatibility: NSObject {
 
-  private override init() {
+  @available(*, unavailable)
+  override init() {
     super.init()
   }
 
