@@ -16,12 +16,19 @@
 
 import Foundation
 
+/// The Keychain attribute used to configure the way the keychain stores your items.
 @objc(GTMKeychainAttribute)
 public final class KeychainAttribute: NSObject {
+  /// An enumeratiion listing the various attributes used to configure the Keychain.
   public enum Attribute {
+    /// Indicates whether to treat macOS keychain items like iOS keychain items.
+    ///
+    /// This attribute will set `kSecUseDataProtectionKeychain` as true in the Keychain query.
     case useDataProtectionKeychain
+    /// The `String` name for the access group to use in the Keychain query.
     case accessGroup(String)
 
+    /// A `String` representation of the attribute.
     public var keyName: String {
       switch self {
       case .useDataProtectionKeychain:
@@ -32,17 +39,29 @@ public final class KeychainAttribute: NSObject {
     }
   }
 
+  /// The set `Attribute` given upon initialization.
   public let attribute: Attribute
 
+  /// Creates an instance of `KeychainAttribute`.
+  /// - Parameters:
+  ///   - attribute: An instance of `KeychainAttribute.Attribute` used to configure Keychain
+  ///       queries.
   public init(attribute: Attribute) {
     self.attribute = attribute
   }
 
+  /// Creates an instance of `KeychainAttribute` whose attribute is set to
+  /// `.useDataProtectionKeychain`.
+  /// - Returns: An instance of `KeychainAttribute`.
   @available(macOS 10.15, *)
   @objc public static let useDataProtectionKeychain = KeychainAttribute(
     attribute: .useDataProtectionKeychain
   )
 
+  /// Creates an instance of `KeychainAttribute` whose attribute is set to `.accessGroup`.
+  /// - Parameters:
+  ///   - name: The `String` name for the access group.
+  /// - Returns: An instance of `KeychainAttribute`.
   @objc public static func keychainAccessGroup(name: String) -> KeychainAttribute {
     return KeychainAttribute(attribute: .accessGroup(name))
   }
