@@ -207,8 +207,7 @@ extension KeychainStore: AuthSessionStore {
     clientSecret: String?
   ) throws -> AuthSession {
     let password = try keychainHelper.password(forService: itemName)
-    let compatibility = GTMOAuth2Compatibility()
-    let authSession = try compatibility.authSession(
+    let authSession = try GTMOAuth2Compatibility.authSession(
       forPersistenceString: password,
       tokenURL: tokenURL,
       redirectURI: redirectURI,
@@ -311,47 +310,51 @@ public extension KeychainStore {
       return ErrorCode(keychainStoreError: self).rawValue
     }
   }
-}
 
-/// Error codes associated with cases from `KeychainStore.Error`.
-@objc(GTMKeychainStoreErrorCode)
-public enum ErrorCode: Int {
-  case unhandled
-  case passwordNotFound
-  case noService
-  case unexpectedPasswordData
-  case failedToCreateResponseStringFromAuthSession
-  case failedToConvertRedirectURItoURL
-  case failedToConvertAuthSessionToData
-  case failedToConvertKeychainDataToAuthSession
-  case failedToDeletePassword
-  case failedToDeletePasswordBecauseItemNotFound
-  case failedToSetPassword
+  /// Error codes associated with cases from `KeychainStore.Error`.
+  ///
+  /// The cases for this enumeration are backed by integer raw values and are used to fill out the
+  /// `errorCode` for the `NSError` representation of `KeychainStore.Error`.
+  @objc(GTMKeychainStoreErrorCode)
+  enum ErrorCode: Int {
+    case unhandled
+    case passwordNotFound
+    case noService
+    case unexpectedPasswordData
+    case failedToCreateResponseStringFromAuthSession
+    case failedToConvertRedirectURItoURL
+    case failedToConvertAuthSessionToData
+    case failedToConvertKeychainDataToAuthSession
+    case failedToDeletePassword
+    case failedToDeletePasswordBecauseItemNotFound
+    case failedToSetPassword
 
-  init(keychainStoreError: KeychainStore.Error) {
-    switch keychainStoreError {
-    case .unhandled:
-      self = .unhandled
-    case .passwordNotFound:
-      self = .passwordNotFound
-    case .noService:
-      self = .noService
-    case .unexpectedPasswordData:
-      self = .unexpectedPasswordData
-    case .failedToCreateResponseStringFromAuthSession:
-      self = .failedToCreateResponseStringFromAuthSession
-    case .failedToConvertRedirectURItoURL:
-      self = .failedToConvertRedirectURItoURL
-    case .failedToConvertAuthSessionToData:
-      self = .failedToConvertAuthSessionToData
-    case .failedToConvertKeychainDataToAuthSession:
-      self = .failedToConvertKeychainDataToAuthSession
-    case .failedToDeletePassword:
-      self = .failedToDeletePassword
-    case .failedToDeletePasswordBecauseItemNotFound:
-      self = .failedToDeletePasswordBecauseItemNotFound
-    case .failedToSetPassword:
-      self = .failedToSetPassword
+    init(keychainStoreError: KeychainStore.Error) {
+      switch keychainStoreError {
+      case .unhandled:
+        self = .unhandled
+      case .passwordNotFound:
+        self = .passwordNotFound
+      case .noService:
+        self = .noService
+      case .unexpectedPasswordData:
+        self = .unexpectedPasswordData
+      case .failedToCreateResponseStringFromAuthSession:
+        self = .failedToCreateResponseStringFromAuthSession
+      case .failedToConvertRedirectURItoURL:
+        self = .failedToConvertRedirectURItoURL
+      case .failedToConvertAuthSessionToData:
+        self = .failedToConvertAuthSessionToData
+      case .failedToConvertKeychainDataToAuthSession:
+        self = .failedToConvertKeychainDataToAuthSession
+      case .failedToDeletePassword:
+        self = .failedToDeletePassword
+      case .failedToDeletePasswordBecauseItemNotFound:
+        self = .failedToDeletePasswordBecauseItemNotFound
+      case .failedToSetPassword:
+        self = .failedToSetPassword
+      }
     }
   }
 }
+

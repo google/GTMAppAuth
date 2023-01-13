@@ -50,6 +50,12 @@ let oobString = "urn:ietf:wg:oauth:2.0:oob"
 /// `GTMOAuth2WindowController` in GTMOAuth2.
 @objc(GTMOAuth2Compatibility)
 public final class GTMOAuth2Compatibility: NSObject {
+
+  @available(*, unavailable)
+  override init() {
+    super.init()
+  }
+
   // MARK: - GTMOAuth2 Utilities
 
   /// Encodes the given `AuthSession` in a GTMOAuth2 compatible persistence string using URL param
@@ -139,7 +145,7 @@ public final class GTMOAuth2Compatibility: NSObject {
   /// - Throws: `KeychainStore.Error.failedToConvertRedirectURItoURL` if `redirectURI` cannot be
   ///   converted to a `URL`.
   /// - Returns: An instance of `AuthSession` if successful.
-  @objc public func authSession(
+  @objc static public func authSession(
     forPersistenceString persistenceString: String,
     tokenURL: URL,
     redirectURI: String,
