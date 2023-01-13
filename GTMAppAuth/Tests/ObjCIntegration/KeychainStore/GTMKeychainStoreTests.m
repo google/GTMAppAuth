@@ -97,7 +97,7 @@
 
   XCTAssertEqualObjects(newItemName, self.keychainStore.itemName);
   GTMAuthSession *authSession =
-      [self.keychainStore retrieveAuthSessionForItemName:self.keychainStore.itemName error:&error];
+      [self.keychainStore retrieveAuthSessionWithItemName:self.keychainStore.itemName error:&error];
   XCTAssertNotNil(authSession);
 
   XCTAssertEqual(authSession.authState.isAuthorized, self.authSession.authState.isAuthorized);
@@ -117,7 +117,7 @@
   XCTAssertNil(error);
 
   GTMAuthSession *retrievedAuth =
-  [self.keychainStore retrieveAuthSessionForItemName:customItemName error:&error];
+  [self.keychainStore retrieveAuthSessionWithItemName:customItemName error:&error];
   XCTAssertNotNil(retrievedAuth);
   XCTAssertNil(error);
 
@@ -161,7 +161,7 @@
   NSError *error;
   NSString *missingItemName = @"missingItemName";
   GTMAuthSession *missingAuthSession =
-      [self.keychainStore retrieveAuthSessionForItemName:missingItemName error:&error];
+      [self.keychainStore retrieveAuthSessionWithItemName:missingItemName error:&error];
 
   XCTAssertNil(missingAuthSession);
   XCTAssertNotNil(error);
