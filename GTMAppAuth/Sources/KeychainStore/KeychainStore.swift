@@ -109,8 +109,8 @@ extension KeychainStore: AuthSessionStore {
     )
   }
 
-  @objc(saveAuthSession:forItemName:error:)
-  public func save(authSession: AuthSession, forItemName itemName: String) throws {
+  @objc(saveAuthSession:withItemName:error:)
+  public func save(authSession: AuthSession, withItemName itemName: String) throws {
     let authSessionData = try authSessionData(fromAuthSession: authSession)
     try keychainHelper.setPassword(
       data: authSessionData,
@@ -165,7 +165,7 @@ extension KeychainStore: AuthSessionStore {
     return keyedUnarchiver
   }
 
-  @objc public func retrieveAuthSession(forItemName itemName: String) throws -> AuthSession {
+  @objc public func retrieveAuthSession(withItemName itemName: String) throws -> AuthSession {
     let passwordData = try keychainHelper.passwordData(forService: itemName)
 
     let keyedUnarchiver = try keyedUnarchiver(forData: passwordData)

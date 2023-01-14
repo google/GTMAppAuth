@@ -301,7 +301,7 @@ class AuthSessionTests: XCTestCase {
   }
 
   func testSaveAuthSessionForItemName() throws {
-    try keychainStore.save(authSession: authSession, forItemName: alternativeTestKeychainItemName)
+    try keychainStore.save(authSession: authSession, withItemName: alternativeTestKeychainItemName)
   }
 
   func testSaveAuthSessionThrows() {
@@ -310,7 +310,7 @@ class AuthSessionTests: XCTestCase {
 
     XCTAssertThrowsError(try keychainStore.save(
       authSession: authSession,
-      forItemName: emptyItemName
+      withItemName: emptyItemName
     )) { error in
       XCTAssertEqual(error as? KeychainStore.Error, expectedError)
     }
@@ -349,9 +349,9 @@ class AuthSessionTests: XCTestCase {
   }
 
   func testRetrieveAuthSessionForItemName() throws {
-    try keychainStore.save(authSession: authSession, forItemName: alternativeTestKeychainItemName)
+    try keychainStore.save(authSession: authSession, withItemName: alternativeTestKeychainItemName)
     let retrievedAuthSession = try keychainStore.retrieveAuthSession(
-      forItemName: alternativeTestKeychainItemName
+      withItemName: alternativeTestKeychainItemName
     )
     XCTAssertEqual(retrievedAuthSession.authState.isAuthorized, authSession.authState.isAuthorized)
     XCTAssertEqual(retrievedAuthSession.serviceProvider, authSession.serviceProvider)
@@ -364,7 +364,7 @@ class AuthSessionTests: XCTestCase {
   func testRetrieveAuthSessionForMissingNameThrowsError() {
     let missingItemName = "missingItemName"
     do {
-      _ = try keychainStore.retrieveAuthSession(forItemName: missingItemName)
+      _ = try keychainStore.retrieveAuthSession(withItemName: missingItemName)
     } catch {
       guard case
         .passwordNotFound(forItemName: let itemName) = error as? KeychainStore.Error else {
