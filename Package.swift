@@ -39,8 +39,8 @@ let package = Package(
     .target(
       name: "GTMAppAuth",
       dependencies: [
-        "GTMSessionFetcherCore",
-        "AppAuthCore"
+        .product(name: "GTMSessionFetcherCore", package: "gtm-session-fetcher"),
+        .product(name: "AppAuthCore", package: "AppAuth-iOS")
       ],
       path: "GTMAppAuth/Sources",
       linkerSettings: [
@@ -50,7 +50,7 @@ let package = Package(
     .target(
       name: "TestHelpers",
       dependencies: [
-        "AppAuthCore",
+        .product(name: "AppAuthCore", package: "AppAuth-iOS"),
         "GTMAppAuth"
       ],
       path: "GTMAppAuth/Tests/Helpers"
@@ -66,7 +66,7 @@ let package = Package(
     .testTarget(
       name: "swift-objc-interop-tests",
       dependencies: [
-        "AppAuthCore",
+        .product(name: "AppAuthCore", package: "AppAuth-iOS"),
         "GTMAppAuth",
         "TestHelpers"
       ],
