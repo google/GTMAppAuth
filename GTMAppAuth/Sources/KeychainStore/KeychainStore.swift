@@ -107,6 +107,13 @@ public final class KeychainStore: NSObject, AuthSessionStore {
     )
   }
 
+  /// Saves the provided `AuthSession`.
+  ///
+  /// - Parameters:
+  ///   - authSession: An instance of `AuthSession` to save.
+  ///   - itemName: A `String` name to use for the save that is different than the name given during
+  ///     initialization.
+  /// - Throws: Any error that may arise during the save.
   @objc(saveAuthSession:withItemName:error:)
   public func save(authSession: AuthSession, withItemName itemName: String) throws {
     let authSessionData = try authSessionData(fromAuthSession: authSession)
@@ -138,6 +145,12 @@ public final class KeychainStore: NSObject, AuthSessionStore {
     return keyedArchiver.encodedData
   }
 
+  /// Removes the stored `AuthSession`.
+  ///
+  /// - Parameters:
+  ///   - itemName: A `String` name to use for the removal different than what was given during
+  ///     initialization.
+  /// - Throws: Any error that may arise during the removal.
   @objc public func removeAuthSession(withItemName itemName: String) throws {
     try keychainHelper.removePassword(forService: itemName)
   }
@@ -163,6 +176,12 @@ public final class KeychainStore: NSObject, AuthSessionStore {
     return keyedUnarchiver
   }
 
+  /// Retrieves the stored `AuthSession`.
+  ///
+  /// - Parameters:
+  ///   - itemName: A `String` name for the item to retrieve different than what was given during
+  ///     initialization.
+  /// - Throws: Any error that may arise during the retrieval.
   @objc public func retrieveAuthSession(withItemName itemName: String) throws -> AuthSession {
     let passwordData = try keychainHelper.passwordData(forService: itemName)
 
