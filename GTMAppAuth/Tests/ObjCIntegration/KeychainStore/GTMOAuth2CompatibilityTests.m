@@ -56,14 +56,13 @@
 
 - (void)testAuthStateForPersistenceString {
   NSError *error;
-  GTMOAuth2Compatibility *gtmOAuth2Compat = [[GTMOAuth2Compatibility alloc] init];
   GTMAuthSession *testPersistAuthSession =
-      [gtmOAuth2Compat authSessionForPersistenceString:[self expectedPersistenceResponseString]
-                                              tokenURL:GTMTestingConstants.testTokenURL
-                                           redirectURI:GTMTestingConstants.testRedirectURI
-                                              clientID:GTMTestingConstants.testClientID
-                                          clientSecret:GTMTestingConstants.testClientSecret
-                                                 error:&error];
+      [GTMOAuth2Compatibility authSessionForPersistenceString:[self expectedPersistenceResponseString]
+                                                     tokenURL:GTMTestingConstants.testTokenURL
+                                                  redirectURI:GTMTestingConstants.testRedirectURI
+                                                     clientID:GTMTestingConstants.testClientID
+                                                 clientSecret:GTMTestingConstants.testClientSecret
+                                                        error:&error];
   XCTAssertNil(error);
   XCTAssertEqual(testPersistAuthSession.authState.scope, self.expectedAuthSession.authState.scope);
   XCTAssertEqualObjects(testPersistAuthSession.authState.lastTokenResponse.accessToken,
@@ -83,15 +82,13 @@
 
 - (void)testAuthSessionForPersistenceStringThrows {
   NSError *error;
-  GTMOAuth2Compatibility *gtmOAuth2Compat = [[GTMOAuth2Compatibility alloc] init];
-
   GTMAuthSession *testPersistAuthSession __unused =
-      [gtmOAuth2Compat authSessionForPersistenceString:[self expectedPersistenceResponseString]
-                                              tokenURL:GTMTestingConstants.testTokenURL
-                                           redirectURI:@""
-                                              clientID:GTMTestingConstants.testClientID
-                                          clientSecret:GTMTestingConstants.testClientSecret
-                                                 error:&error];
+      [GTMOAuth2Compatibility authSessionForPersistenceString:[self expectedPersistenceResponseString]
+                                                     tokenURL:GTMTestingConstants.testTokenURL
+                                                  redirectURI:@""
+                                                     clientID:GTMTestingConstants.testClientID
+                                                 clientSecret:GTMTestingConstants.testClientSecret
+                                                        error:&error];
   XCTAssertNotNil(error);
   XCTAssertEqual(error.code, GTMKeychainStoreErrorCodeFailedToConvertRedirectURItoURL);
 }

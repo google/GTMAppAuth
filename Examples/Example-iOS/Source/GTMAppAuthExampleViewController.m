@@ -115,7 +115,7 @@ static NSString *const kKeychainStoreItemName = @"authorization";
   if (_authSession.canAuthorize) {
     [self.keychainStore saveAuthSession:_authSession error:&error];
   } else {
-    [self.keychainStore removeAuthSessionAndReturnError:&error];
+    [self.keychainStore removeAuthSessionWithError:&error];
   }
   if (error) {
     NSLog(@"Error saving state: %@ error", error);
@@ -127,7 +127,7 @@ static NSString *const kKeychainStoreItemName = @"authorization";
 - (void)loadState {
   NSError *error;
   GTMAuthSession *authSession =
-      [self.keychainStore retrieveAuthSessionAndReturnError:&error];
+      [self.keychainStore retrieveAuthSessionWithError:&error];
   if (error) {
     NSLog(@"Error loading state: %@", error);
   }
