@@ -29,10 +29,12 @@ public protocol AuthSessionStore {
   /// Removes the stored `AuthSession`.
   ///
   /// - Throws: Any error that may arise during the removal.
-  @objc func removeAuthSession() throws
+  @objc(removeAuthSessionWithError:)
+  func removeAuthSession() throws
 
   /// Retrieves the stored `AuthSession`.
   ///
   /// - Throws: Any error that may arise during the retrieval.
-  @objc func retrieveAuthSession() throws -> AuthSession
+  @objc(retrieveAuthSessionWithError:)
+  func retrieveAuthSession() throws -> AuthSession
 }

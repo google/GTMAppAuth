@@ -398,8 +398,8 @@ class KeychainStoreTests: XCTestCase {
 
   func testRetrieveAuthSessionForItemName() throws {
     let anotherItemName = "anotherItemName"
-    try keychainStore.save(authSession: authSession, forItemName: anotherItemName)
-    let expectedAuthSession = try keychainStore.retrieveAuthSession(forItemName: anotherItemName)
+    try keychainStore.save(authSession: authSession, withItemName: anotherItemName)
+    let expectedAuthSession = try keychainStore.retrieveAuthSession(withItemName: anotherItemName)
 
     XCTAssertEqual(
       expectedAuthSession.authState.isAuthorized,
@@ -414,15 +414,15 @@ class KeychainStoreTests: XCTestCase {
   func testRetrievePasswordNoService() throws {
     try keychainStore.save(authSession: authSession)
 
-    XCTAssertThrowsError(try keychainStore.retrieveAuthSession(forItemName: "")) { thrownError in
+    XCTAssertThrowsError(try keychainStore.retrieveAuthSession(withItemName: "")) { thrownError in
       XCTAssertEqual(thrownError as? KeychainStore.Error, .noService)
     }
   }
 
   func testSaveAuthSessionForItemName() throws {
     let anotherItemName = "anotherItemName"
-    try keychainStore.save(authSession: authSession, forItemName: anotherItemName)
-    let expectedAuthSession = try keychainStore.retrieveAuthSession(forItemName: anotherItemName)
+    try keychainStore.save(authSession: authSession, withItemName: anotherItemName)
+    let expectedAuthSession = try keychainStore.retrieveAuthSession(withItemName: anotherItemName)
     XCTAssertEqual(
       expectedAuthSession.authState.isAuthorized,
       authSession.authState.isAuthorized
@@ -435,7 +435,7 @@ class KeychainStoreTests: XCTestCase {
 
   func testSavePasswordNoService() {
     XCTAssertThrowsError(
-      try keychainStore.save(authSession: authSession, forItemName: "")
+      try keychainStore.save(authSession: authSession, withItemName: "")
     ) { thrownError in
       XCTAssertEqual(thrownError as? KeychainStore.Error, .noService)
     }
@@ -460,7 +460,7 @@ class KeychainStoreTests: XCTestCase {
 
   func testPasswordNotFoundError() {
     XCTAssertThrowsError(
-      try keychainStore.retrieveAuthSession(forItemName: TestingConstants.testKeychainItemName)
+      try keychainStore.retrieveAuthSession(withItemName: TestingConstants.testKeychainItemName)
     ) { thrownError in
       XCTAssertEqual(
         thrownError as? KeychainStore.Error,
