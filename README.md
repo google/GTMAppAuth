@@ -227,7 +227,9 @@ GTMSessionFetcher *fetcher = [fetcherService fetcherWithURL:userinfoEndpoint];
 You can easily save `GTMAuthSession` instances to the Keychain using the `GTMKeychainStore` class.
 
 ```objc
-// Create a GIDKeychainStore instance
+// Create a GIDKeychainStore instance, intializing it with the Keychain item name 
+// `kGTMAppAuthExampleAuthorizerKey` which will be used when saving, retrieving, and
+// removing `GTMAuthSession` instances.
 GIDKeychainStore *keychainStore =
     [[GIDKeychainStore alloc] initWithItemName:kGTMAppAuthExampleAuthorizerKey];
     
@@ -280,6 +282,12 @@ in the `keychainAttributes` parameter of `initWithItemName:keychainAttributes:` 
 Note that Keychain items stored via one storage type will not be available via the other and macOS apps that choose
 to use the data protection Keychain will need to be signed in order for Keychain operations to succeed.
 
+### Implementing Your Own Storage
+
+If you'd like to use a backing store other than the Keychain to save your `GTMAuthSession`
+instances, you can create your own `GTMAuthSessionStore` conformance.  Use `GTMKeychainStore` as an
+example of how to do this.
+
 #### GTMOAuth2 Compatibility
 
 To assist the migration from GTMOAuth2 to GTMAppAuth, GTMOAuth2-compatible Keychain methods are provided in `GTMKeychainStore`.
@@ -292,7 +300,7 @@ NSError *error;
 GTMAuthSession *authSession =
     [keychainStore retrieveAuthSessionForGoogleInGTMOAuth2FormatWithClientID:clientID
                                                                 clientSecret:clientSecret
-                                                                error:&error];
+                                                                       error:&error];
 
 // Remove from the Keychain
 [keychainStore removeAuthSessionWithError:&error];
@@ -422,7 +430,7 @@ if (!authSession) {
   authSession =
       [oldKeychainStore retrieveAuthSessionInGTMOAuth2FormatWithClientID:kPreviousClientID
                                                             clientSecret:kPreviousClientSecret
-                                                            error:&error];
+                                                                   error:&error];
   if (authSession) {
     // Remove previously stored GTMOAuth2-formatted data.
     [oldKeychainStore removeAuthSessionWithError:&error];
