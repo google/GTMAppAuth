@@ -107,7 +107,7 @@ public final class KeychainStore: NSObject, AuthSessionStore {
     )
   }
 
-  /// Saves the provided `AuthSession`.
+  /// Saves the provided `AuthSession` using the provided item name.
   ///
   /// - Parameters:
   ///   - authSession: An instance of `AuthSession` to save.
@@ -145,7 +145,7 @@ public final class KeychainStore: NSObject, AuthSessionStore {
     return keyedArchiver.encodedData
   }
 
-  /// Removes the stored `AuthSession`.
+  /// Removes the stored `AuthSession` matching the provided item name.
   ///
   /// - Parameters:
   ///   - itemName: A `String` name to use for the removal different than what was given during
@@ -176,7 +176,7 @@ public final class KeychainStore: NSObject, AuthSessionStore {
     return keyedUnarchiver
   }
 
-  /// Retrieves the stored `AuthSession`.
+  /// Retrieves the stored `AuthSession` matching the provided item name.
   ///
   /// - Parameters:
   ///   - itemName: A `String` name for the item to retrieve different than what was given during
