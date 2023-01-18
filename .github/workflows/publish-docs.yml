@@ -1,6 +1,9 @@
 name: Publish API Documentation
 
 on:
+  push:
+    branches:
+      - petea-docs
   workflow_dispatch:
 
 concurrency:
