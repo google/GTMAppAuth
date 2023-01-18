@@ -47,6 +47,47 @@ import AppAuth
     ) as! Self
   }
 
+  public static func testInstanceWithoutAccessToken(
+    idToken: String,
+    expires: NSNumber?,
+    tokenRequest: OIDTokenRequest?
+  ) -> Self {
+    let parameters: [String: NSObject & NSCopying] = [
+      "expires_in": (expires ?? NSNumber(value: TestingConstants.accessTokenExpiresIn)),
+      "token_type": "example_token_type" as NSString,
+      "refresh_token": TestingConstants.testRefreshToken as NSString,
+      "scope": OIDScopeUtilities.scopes(with: [TestingConstants.testScope2]) as NSString,
+      "server_code": TestingConstants.serverAuthCode as NSString,
+      "id_token": idToken as NSString
+    ]
+
+    return OIDTokenResponse(
+      request: tokenRequest ?? OIDTokenRequest.testInstance(),
+      parameters: parameters
+    ) as! Self
+  }
+
+  public static func testInstanceWithEmptyAccessToken(
+    idToken: String,
+    expires: NSNumber?,
+    tokenRequest: OIDTokenRequest?
+  ) -> Self {
+    let parameters: [String: NSObject & NSCopying] = [
+      "access_token": "" as NSString,
+      "expires_in": (expires ?? NSNumber(value: TestingConstants.accessTokenExpiresIn)),
+      "token_type": "example_token_type" as NSString,
+      "refresh_token": TestingConstants.testRefreshToken as NSString,
+      "scope": OIDScopeUtilities.scopes(with: [TestingConstants.testScope2]) as NSString,
+      "server_code": TestingConstants.serverAuthCode as NSString,
+      "id_token": idToken as NSString
+    ]
+
+    return OIDTokenResponse(
+      request: tokenRequest ?? OIDTokenRequest.testInstance(),
+      parameters: parameters
+    ) as! Self
+  }
+
   public static func testInstance(
     idToken: String,
     accessToken: String?,

@@ -465,5 +465,28 @@ public extension AuthSession {
         return ["request": request]
       }
     }
+
+    public var errorCode: Int {
+      return ErrorCode(error: self).rawValue
+    }
+  }
+
+  /// Error codes associated with cases from `AuthSession.Error`.
+  ///
+  /// The cases for this enumeration are backed by integer raw values and are used to fill out the
+  /// `errorCode` for the `NSError` representation of `AuthSession.Error`.
+  @objc(GTMAuthSessionErrorCode)
+  enum ErrorCode: Int {
+    case cannotAuthorizeRequest
+    case accessTokenEmptyForRequest
+
+    init(error: AuthSession.Error) {
+      switch error {
+      case .cannotAuthorizeRequest:
+        self = .cannotAuthorizeRequest
+      case .accessTokenEmptyForRequest:
+        self = .accessTokenEmptyForRequest
+      }
+    }
   }
 }
