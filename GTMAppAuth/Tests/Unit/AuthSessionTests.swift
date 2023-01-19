@@ -112,12 +112,28 @@ class AuthSessionTests: XCTestCase {
       authState: OIDAuthState.testInstance()
     )
 
+    // The error we expect from the
+    // `AuthSessionDelegate.authorizeRequestDidFail(forAuthSession:error:completion:)` callback
+    let expectedCustomErrorDomain = "SomeCustomDomain"
+    let expectedError = NSError(domain: expectedCustomErrorDomain, code: 4)
     let request = NSMutableURLRequest(url: insecureFakeURL)
-    let authSessionDelegate = AuthSessionDelegateProvider(originalAuthSession: authSession)
+    let authSessionDelegate = AuthSessionDelegateProvider(
+      originalAuthSession: authSession,
+      expectedError: expectedError
+    )
     authSession.delegate = authSessionDelegate
 
     authSession.authorizeRequest(request) { error in
-      XCTAssertNotNil(error)
+      guard let error = error as? NSError else {
+        return XCTFail("There should be an `NSError` authorizing \(request)")
+      }
+      XCTAssertEqual(expectedError.code, error.code)
+      // Ideally, we'd like to pass through the error domain from the delegate, but `CustomNSError`
+      // requires that its `errorDomain` be defined statically at the type level.
+      XCTAssertEqual(error.domain, GTMAppAuthExternalError.errorDomain)
+      XCTAssertEqual(
+        error.userInfo[GTMAppAuthExternalError.customErrorDomainKey] as! String, expectedCustomErrorDomain
+      )
       authorizeSecureRequestExpectation.fulfill()
     }
     XCTAssertTrue(authSession.isAuthorizingRequest(request as URLRequest))

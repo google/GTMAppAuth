@@ -77,8 +77,12 @@ public class AuthSessionDelegateProvider: NSObject, AuthSessionDelegate {
   /// - Note: Defaults to `false`.
   @objc public var authorizeRequestDidFailCalled = false
 
-  @objc public init(originalAuthSession: AuthSession) {
+  /// The expected error from the delegate callback.
+  @objc public let expectedError: NSError?
+
+  @objc public init(originalAuthSession: AuthSession, expectedError: NSError? = nil) {
     self.originalAuthSession = originalAuthSession
+    self.expectedError = expectedError
   }
 
   public func additionalRefreshParameters(
@@ -94,12 +98,14 @@ public class AuthSessionDelegateProvider: NSObject, AuthSessionDelegate {
     error: Error,
     completion: @escaping (NSError?) -> ()
   ) {
+    guard let expectedError = expectedError else {
+      return XCTFail("There should be an `expectedError` when testing \(#function)")
+    }
     guard let _ = error as? AuthSession.Error else {
       return XCTFail("Received `error` should be of type `AuthSession.Error")
     }
     XCTAssertEqual(authSession, originalAuthSession)
     authorizeRequestDidFailCalled = true
-    let newError = NSError(domain: "SomeDomain", code: 1)
-    completion(newError)
+    completion(expectedError)
   }
 }

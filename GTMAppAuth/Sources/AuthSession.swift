@@ -495,16 +495,3 @@ public extension AuthSession {
     }
   }
 }
-
-@objc public final class GTMAppAuthExternalError: NSObject, Swift.Error, CustomNSError {
-  @objc public let errorCode: Int
-  @objc public let errorUserInfo: [String : Any]
-  @objc public static let errorDomain: String = "GTMAppAuthExternalErrorDomain"
-  @objc public let domain: String
-
-  init(externalError: NSError) {
-    self.errorCode = externalError.code
-    self.errorUserInfo = externalError.userInfo
-    self.domain = externalError.domain
-  }
-}
