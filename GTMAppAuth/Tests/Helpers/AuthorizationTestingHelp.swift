@@ -25,11 +25,7 @@ import AppAuth
 import XCTest
 import GTMAppAuth
 
-/// A subclass of `AuthSession` to use in tests.
-@objc(GTMAuthorizationTestingHelper)
-public class AuthorizationTestingHelper: AuthSession {}
-
-/// The delegate object passed to `AuthorizationTestingHelper`.
+/// The delegate object passed to selector-based callback to authorize requests.
 @objc(GTMAuthorizationTestDelegate)
 public class AuthorizationTestDelegate: NSObject {
   /// The authorization passed back to this delegate.
@@ -65,5 +61,49 @@ public class AuthorizationTestDelegate: NSObject {
     passedError = error
 
     expectation.fulfill()
+  }
+}
+
+/// A testing helper given to `AuthSession`'s `delegate` to verify delegate callbacks.
+@objc(GTMAuthSessionDelegateProvider)
+public class AuthSessionDelegateProvider: NSObject, AuthSessionDelegate {
+  /// The `AuthSession` to which this delegate was given.
+  @objc public var originalAuthSession: AuthSession?
+  /// The expected error, if any, to receive from an `AuthSession` callback.
+  ///
+  /// This `Error` will be cast to an `AuthSession.Error` in the test in the below delegate method.
+  @objc public var expectedError: Swift.Error?
+  /// Whether or not the delegate callback for additional refresh parameters was called.
+  ///
+  /// - Note: Defaults to `false`.
+  @objc public var additionalRefreshParametersCalled = false
+  /// Whether or not the delegate callback for authorization request failure was called.
+  ///
+  /// - Note: Defaults to `false`.
+  @objc public var authorizeRequestDidFailCalled = false
+
+  @objc public init(originalAuthSession: AuthSession, expectedError: Error? = nil) {
+    self.originalAuthSession = originalAuthSession
+    self.expectedError = expectedError
+  }
+
+  public func additionalRefreshParameters(
+    forAuthSession authSession: AuthSession
+  ) -> [String : String]? {
+    XCTAssertEqual(authSession, originalAuthSession)
+    additionalRefreshParametersCalled = true
+    return [:]
+  }
+
+  public func authorizeRequestDidFail(forAuthSession authSession: AuthSession, error: Error) {
+    guard let expectedError = expectedError as? AuthSession.Error else {
+      return XCTFail("There should be an `expectedError` when testing \(#function)")
+    }
+    guard let receivedError = error as? AuthSession.Error else {
+      return XCTFail("Receied `error` should be of type `AuthSession.Error")
+    }
+    XCTAssertEqual(authSession, originalAuthSession)
+    XCTAssertEqual(expectedError, receivedError)
+    authorizeRequestDidFailCalled = true
   }
 }

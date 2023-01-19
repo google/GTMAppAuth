@@ -75,6 +75,27 @@ class AuthSessionTests: XCTestCase {
     XCTAssertTrue(authSession.isAuthorizedRequest(request as URLRequest))
   }
 
+  func testAuthSessionAuthorizeRequestAdditionalParametersDelegateCallback() {
+    let authorizeSecureRequestExpectation = expectation(
+      description: "Authorize with completion expectation"
+    )
+    let authSession = AuthSession(
+      authState: OIDAuthState.testInstance()
+    )
+    let authSessionDelegate = AuthSessionDelegateProvider(originalAuthSession: authSession)
+    authSession.delegate = authSessionDelegate
+
+    let request = NSMutableURLRequest(url: secureFakeURL)
+    authSession.authorizeRequest(request) { error in
+      XCTAssertNil(error)
+      authorizeSecureRequestExpectation.fulfill()
+    }
+    XCTAssertTrue(authSession.isAuthorizingRequest(request as URLRequest))
+    waitForExpectations(timeout: expectationTimeout)
+    XCTAssertTrue(authSession.isAuthorizedRequest(request as URLRequest))
+    XCTAssertTrue(authSessionDelegate.additionalRefreshParametersCalled)
+  }
+
   func testAuthorizeInsecureRequestWithCompletion() {
     let authorizeInsecureRequestExpectation = expectation(
       description: "Authorize with completion expectation"
@@ -118,9 +139,8 @@ class AuthSessionTests: XCTestCase {
     let delegateExpectation = expectation(
       description: "Delegate callback expectation"
     )
-    let originalAuthorization = AuthorizationTestingHelper(
-      authState: OIDAuthState.testInstance()
-    )
+
+    let originalAuthorization = AuthSession(authState: OIDAuthState.testInstance())
     let testingDelegate = AuthorizationTestDelegate(
       expectation: delegateExpectation
     )
@@ -153,9 +173,8 @@ class AuthSessionTests: XCTestCase {
     let delegateExpectation = expectation(
       description: "Delegate callback expectation"
     )
-    let originalAuthorization = AuthorizationTestingHelper(
-      authState: OIDAuthState.testInstance()
-    )
+
+    let originalAuthorization = AuthSession(authState: OIDAuthState.testInstance())
     let testingDelegate = AuthorizationTestDelegate(
       expectation: delegateExpectation
     )

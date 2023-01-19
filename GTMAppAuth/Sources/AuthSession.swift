@@ -29,7 +29,7 @@ import GTMSessionFetcher
 ///
 /// Enables you to use AppAuth with the GTM Session Fetcher library.
 @objc(GTMAuthSession)
-open class AuthSession: NSObject, GTMSessionFetcherAuthorizer, NSSecureCoding {
+public final class AuthSession: NSObject, GTMSessionFetcherAuthorizer, NSSecureCoding {
   /// The legacy name for this type used while archiving and unarchiving an instance.
   static let legacyArchiveName = "GTMAppAuthFetcherAuthorization"
 
@@ -69,8 +69,8 @@ open class AuthSession: NSObject, GTMSessionFetcherAuthorizer, NSSecureCoding {
   /// bearer token unencrypted.
   @objc public var shouldAuthorizeAllRequests = false
 
-  /// Delegate of the `AuthSession` used to supply additional parameters on token refresh.
-  @objc public weak var tokenRefreshDelegate: AuthSessionTokenRefreshDelegate?
+  /// Delegate of the `AuthSession`.
+  @objc public weak var delegate: AuthSessionDelegate?
 
   /// The fetcher service.
   @objc public weak var fetcherService: GTMSessionFetcherServiceProtocol? = nil
@@ -225,8 +225,7 @@ open class AuthSession: NSObject, GTMSessionFetcherAuthorizer, NSSecureCoding {
     serialAuthArgsQueue.sync {
       authorizationArgs.append(args)
     }
-    let additionalRefreshParameters = tokenRefreshDelegate?
-      .additionalRefreshParameters(authSession: self)
+    let additionalRefreshParameters = delegate?.additionalRefreshParameters?(forAuthSession: self)
     let authStateAction = {
       (accessToken: String?, idToken: String?, error: Swift.Error?) in
       self.serialAuthArgsQueue.sync { [weak self] in
@@ -282,6 +281,11 @@ open class AuthSession: NSObject, GTMSessionFetcherAuthorizer, NSSecureCoding {
     let callbackQueue = fetcherService?.callbackQueue ?? DispatchQueue.main
     callbackQueue.async { [weak self] in
       guard let self = self else { return }
+
+      if let error = args.error, let delegate = self.delegate {
+        delegate.authorizeRequestDidFail?(forAuthSession: self, error: error)
+      }
+
       switch args.callbackStyle {
       case .completion(let callback):
         self.invokeCompletionCallback(with: callback, error: args.error)
@@ -429,14 +433,6 @@ extension AuthorizationArguments {
     case completion((Swift.Error?) -> Void)
     case delegate(Any, Selector)
   }
-}
-
-/// Delegate of the `AuthSession` used to supply additional parameters on token refresh.
-@objc(GTMAuthSessionTokenRefreshDelegate)
-public protocol AuthSessionTokenRefreshDelegate: NSObjectProtocol {
-  func additionalRefreshParameters(
-    authSession: AuthSession
-  ) -> [String: String]?
 }
 
 public extension AuthSession {
