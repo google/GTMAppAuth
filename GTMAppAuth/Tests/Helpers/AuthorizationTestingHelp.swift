@@ -34,8 +34,7 @@ public class AuthorizationTestDelegate: NSObject {
   @objc public var passedRequest: NSMutableURLRequest?
   /// The error passed back to this delegate.
   @objc public var passedError: NSError?
-  /// The expectation needing fulfillment when this delegate receives its
-  /// callback.
+  /// The expectation needing fulfillment when this delegate receives its callback.
   @objc public let expectation: XCTestExpectation
 
   /// An initializer creating the delegate.
@@ -69,10 +68,6 @@ public class AuthorizationTestDelegate: NSObject {
 public class AuthSessionDelegateProvider: NSObject, AuthSessionDelegate {
   /// The `AuthSession` to which this delegate was given.
   @objc public var originalAuthSession: AuthSession?
-  /// The expected error, if any, to receive from an `AuthSession` callback.
-  ///
-  /// This `Error` will be cast to an `AuthSession.Error` in the test in the below delegate method.
-  @objc public var expectedError: Swift.Error?
   /// Whether or not the delegate callback for additional refresh parameters was called.
   ///
   /// - Note: Defaults to `false`.
@@ -82,9 +77,8 @@ public class AuthSessionDelegateProvider: NSObject, AuthSessionDelegate {
   /// - Note: Defaults to `false`.
   @objc public var authorizeRequestDidFailCalled = false
 
-  @objc public init(originalAuthSession: AuthSession, expectedError: Error? = nil) {
+  @objc public init(originalAuthSession: AuthSession) {
     self.originalAuthSession = originalAuthSession
-    self.expectedError = expectedError
   }
 
   public func additionalRefreshParameters(
@@ -95,15 +89,17 @@ public class AuthSessionDelegateProvider: NSObject, AuthSessionDelegate {
     return [:]
   }
 
-  public func authorizeRequestDidFail(forAuthSession authSession: AuthSession, error: Error) {
-    guard let expectedError = expectedError as? AuthSession.Error else {
-      return XCTFail("There should be an `expectedError` when testing \(#function)")
-    }
-    guard let receivedError = error as? AuthSession.Error else {
-      return XCTFail("Receied `error` should be of type `AuthSession.Error")
+  public func authorizeRequestDidFail(
+    forAuthSession authSession: AuthSession,
+    error: Error,
+    completion: @escaping (NSError?) -> ()
+  ) {
+    guard let _ = error as? AuthSession.Error else {
+      return XCTFail("Received `error` should be of type `AuthSession.Error")
     }
     XCTAssertEqual(authSession, originalAuthSession)
-    XCTAssertEqual(expectedError, receivedError)
     authorizeRequestDidFailCalled = true
+    let newError = NSError(domain: "SomeDomain", code: 1)
+    completion(newError)
   }
 }

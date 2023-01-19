@@ -279,12 +279,21 @@ public final class AuthSession: NSObject, GTMSessionFetcherAuthorizer, NSSecureC
       args.error = Error.cannotAuthorizeRequest(request as URLRequest)
     }
     let callbackQueue = fetcherService?.callbackQueue ?? DispatchQueue.main
+
     callbackQueue.async { [weak self] in
       guard let self = self else { return }
 
       if let error = args.error, let delegate = self.delegate {
-        delegate.authorizeRequestDidFail?(forAuthSession: self, error: error)
+        delegate.authorizeRequestDidFail?(forAuthSession: self, error: error) { newError in
+          if let newError, !(newError is AuthSession.Error) {
+            args.error = GTMAppAuthExternalError(externalError: newError)
+          }
+        }
       }
+    }
+
+    callbackQueue.async { [weak self] in
+      guard let self = self else { return }
 
       switch args.callbackStyle {
       case .completion(let callback):
@@ -484,5 +493,18 @@ public extension AuthSession {
         self = .accessTokenEmptyForRequest
       }
     }
+  }
+}
+
+@objc public final class GTMAppAuthExternalError: NSObject, Swift.Error, CustomNSError {
+  @objc public let errorCode: Int
+  @objc public let errorUserInfo: [String : Any]
+  @objc public static let errorDomain: String = "GTMAppAuthExternalErrorDomain"
+  @objc public let domain: String
+
+  init(externalError: NSError) {
+    self.errorCode = externalError.code
+    self.errorUserInfo = externalError.userInfo
+    self.domain = externalError.domain
   }
 }

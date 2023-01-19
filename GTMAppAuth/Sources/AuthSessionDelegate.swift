@@ -31,8 +31,10 @@ public protocol AuthSessionDelegate {
   /// - Parameters:
   ///   - authSession: The `AuthSession` whose authorization request failed.
   ///   - error: The `Error` associated with the failure.
+  ///   - completion: A callback from the delegate providing a customized `NSError` if it exists; nil otherwise.
   @objc optional func authorizeRequestDidFail(
     forAuthSession authSession: AuthSession,
-    error: Swift.Error
+    error: Swift.Error,
+    completion: @escaping (NSError?) -> ()
   )
 }

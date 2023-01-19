@@ -96,6 +96,36 @@ class AuthSessionTests: XCTestCase {
     XCTAssertTrue(authSessionDelegate.additionalRefreshParametersCalled)
   }
 
+  func testAuthSessionSelectorCallbackAdditionalParametersDelegateCallback() {
+    XCTFail("Not implemented")
+  }
+
+  func testAuthSessionSelectorCallbackAuthorizeRequestDidFailDelegateCallback() {
+    XCTFail("Not implemented")
+  }
+
+  func testAuthSessionAuthorizeRequestDidFailDelegateCallback() {
+    let authorizeSecureRequestExpectation = expectation(
+      description: "Authorize with completion expectation"
+    )
+    let authSession = AuthSession(
+      authState: OIDAuthState.testInstance()
+    )
+
+    let request = NSMutableURLRequest(url: insecureFakeURL)
+    let authSessionDelegate = AuthSessionDelegateProvider(originalAuthSession: authSession)
+    authSession.delegate = authSessionDelegate
+
+    authSession.authorizeRequest(request) { error in
+      XCTAssertNotNil(error)
+      authorizeSecureRequestExpectation.fulfill()
+    }
+    XCTAssertTrue(authSession.isAuthorizingRequest(request as URLRequest))
+    waitForExpectations(timeout: expectationTimeout)
+    XCTAssertFalse(authSession.isAuthorizedRequest(request as URLRequest))
+    XCTAssertTrue(authSessionDelegate.authorizeRequestDidFailCalled)
+  }
+
   func testAuthorizeInsecureRequestWithCompletion() {
     let authorizeInsecureRequestExpectation = expectation(
       description: "Authorize with completion expectation"
