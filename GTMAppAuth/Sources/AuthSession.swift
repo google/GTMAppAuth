@@ -285,7 +285,7 @@ public final class AuthSession: NSObject, GTMSessionFetcherAuthorizer, NSSecureC
 
       if let error = args.error, let delegate = self.delegate {
         delegate.authorizeRequestDidFail?(forAuthSession: self, error: error) { newError in
-          if let newError, !(newError is AuthSession.Error) {
+          if let newError = newError, !(newError is AuthSession.Error) {
             args.error = GTMAppAuthExternalError(externalError: newError)
           }
         }
