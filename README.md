@@ -227,27 +227,25 @@ GTMSessionFetcher *fetcher = [fetcherService fetcherWithURL:userinfoEndpoint];
 You can easily save `GTMAuthSession` instances to the Keychain using the `GTMKeychainStore` class.
 
 ```objc
-// Create a GIDKeychainStore instance, intializing it with the Keychain item name 
-// `kGTMAppAuthExampleAuthorizerKey` which will be used when saving, retrieving, and
-// removing `GTMAuthSession` instances.
-GIDKeychainStore *keychainStore =
-    [[GIDKeychainStore alloc] initWithItemName:kGTMAppAuthExampleAuthorizerKey];
+// Create a GIDKeychainStore instance, intializing it with the Keychain item name `kKeychainItemName`
+// which will be used when saving, retrieving, and removing `GTMAuthSession` instances.
+GIDKeychainStore *keychainStore = [[GIDKeychainStore alloc] initWithItemName:kKeychainItemName];
     
 NSError *error;
 
-// Save to Keychain
+// Save to the Keychain
 [keychainStore saveAuthSession:self.authSession error:&error];
 if (error) {
   // Handle error
 }
 
-// Retrieve from Keychain
+// Retrieve from the Keychain
 self.authSession = [keychainStore retrieveAuthSessionWithError:&error];
 if (error) {
   // Handle error
 }
 
-// Remove from Keychain
+// Remove from the Keychain
 [keychainStore removeAuthSessionWithError:&error];
 if (error) {
   // Handle error
