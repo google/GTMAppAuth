@@ -315,8 +315,7 @@ public final class AuthSession: NSObject, GTMSessionFetcherAuthorizer, NSSecureC
     request: NSMutableURLRequest,
     error: Swift.Error?
   ) {
-    guard let delegate = delegate as? NSObject,
-          delegate.responds(to: selector) else {
+    guard let delegate = delegate as? NSObject, delegate.responds(to: selector) else {
       return
     }
     let authorization = self
