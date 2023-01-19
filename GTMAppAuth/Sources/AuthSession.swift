@@ -225,7 +225,9 @@ public final class AuthSession: NSObject, GTMSessionFetcherAuthorizer, NSSecureC
     serialAuthArgsQueue.sync {
       authorizationArgs.append(args)
     }
-    let additionalRefreshParameters = delegate?.additionalRefreshParameters?(forAuthSession: self)
+    let additionalRefreshParameters = delegate?.additionalTokenRefreshParameters?(
+      forAuthSession: self
+    )
     let authStateAction = {
       (accessToken: String?, idToken: String?, error: Swift.Error?) in
       self.serialAuthArgsQueue.sync { [weak self] in

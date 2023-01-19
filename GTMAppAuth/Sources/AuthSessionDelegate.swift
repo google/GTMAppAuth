@@ -23,7 +23,7 @@ public protocol AuthSessionDelegate {
   /// - Parameters:
   ///   - authSession: The `AuthSession` needing additional token refresh parameters.
   /// - Returns: An optional `[String: String]` supplying the additional token refresh parameters.
-  @objc optional func additionalRefreshParameters(
+  @objc optional func additionalTokenRefreshParameters(
     forAuthSession authSession: AuthSession
   ) -> [String: String]?
 

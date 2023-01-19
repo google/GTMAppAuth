@@ -85,7 +85,7 @@ public class AuthSessionDelegateProvider: NSObject, AuthSessionDelegate {
     self.expectedError = expectedError
   }
 
-  public func additionalRefreshParameters(
+  public func additionalTokenRefreshParameters(
     forAuthSession authSession: AuthSession
   ) -> [String : String]? {
     XCTAssertEqual(authSession, originalAuthSession)
