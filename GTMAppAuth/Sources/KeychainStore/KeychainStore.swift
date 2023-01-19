@@ -28,7 +28,7 @@ import GTMSessionFetcher
 
 /// A helper providing a concrete implementation for saving and loading auth data to the keychain.
 @objc(GTMKeychainStore)
-public final class KeychainStore: NSObject {
+public final class KeychainStore: NSObject, AuthSessionStore {
   private let keychainHelper: KeychainHelper
   /// The last used `NSKeyedArchiver` used in tests to ensure that the class name mapping worked.
   private(set) var lastUsedKeyedArchiver: NSKeyedArchiver?
@@ -86,11 +86,9 @@ public final class KeychainStore: NSObject {
 
     super.init()
   }
-}
 
-// MARK: - AuthSessionStore Conformance
+  // MARK: - AuthSessionStore Conformance
 
-extension KeychainStore: AuthSessionStore {
   /// An initializer for to create an instance of this keychain wrapper.
   ///
   /// - Parameters:
@@ -109,6 +107,13 @@ extension KeychainStore: AuthSessionStore {
     )
   }
 
+  /// Saves the provided `AuthSession` using the provided item name.
+  ///
+  /// - Parameters:
+  ///   - authSession: An instance of `AuthSession` to save.
+  ///   - itemName: A `String` name to use for the save that is different than the name given during
+  ///     initialization.
+  /// - Throws: Any error that may arise during the save.
   @objc(saveAuthSession:withItemName:error:)
   public func save(authSession: AuthSession, withItemName itemName: String) throws {
     let authSessionData = try authSessionData(fromAuthSession: authSession)
@@ -140,6 +145,12 @@ extension KeychainStore: AuthSessionStore {
     return keyedArchiver.encodedData
   }
 
+  /// Removes the stored `AuthSession` matching the provided item name.
+  ///
+  /// - Parameters:
+  ///   - itemName: A `String` name to use for the removal different than what was given during
+  ///     initialization.
+  /// - Throws: Any error that may arise during the removal.
   @objc public func removeAuthSession(withItemName itemName: String) throws {
     try keychainHelper.removePassword(forService: itemName)
   }
@@ -165,6 +176,12 @@ extension KeychainStore: AuthSessionStore {
     return keyedUnarchiver
   }
 
+  /// Retrieves the stored `AuthSession` matching the provided item name.
+  ///
+  /// - Parameters:
+  ///   - itemName: A `String` name for the item to retrieve different than what was given during
+  ///     initialization.
+  /// - Throws: Any error that may arise during the retrieval.
   @objc public func retrieveAuthSession(withItemName itemName: String) throws -> AuthSession {
     let passwordData = try keychainHelper.passwordData(forService: itemName)
 
