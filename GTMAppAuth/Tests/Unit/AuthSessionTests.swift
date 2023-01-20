@@ -206,15 +206,16 @@ class AuthSessionTests: XCTestCase {
     authSession.delegate = authSessionDelegate
 
     authSession.authorizeRequest(request) { error in
-      guard let error = error as? NSError else {
+      guard let error = error else {
         return XCTFail("There should be an `NSError` authorizing \(request)")
       }
-      XCTAssertEqual(expectedError.code, error.code)
+      let nsError = error as NSError
+      XCTAssertEqual(expectedError.code, nsError.code)
       // Ideally, we'd like to pass through the error domain from the delegate, but `CustomNSError`
       // requires that its `errorDomain` be defined statically at the type level.
-      XCTAssertEqual(error.domain, GTMAppAuthExternalError.errorDomain)
+      XCTAssertEqual(nsError.domain, GTMAppAuthExternalError.errorDomain)
       XCTAssertEqual(
-        error.userInfo[GTMAppAuthExternalError.customErrorDomainKey] as! String,
+        nsError.userInfo[GTMAppAuthExternalError.customErrorDomainKey] as! String,
         expectedCustomErrorDomain
       )
       authorizeSecureRequestExpectation.fulfill()
