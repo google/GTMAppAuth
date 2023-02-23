@@ -266,7 +266,7 @@ public final class AuthSession: NSObject, GTMSessionFetcherAuthorizer, NSSecureC
       )
 #endif
     }
-    if isAuthorizableRequest,
+    authorizeRequestControlFlow: if isAuthorizableRequest,
        let accessToken = accessToken,
        !accessToken.isEmpty {
       request.setValue(
@@ -277,6 +277,7 @@ public final class AuthSession: NSObject, GTMSessionFetcherAuthorizer, NSSecureC
       args.error = nil
     } else if args.error != nil {
       // Keep error received from AppAuth
+      break authorizeRequestControlFlow
     } else if accessToken?.isEmpty ?? true {
       args.error = Error.accessTokenEmptyForRequest(request as URLRequest)
     } else {
@@ -289,8 +290,9 @@ public final class AuthSession: NSObject, GTMSessionFetcherAuthorizer, NSSecureC
 
       if let error = args.error, let delegate = self.delegate {
         delegate.authorizeRequestDidFail?(forAuthSession: self, error: error) { newError in
-          if let newError = newError, !(newError is AuthSession.Error) {
-            args.error = GTMAppAuthExternalError(externalError: newError)
+          if let newError = newError {
+            // Only reassign error if there is a `newError`
+            args.error = newError
           }
         }
       }
