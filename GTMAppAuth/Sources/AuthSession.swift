@@ -232,7 +232,11 @@ public final class AuthSession: NSObject, GTMSessionFetcherAuthorizer, NSSecureC
       (accessToken: String?, idToken: String?, error: Swift.Error?) in
       self.serialAuthArgsQueue.sync { [weak self] in
         guard let self = self else { return }
-        for queuedArgs in self.authorizationArgs {
+        for var queuedArgs in self.authorizationArgs {
+          if let error = error {
+            // Give `queuedArgs` most recent error from AppAuth
+            queuedArgs.error = error
+          }
           self.authorizeRequestImmediately(args: queuedArgs, accessToken: accessToken)
         }
         self.authorizationArgs.removeAll()
@@ -244,10 +248,7 @@ public final class AuthSession: NSObject, GTMSessionFetcherAuthorizer, NSSecureC
     )
   }
 
-  private func authorizeRequestImmediately(
-    args: AuthorizationArguments,
-    accessToken: String?
-  ) {
+  private func authorizeRequestImmediately(args: AuthorizationArguments, accessToken: String?) {
     var args = args
     let request = args.request
     let requestURL = request.url
@@ -257,7 +258,6 @@ public final class AuthSession: NSObject, GTMSessionFetcherAuthorizer, NSSecureC
     || requestURL?.isFileURL ?? false
     || shouldAuthorizeAllRequests
     if !isAuthorizableRequest {
-      //
 #if DEBUG
       print(
   """
@@ -275,6 +275,8 @@ public final class AuthSession: NSObject, GTMSessionFetcherAuthorizer, NSSecureC
       )
       // `request` is authorized even if previous refreshes produced an error
       args.error = nil
+    } else if args.error != nil {
+      // Keep error received from AppAuth
     } else if accessToken?.isEmpty ?? true {
       args.error = Error.accessTokenEmptyForRequest(request as URLRequest)
     } else {
