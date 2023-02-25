@@ -283,24 +283,11 @@ public final class AuthSession: NSObject, GTMSessionFetcherAuthorizer, NSSecureC
     } else {
       args.error = Error.cannotAuthorizeRequest(request as URLRequest)
     }
-    // This can either be a serial queue (since that is what `DispatchQueue.main` is, or it can be
-    // anything, given that we don't know what `fetcherService.callbackQueue` will yield
     let callbackQueue = fetcherService?.callbackQueue ?? DispatchQueue.main
 
-    // Since we want to ensure that `args.error` has a chance to be updated by the `delegate`, we
-    // need to place a barrier here to prevent the below async block of work to complete before the
-    // delegate has a chance to modify the error.
-    callbackQueue.async(flags: [.barrier]) { [weak self] in
-      guard let self = self else { return }
-
-      if let error = args.error, let delegate = self.delegate {
-        delegate.authorizeRequestDidFail?(forAuthSession: self, error: error) { newError in
-          if let newError = newError {
-            // Only reassign error if there is a `newError`
-            args.error = newError
-          }
-        }
-      }
+    if let error = args.error, let delegate = self.delegate {
+      // If there is an updated error, use that; otherwise, use whatever is already in `args.error`
+      args.error = delegate.updatedError?(forAuthSession: self, originalError: error) ?? args.error
     }
 
     callbackQueue.async { [weak self] in

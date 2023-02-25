@@ -75,7 +75,7 @@ public class AuthSessionDelegateProvider: NSObject, AuthSessionDelegate {
   /// Whether or not the delegate callback for authorization request failure was called.
   ///
   /// - Note: Defaults to `false`.
-  @objc public var authorizeRequestDidFailCalled = false
+  @objc public var updatedErrorCalled = false
 
   /// The expected error from the delegate callback.
   @objc public let expectedError: NSError?
@@ -93,19 +93,15 @@ public class AuthSessionDelegateProvider: NSObject, AuthSessionDelegate {
     return [:]
   }
 
-  public func authorizeRequestDidFail(
+  public func updatedError(
     forAuthSession authSession: AuthSession,
-    error: Error,
-    completion: @escaping (NSError?) -> ()
-  ) {
-    guard let expectedError = expectedError else {
-      return XCTFail("There should be an `expectedError` when testing \(#function)")
-    }
-    guard let _ = error as? AuthSession.Error else {
-      return XCTFail("Received `error` should be of type `AuthSession.Error")
-    }
+    originalError: Error
+  ) -> Error? {
     XCTAssertEqual(authSession, originalAuthSession)
-    authorizeRequestDidFailCalled = true
-    completion(expectedError)
+    updatedErrorCalled = true
+    guard let expectedError = expectedError else {
+      return nil
+    }
+    return expectedError
   }
 }

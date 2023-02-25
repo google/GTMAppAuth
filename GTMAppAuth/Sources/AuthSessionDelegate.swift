@@ -20,6 +20,7 @@ import Foundation
 @objc(GTMAuthSessionDelegate)
 public protocol AuthSessionDelegate {
   /// Used to supply additional parameters on token refresh.
+  ///
   /// - Parameters:
   ///   - authSession: The `AuthSession` needing additional token refresh parameters.
   /// - Returns: An optional `[String: String]` supplying the additional token refresh parameters.
@@ -27,14 +28,17 @@ public protocol AuthSessionDelegate {
     forAuthSession authSession: AuthSession
   ) -> [String: String]?
 
-  /// A callback letting the delegate know that the authorization request failed.
+  /// A method notifying the delegate that the authorization request failed.
+  ///
+  /// Use this method to examine the error behind the failed authorization request and supply a more
+  /// custom error specifying whatever context is needed.
+  ///
   /// - Parameters:
   ///   - authSession: The `AuthSession` whose authorization request failed.
-  ///   - error: The `Error` associated with the failure.
-  ///   - completion: A callback from the delegate providing a customized `NSError` if it exists; nil otherwise.
-  @objc optional func authorizeRequestDidFail(
+  ///   - originalError: The original `Error` associated with the failure.
+  /// - Returns: The new error for `AuthSession` to send back or nil if no error should be sent.
+  @objc optional func updatedError(
     forAuthSession authSession: AuthSession,
-    error: Swift.Error,
-    completion: @escaping (NSError?) -> ()
-  )
+    originalError: Error
+  ) -> Error?
 }
