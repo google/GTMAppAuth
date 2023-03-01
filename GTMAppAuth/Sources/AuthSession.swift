@@ -294,7 +294,8 @@ public final class AuthSession: NSObject, GTMSessionFetcherAuthorizer, NSSecureC
 
     if let error = args.error, let delegate = self.delegate {
       // If there is an updated error, use that; otherwise, use whatever is already in `args.error`
-      args.error = delegate.updatedError?(forAuthSession: self, originalError: error) ?? args.error
+      let newError = delegate.updatedError?(forAuthSession: self, originalError: error)
+      args.error = newError ?? error
     }
 
     callbackQueue.async { [weak self] in
