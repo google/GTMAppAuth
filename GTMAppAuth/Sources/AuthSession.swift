@@ -285,13 +285,6 @@ public final class AuthSession: NSObject, GTMSessionFetcherAuthorizer, NSSecureC
     }
     let callbackQueue = fetcherService?.callbackQueue ?? DispatchQueue.main
 
-    let userInfo: [String: Any] = [
-      "OIDOAuthErrorResponseErrorKey": ["foo": "bar"],
-      NSUnderlyingErrorKey: NSError(domain: "SomeUnderlyingError", code: 0)
-    ]
-    let appAuthError = NSError(domain: "org.openid.appauth.resourceserver", code: 0, userInfo: userInfo)
-    args.error = appAuthError
-
     if let error = args.error, let delegate = self.delegate {
       // If there is an updated error, use that; otherwise, use whatever is already in `args.error`
       let newError = delegate.updatedError?(forAuthSession: self, originalError: error)
