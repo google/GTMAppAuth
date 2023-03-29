@@ -66,12 +66,15 @@ public class AuthorizationTestDelegate: NSObject {
 /// A testing helper given to `AuthSession`'s `delegate` to verify delegate callbacks.
 @objc(GTMAuthSessionDelegateProvider)
 public class AuthSessionDelegateProvider: NSObject, AuthSessionDelegate {
+
   /// The `AuthSession` to which this delegate was given.
   @objc public var originalAuthSession: AuthSession?
+
   /// Whether or not the delegate callback for additional refresh parameters was called.
   ///
   /// - Note: Defaults to `false`.
   @objc public var additionalRefreshParametersCalled = false
+
   /// Whether or not the delegate callback for authorization request failure was called.
   ///
   /// - Note: Defaults to `false`.
