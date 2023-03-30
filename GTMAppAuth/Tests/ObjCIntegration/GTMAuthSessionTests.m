@@ -156,8 +156,8 @@
       [[XCTestExpectation alloc] initWithDescription:@"Authorize with delegate"];
 
   OIDAuthState *authState = OIDAuthState.testInstance;
-  GTMAuthorizationTestingHelper *originalAuthorization =
-      [[GTMAuthorizationTestingHelper alloc] initWithAuthState:authState];
+  GTMAuthSession *originalAuthorization =
+      [[GTMAuthSession alloc] initWithAuthState:authState];
   GTMAuthorizationTestDelegate *testingDelegate =
       [[GTMAuthorizationTestDelegate alloc] initWithExpectation:delegateExpectation];
 
