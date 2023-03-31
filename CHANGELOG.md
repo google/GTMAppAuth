@@ -9,6 +9,7 @@
     - Stored representation of `GTMAuthSession` objects remains unchanged from that of `GTMAppAuthFetcherAuthorization`
       in previous versions of GTMAppAuth, allowing for backward and forward compatibilty.
   - Significantly improved error handling.
+  - Added [`AuthSessionDelegate`](https://github.com/google/GTMAppAuth/pull/224/files#diff-ad81e5244511faaa4b3d98553128438e30a94914c279fb7d42c0acfbbdc24500) protocol allowing clients to 1) provide additional token refresh parameters and 2) inspect and modify errors before they are returned during the authorize request flow.
 - Unit tests added. ([#190](https://github.com/google/GTMAppAuth/pull/190), [#202](https://github.com/google/GTMAppAuth/pull/202))
 
 # 2.0.0
