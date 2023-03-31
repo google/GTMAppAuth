@@ -29,7 +29,7 @@ import GTMSessionFetcher
 ///
 /// Enables you to use AppAuth with the GTM Session Fetcher library.
 @objc(GTMAuthSession)
-open class AuthSession: NSObject, GTMSessionFetcherAuthorizer, NSSecureCoding {
+public final class AuthSession: NSObject, GTMSessionFetcherAuthorizer, NSSecureCoding {
   /// The legacy name for this type used while archiving and unarchiving an instance.
   static let legacyArchiveName = "GTMAppAuthFetcherAuthorization"
 
@@ -69,8 +69,8 @@ open class AuthSession: NSObject, GTMSessionFetcherAuthorizer, NSSecureCoding {
   /// bearer token unencrypted.
   @objc public var shouldAuthorizeAllRequests = false
 
-  /// Delegate of the `AuthSession` used to supply additional parameters on token refresh.
-  @objc public weak var tokenRefreshDelegate: AuthSessionTokenRefreshDelegate?
+  /// Delegate of the `AuthSession`.
+  @objc public weak var delegate: AuthSessionDelegate?
 
   /// The fetcher service.
   @objc public weak var fetcherService: GTMSessionFetcherServiceProtocol? = nil
@@ -225,13 +225,18 @@ open class AuthSession: NSObject, GTMSessionFetcherAuthorizer, NSSecureCoding {
     serialAuthArgsQueue.sync {
       authorizationArgs.append(args)
     }
-    let additionalRefreshParameters = tokenRefreshDelegate?
-      .additionalRefreshParameters(authSession: self)
+    let additionalRefreshParameters = delegate?.additionalTokenRefreshParameters?(
+      forAuthSession: self
+    )
     let authStateAction = {
       (accessToken: String?, idToken: String?, error: Swift.Error?) in
       self.serialAuthArgsQueue.sync { [weak self] in
         guard let self = self else { return }
-        for queuedArgs in self.authorizationArgs {
+        for var queuedArgs in self.authorizationArgs {
+          if let error = error {
+            // Give `queuedArgs` most recent error from AppAuth
+            queuedArgs.error = error
+          }
           self.authorizeRequestImmediately(args: queuedArgs, accessToken: accessToken)
         }
         self.authorizationArgs.removeAll()
@@ -243,10 +248,7 @@ open class AuthSession: NSObject, GTMSessionFetcherAuthorizer, NSSecureCoding {
     )
   }
 
-  private func authorizeRequestImmediately(
-    args: AuthorizationArguments,
-    accessToken: String?
-  ) {
+  private func authorizeRequestImmediately(args: AuthorizationArguments, accessToken: String?) {
     var args = args
     let request = args.request
     let requestURL = request.url
@@ -256,7 +258,6 @@ open class AuthSession: NSObject, GTMSessionFetcherAuthorizer, NSSecureCoding {
     || requestURL?.isFileURL ?? false
     || shouldAuthorizeAllRequests
     if !isAuthorizableRequest {
-      //
 #if DEBUG
       print(
   """
@@ -265,7 +266,7 @@ open class AuthSession: NSObject, GTMSessionFetcherAuthorizer, NSSecureCoding {
       )
 #endif
     }
-    if isAuthorizableRequest,
+    authorizeRequestControlFlow: if isAuthorizableRequest,
        let accessToken = accessToken,
        !accessToken.isEmpty {
       request.setValue(
@@ -274,14 +275,25 @@ open class AuthSession: NSObject, GTMSessionFetcherAuthorizer, NSSecureCoding {
       )
       // `request` is authorized even if previous refreshes produced an error
       args.error = nil
+    } else if args.error != nil {
+      // Keep error received from AppAuth
+      break authorizeRequestControlFlow
     } else if accessToken?.isEmpty ?? true {
       args.error = Error.accessTokenEmptyForRequest(request as URLRequest)
     } else {
       args.error = Error.cannotAuthorizeRequest(request as URLRequest)
     }
     let callbackQueue = fetcherService?.callbackQueue ?? DispatchQueue.main
+
+    if let error = args.error, let delegate = self.delegate {
+      // If there is an updated error, use that; otherwise, use whatever is already in `args.error`
+      let newError = delegate.updatedError?(forAuthSession: self, originalError: error)
+      args.error = newError ?? error
+    }
+
     callbackQueue.async { [weak self] in
       guard let self = self else { return }
+
       switch args.callbackStyle {
       case .completion(let callback):
         self.invokeCompletionCallback(with: callback, error: args.error)
@@ -302,8 +314,7 @@ open class AuthSession: NSObject, GTMSessionFetcherAuthorizer, NSSecureCoding {
     request: NSMutableURLRequest,
     error: Swift.Error?
   ) {
-    guard let delegate = delegate as? NSObject,
-          delegate.responds(to: selector) else {
+    guard let delegate = delegate as? NSObject, delegate.responds(to: selector) else {
       return
     }
     let authorization = self
@@ -429,14 +440,6 @@ extension AuthorizationArguments {
     case completion((Swift.Error?) -> Void)
     case delegate(Any, Selector)
   }
-}
-
-/// Delegate of the `AuthSession` used to supply additional parameters on token refresh.
-@objc(GTMAuthSessionTokenRefreshDelegate)
-public protocol AuthSessionTokenRefreshDelegate: NSObjectProtocol {
-  func additionalRefreshParameters(
-    authSession: AuthSession
-  ) -> [String: String]?
 }
 
 public extension AuthSession {

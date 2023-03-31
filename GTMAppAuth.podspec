@@ -40,7 +40,6 @@ requests with AppAuth.
       :ios => ios_deployment_target,
       :osx => osx_deployment_target,
       :tvos => tvos_deployment_target,
-      :watchos => watchos_deployment_target,
     }
     unit_tests.source_files = [
       'GTMAppAuth/Tests/Unit/**/*.swift',
@@ -54,7 +53,6 @@ requests with AppAuth.
       :ios => ios_deployment_target,
       :osx => osx_deployment_target,
       :tvos => tvos_deployment_target,
-      :watchos => watchos_deployment_target,
     }
     api_tests.source_files = [
       'GTMAppAuth/Tests/ObjCIntegration/**/*.m',

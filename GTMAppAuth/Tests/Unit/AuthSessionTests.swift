@@ -75,6 +75,228 @@ class AuthSessionTests: XCTestCase {
     XCTAssertTrue(authSession.isAuthorizedRequest(request as URLRequest))
   }
 
+  func testAuthSessionAuthorizeRequestWithCompletionAdditionalParametersDelegateCallback() {
+    let authorizeSecureRequestExpectation = expectation(
+      description: "Authorize with completion expectation"
+    )
+    let authSession = AuthSession(
+      authState: OIDAuthState.testInstance()
+    )
+    let authSessionDelegate = AuthSessionDelegateProvider(originalAuthSession: authSession)
+    authSession.delegate = authSessionDelegate
+
+    let request = NSMutableURLRequest(url: secureFakeURL)
+    authSession.authorizeRequest(request) { error in
+      XCTAssertNil(error)
+      authorizeSecureRequestExpectation.fulfill()
+    }
+    XCTAssertTrue(authSession.isAuthorizingRequest(request as URLRequest))
+    waitForExpectations(timeout: expectationTimeout)
+    XCTAssertTrue(authSession.isAuthorizedRequest(request as URLRequest))
+    XCTAssertTrue(authSessionDelegate.additionalRefreshParametersCalled)
+  }
+
+  func testAuthSessionSelectorCallbackAdditionalParametersDelegateCallback() {
+    let delegateExpectation = expectation(
+      description: "Delegate callback expectation"
+    )
+
+    let originalAuthorization = AuthSession(authState: OIDAuthState.testInstance())
+    let testingDelegate = AuthorizationTestDelegate(
+      expectation: delegateExpectation
+    )
+    let authSessionDelegate = AuthSessionDelegateProvider(
+      originalAuthSession: originalAuthorization
+    )
+    originalAuthorization.delegate = authSessionDelegate
+
+    let originalRequest = NSMutableURLRequest(url: self.secureFakeURL)
+    originalAuthorization.authorizeRequest(
+      originalRequest,
+      delegate: testingDelegate,
+      didFinish: #selector(
+        AuthorizationTestDelegate.authentication(_:request:finishedWithError:)
+      )
+    )
+
+    XCTAssertTrue(originalAuthorization.isAuthorizingRequest(originalRequest as URLRequest))
+    waitForExpectations(timeout: expectationTimeout)
+
+    guard let receivedRequest = testingDelegate.passedRequest else {
+      return XCTFail("Testing delegate did not receive the request")
+    }
+    XCTAssertEqual(originalRequest, receivedRequest)
+
+    guard let receivedAuthorization = testingDelegate.passedAuthorization else {
+      return XCTFail("Testing delegate did not receive the authorization")
+    }
+    XCTAssertEqual(originalAuthorization, receivedAuthorization)
+
+    XCTAssertNil(testingDelegate.passedError)
+
+    XCTAssertTrue(originalAuthorization.isAuthorizedRequest(originalRequest as URLRequest))
+    XCTAssertTrue(authSessionDelegate.additionalRefreshParametersCalled)
+  }
+
+  func testAuthSessionSelectorCallbackUpdatedErrorDelegateCallback() {
+    let delegateExpectation = expectation(
+      description: "Delegate callback expectation"
+    )
+
+    let originalAuthorization = AuthSession(authState: OIDAuthState.testInstance())
+    let testingDelegate = AuthorizationTestDelegate(
+      expectation: delegateExpectation
+    )
+
+    // The error we expect from the `AuthSessionDelegate`
+    let expectedCustomErrorDomain = "SomeCustomDomain"
+    let expectedError = NSError(domain: expectedCustomErrorDomain, code: 4)
+    let authSessionDelegate = AuthSessionDelegateProvider(
+      originalAuthSession: originalAuthorization,
+      expectedError: expectedError
+    )
+    originalAuthorization.delegate = authSessionDelegate
+
+    // There must be an error here for the delegate to get the `updatedError` callback
+    let originalRequest = NSMutableURLRequest(url: self.insecureFakeURL)
+    originalAuthorization.authorizeRequest(
+      originalRequest,
+      delegate: testingDelegate,
+      didFinish: #selector(
+        AuthorizationTestDelegate.authentication(_:request:finishedWithError:)
+      )
+    )
+
+    XCTAssertTrue(originalAuthorization.isAuthorizingRequest(originalRequest as URLRequest))
+    waitForExpectations(timeout: expectationTimeout)
+
+    guard let receivedRequest = testingDelegate.passedRequest else {
+      return XCTFail("Testing delegate did not receive the request")
+    }
+    XCTAssertEqual(originalRequest, receivedRequest)
+
+    guard let receivedAuthorization = testingDelegate.passedAuthorization else {
+      return XCTFail("Testing delegate did not receive the authorization")
+    }
+    XCTAssertEqual(originalAuthorization, receivedAuthorization)
+
+    XCTAssertNotNil(testingDelegate.passedError)
+    XCTAssertEqual(testingDelegate.passedError, expectedError)
+    XCTAssertFalse(originalAuthorization.isAuthorizedRequest(originalRequest as URLRequest))
+    XCTAssertTrue(authSessionDelegate.updatedErrorCalled)
+  }
+
+  func testAuthSessionSelectorCallbackNoUpdatedErrorDelegateCallback() {
+    let delegateExpectation = expectation(
+      description: "Delegate callback expectation"
+    )
+
+    let originalAuthorization = AuthSession(authState: OIDAuthState.testInstance())
+    let testingDelegate = AuthorizationTestDelegate(
+      expectation: delegateExpectation
+    )
+
+    let authSessionDelegate = AuthSessionDelegateProvider(
+      originalAuthSession: originalAuthorization,
+      expectedError: nil
+    )
+    originalAuthorization.delegate = authSessionDelegate
+
+    // There must be an error here for the delegate to get the `updatedError` callback
+    let originalRequest = NSMutableURLRequest(url: self.insecureFakeURL)
+    originalAuthorization.authorizeRequest(
+      originalRequest,
+      delegate: testingDelegate,
+      didFinish: #selector(
+        AuthorizationTestDelegate.authentication(_:request:finishedWithError:)
+      )
+    )
+
+    XCTAssertTrue(originalAuthorization.isAuthorizingRequest(originalRequest as URLRequest))
+    waitForExpectations(timeout: expectationTimeout)
+
+    guard let receivedRequest = testingDelegate.passedRequest else {
+      return XCTFail("Testing delegate did not receive the request")
+    }
+    XCTAssertEqual(originalRequest, receivedRequest)
+
+    guard let receivedAuthorization = testingDelegate.passedAuthorization else {
+      return XCTFail("Testing delegate did not receive the authorization")
+    }
+    XCTAssertEqual(originalAuthorization, receivedAuthorization)
+
+    XCTAssertNotNil(testingDelegate.passedError)
+    XCTAssertEqual(
+      testingDelegate.passedError as? FetcherAuthError,
+      FetcherAuthError.cannotAuthorizeRequest(originalRequest as URLRequest)
+    )
+    XCTAssertFalse(originalAuthorization.isAuthorizedRequest(originalRequest as URLRequest))
+    XCTAssertTrue(authSessionDelegate.updatedErrorCalled)
+  }
+
+  func testAuthSessionAuthorizeRequestWithCompletionDidFailDelegateUpdatedErrorCallback() {
+    let authorizeSecureRequestExpectation = expectation(
+      description: "Authorize with completion expectation"
+    )
+    let authSession = AuthSession(
+      authState: OIDAuthState.testInstance()
+    )
+
+    // The error we expect from the
+    // `AuthSessionDelegate.updatedError(forAuthSession:error:)` callback
+    let expectedCustomErrorDomain = "SomeCustomDomain"
+    let expectedError = NSError(domain: expectedCustomErrorDomain, code: 4)
+    // There must be an error here for the delegate to get the `updatedError` callback
+    let request = NSMutableURLRequest(url: insecureFakeURL)
+    let authSessionDelegate = AuthSessionDelegateProvider(
+      originalAuthSession: authSession,
+      expectedError: expectedError
+    )
+    authSession.delegate = authSessionDelegate
+
+    authSession.authorizeRequest(request) { error in
+      guard let error = error else {
+        return XCTFail("There should be an `NSError` authorizing \(request)")
+      }
+      let nsError = error as NSError
+      XCTAssertEqual(nsError, expectedError)
+      authorizeSecureRequestExpectation.fulfill()
+    }
+    XCTAssertTrue(authSession.isAuthorizingRequest(request as URLRequest))
+    waitForExpectations(timeout: expectationTimeout)
+    XCTAssertFalse(authSession.isAuthorizedRequest(request as URLRequest))
+    XCTAssertTrue(authSessionDelegate.updatedErrorCalled)
+  }
+
+  func testAuthSessionAuthorizeRequestWithCompletionDidFailButDelegateDoesntUpdateError() {
+    let authorizeSecureRequestExpectation = expectation(
+      description: "Authorize with completion expectation"
+    )
+    let authSession = AuthSession(
+      authState: OIDAuthState.testInstance()
+    )
+
+    // There must be an error here for the delegate to get the `updatedError` callback
+    let request = NSMutableURLRequest(url: insecureFakeURL)
+    let authSessionDelegate = AuthSessionDelegateProvider(
+      originalAuthSession: authSession,
+      expectedError: nil
+    )
+    authSession.delegate = authSessionDelegate
+
+    authSession.authorizeRequest(request) { error in
+      guard let error = error as? FetcherAuthError else {
+        return XCTFail("There should be an `NSError` authorizing \(request)")
+      }
+      XCTAssertEqual(error, FetcherAuthError.cannotAuthorizeRequest(request as URLRequest))
+      authorizeSecureRequestExpectation.fulfill()
+    }
+    XCTAssertTrue(authSession.isAuthorizingRequest(request as URLRequest))
+    waitForExpectations(timeout: expectationTimeout)
+    XCTAssertFalse(authSession.isAuthorizedRequest(request as URLRequest))
+    XCTAssertTrue(authSessionDelegate.updatedErrorCalled)
+  }
+
   func testAuthorizeInsecureRequestWithCompletion() {
     let authorizeInsecureRequestExpectation = expectation(
       description: "Authorize with completion expectation"
@@ -118,9 +340,8 @@ class AuthSessionTests: XCTestCase {
     let delegateExpectation = expectation(
       description: "Delegate callback expectation"
     )
-    let originalAuthorization = AuthorizationTestingHelper(
-      authState: OIDAuthState.testInstance()
-    )
+
+    let originalAuthorization = AuthSession(authState: OIDAuthState.testInstance())
     let testingDelegate = AuthorizationTestDelegate(
       expectation: delegateExpectation
     )
@@ -153,9 +374,8 @@ class AuthSessionTests: XCTestCase {
     let delegateExpectation = expectation(
       description: "Delegate callback expectation"
     )
-    let originalAuthorization = AuthorizationTestingHelper(
-      authState: OIDAuthState.testInstance()
-    )
+
+    let originalAuthorization = AuthSession(authState: OIDAuthState.testInstance())
     let testingDelegate = AuthorizationTestDelegate(
       expectation: delegateExpectation
     )

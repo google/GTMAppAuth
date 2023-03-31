@@ -29,7 +29,8 @@ import GTMSessionFetcher
 /// A helper providing a concrete implementation for saving and loading auth data to the keychain.
 @objc(GTMKeychainStore)
 public final class KeychainStore: NSObject, AuthSessionStore {
-  private let keychainHelper: KeychainHelper
+  /// The helper wrapping keychain access.
+  @objc public let keychainHelper: KeychainHelper
   /// The last used `NSKeyedArchiver` used in tests to ensure that the class name mapping worked.
   private(set) var lastUsedKeyedArchiver: NSKeyedArchiver?
   /// The last used `NSKeyedUnarchiver` used in tests to ensure that the class name mapping worked.
