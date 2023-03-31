@@ -26,7 +26,6 @@ import AppAuth
 @testable import GTMAppAuth
 
 class GTMOAuth2CompatibilityTests: XCTestCase {
-  private let gtmOAuth2Compatibility = GTMOAuth2Compatibility()
   private lazy var testPersistenceString: String = {
     return "access_token=\(TestingConstants.testAccessToken)&refresh_token=\(TestingConstants.testRefreshToken)&scope=\(TestingConstants.testScope2)&serviceProvider=\(TestingConstants.testServiceProvider)&userEmail=foo%40foo.com&userEmailIsVerified=y&userID=\(TestingConstants.testUserID)"
   }()
@@ -139,7 +138,7 @@ class GTMOAuth2CompatibilityTests: XCTestCase {
   func testAuthSessionFromKeychainForPersistenceStringFailedWithBadURI() {
     let badURI = ""
     XCTAssertThrowsError(
-      try gtmOAuth2Compatibility.authSession(
+      try GTMOAuth2Compatibility.authSession(
         forPersistenceString: testPersistenceString,
         tokenURL: TestingConstants.testTokenURL,
         redirectURI: badURI,
@@ -155,7 +154,7 @@ class GTMOAuth2CompatibilityTests: XCTestCase {
   }
 
   func testAuthSessionFromKeychainForPersistenceString() throws {
-    let authSession = try gtmOAuth2Compatibility.authSession(
+    let authSession = try GTMOAuth2Compatibility.authSession(
       forPersistenceString: testPersistenceString,
       tokenURL: TestingConstants.testTokenURL,
       redirectURI: TestingConstants.testRedirectURI,
@@ -178,7 +177,7 @@ class GTMOAuth2CompatibilityTests: XCTestCase {
   }
 
   func testAuthSessionFromKeychainMatchesForNameAndPersistenceString() throws {
-    let expectedPersistAuth = try gtmOAuth2Compatibility.authSession(
+    let expectedPersistAuth = try GTMOAuth2Compatibility.authSession(
       forPersistenceString: testPersistenceString,
       tokenURL: TestingConstants.testTokenURL,
       redirectURI: TestingConstants.testRedirectURI,
@@ -215,7 +214,7 @@ class GTMOAuth2CompatibilityTests: XCTestCase {
   }
 
   func testAuthSessionFromKeychainUsingGoogleOAuthProviderInformation() throws {
-    let expectedPersistAuth = try gtmOAuth2Compatibility.authSession(
+    let expectedPersistAuth = try GTMOAuth2Compatibility.authSession(
       forPersistenceString: testPersistenceString,
       tokenURL: TestingConstants.testTokenURL,
       redirectURI: TestingConstants.testRedirectURI,

@@ -1,0 +1,60 @@
+name: Publish API Documentation
+
+on:
+  push:
+    branches:
+      - petea-docs
+  workflow_dispatch:
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+
+  generate:
+    runs-on: macos-12
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Build DocC Archive
+        run: |
+          xcodebuild docbuild \
+            -scheme GTMAppAuth \
+            -derivedDataPath /tmp/xcodebuild_output \
+            -destination 'generic/platform=iOS' \
+            DOCC_EXTRACT_OBJC_INFO_FOR_SWIFT_SYMBOLS=YES \
+            SWIFT_INSTALL_OBJC_HEADER=YES
+      - name: Generate Static Content
+        run: |
+          $(xcrun --find docc) process-archive transform-for-static-hosting \
+            /tmp/xcodebuild_output/Build/Products/Debug-iphoneos/GTMAppAuth.doccarchive \
+            --output-path /tmp/docs \
+            --hosting-base-path /GTMAppAuth/
+      - name: Insert Redirect
+        run: |
+          printf "%s\n" \
+            "<html>" \
+              "<head>" \
+                "<meta http-equiv=\"refresh\" content=\"0;URL='https://google.github.io/GTMAppAuth/documentation/gtmappauth'\">" \
+              "</head>" \
+              "<body></body>" \
+            "</html>" > /tmp/docs/index.html
+      - name: Upload GitHub Pages Artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: /tmp/docs
+
+  deploy:
+    needs: generate
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1

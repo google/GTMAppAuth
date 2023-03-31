@@ -28,8 +28,9 @@ import GTMSessionFetcher
 
 /// A helper providing a concrete implementation for saving and loading auth data to the keychain.
 @objc(GTMKeychainStore)
-public final class KeychainStore: NSObject {
-  private let keychainHelper: KeychainHelper
+public final class KeychainStore: NSObject, AuthSessionStore {
+  /// The helper wrapping keychain access.
+  @objc public let keychainHelper: KeychainHelper
   /// The last used `NSKeyedArchiver` used in tests to ensure that the class name mapping worked.
   private(set) var lastUsedKeyedArchiver: NSKeyedArchiver?
   /// The last used `NSKeyedUnarchiver` used in tests to ensure that the class name mapping worked.
@@ -86,11 +87,9 @@ public final class KeychainStore: NSObject {
 
     super.init()
   }
-}
 
-// MARK: - AuthSessionStore Conformance
+  // MARK: - AuthSessionStore Conformance
 
-extension KeychainStore: AuthSessionStore {
   /// An initializer for to create an instance of this keychain wrapper.
   ///
   /// - Parameters:
@@ -109,8 +108,15 @@ extension KeychainStore: AuthSessionStore {
     )
   }
 
-  @objc(saveAuthSession:forItemName:error:)
-  public func save(authSession: AuthSession, forItemName itemName: String) throws {
+  /// Saves the provided `AuthSession` using the provided item name.
+  ///
+  /// - Parameters:
+  ///   - authSession: An instance of `AuthSession` to save.
+  ///   - itemName: A `String` name to use for the save that is different than the name given during
+  ///     initialization.
+  /// - Throws: Any error that may arise during the save.
+  @objc(saveAuthSession:withItemName:error:)
+  public func save(authSession: AuthSession, withItemName itemName: String) throws {
     let authSessionData = try authSessionData(fromAuthSession: authSession)
     try keychainHelper.setPassword(
       data: authSessionData,
@@ -140,6 +146,12 @@ extension KeychainStore: AuthSessionStore {
     return keyedArchiver.encodedData
   }
 
+  /// Removes the stored `AuthSession` matching the provided item name.
+  ///
+  /// - Parameters:
+  ///   - itemName: A `String` name to use for the removal different than what was given during
+  ///     initialization.
+  /// - Throws: Any error that may arise during the removal.
   @objc public func removeAuthSession(withItemName itemName: String) throws {
     try keychainHelper.removePassword(forService: itemName)
   }
@@ -165,7 +177,13 @@ extension KeychainStore: AuthSessionStore {
     return keyedUnarchiver
   }
 
-  @objc public func retrieveAuthSession(forItemName itemName: String) throws -> AuthSession {
+  /// Retrieves the stored `AuthSession` matching the provided item name.
+  ///
+  /// - Parameters:
+  ///   - itemName: A `String` name for the item to retrieve different than what was given during
+  ///     initialization.
+  /// - Throws: Any error that may arise during the retrieval.
+  @objc public func retrieveAuthSession(withItemName itemName: String) throws -> AuthSession {
     let passwordData = try keychainHelper.passwordData(forService: itemName)
 
     let keyedUnarchiver = try keyedUnarchiver(forData: passwordData)
@@ -173,9 +191,7 @@ extension KeychainStore: AuthSessionStore {
       of: AuthSession.self,
       forKey: NSKeyedArchiveRootObjectKey
     ) else {
-      throw AuthSession
-        .Error
-        .failedToConvertKeychainDataToAuthSession(forItemName: itemName)
+      throw Error.failedToConvertKeychainDataToAuthSession(itemName: itemName)
     }
     return auth
   }
@@ -188,9 +204,7 @@ extension KeychainStore: AuthSessionStore {
       of: AuthSession.self,
       forKey: NSKeyedArchiveRootObjectKey
     ) else {
-      throw AuthSession
-        .Error
-        .failedToConvertKeychainDataToAuthSession(forItemName: itemName)
+      throw Error.failedToConvertKeychainDataToAuthSession(itemName: itemName)
     }
     return auth
   }
@@ -211,8 +225,7 @@ extension KeychainStore: AuthSessionStore {
     clientSecret: String?
   ) throws -> AuthSession {
     let password = try keychainHelper.password(forService: itemName)
-    let compatibility = GTMOAuth2Compatibility()
-    let authSession = try compatibility.authSession(
+    let authSession = try GTMOAuth2Compatibility.authSession(
       forPersistenceString: password,
       tokenURL: tokenURL,
       redirectURI: redirectURI,
@@ -275,6 +288,7 @@ public extension KeychainStore {
     case failedToCreateResponseStringFromAuthSession(AuthSession)
     case failedToConvertRedirectURItoURL(String)
     case failedToConvertAuthSessionToData
+    case failedToConvertKeychainDataToAuthSession(itemName: String)
     case failedToDeletePassword(forItemName: String)
     case failedToDeletePasswordBecauseItemNotFound(itemName: String)
     case failedToSetPassword(forItemName: String)
@@ -299,6 +313,8 @@ public extension KeychainStore {
         return ["redirectURI": redirectURI]
       case .failedToConvertAuthSessionToData:
         return [:]
+      case .failedToConvertKeychainDataToAuthSession(itemName: let itemName):
+        return ["itemName": itemName]
       case .failedToDeletePassword(let itemName):
         return ["itemName": itemName]
       case .failedToDeletePasswordBecauseItemNotFound(itemName: let itemName):
@@ -312,44 +328,51 @@ public extension KeychainStore {
       return ErrorCode(keychainStoreError: self).rawValue
     }
   }
-}
 
-/// Error codes associated with cases from `KeychainStore.Error`.
-@objc(GTMKeychainStoreErrorCode)
-public enum ErrorCode: Int {
-  case unhandled
-  case passwordNotFound
-  case noService
-  case unexpectedPasswordData
-  case failedToCreateResponseStringFromAuthSession
-  case failedToConvertRedirectURItoURL
-  case failedToConvertAuthSessionToData
-  case failedToDeletePassword
-  case failedToDeletePasswordBecauseItemNotFound
-  case failedToSetPassword
+  /// Error codes associated with cases from `KeychainStore.Error`.
+  ///
+  /// The cases for this enumeration are backed by integer raw values and are used to fill out the
+  /// `errorCode` for the `NSError` representation of `KeychainStore.Error`.
+  @objc(GTMKeychainStoreErrorCode)
+  enum ErrorCode: Int {
+    case unhandled
+    case passwordNotFound
+    case noService
+    case unexpectedPasswordData
+    case failedToCreateResponseStringFromAuthSession
+    case failedToConvertRedirectURItoURL
+    case failedToConvertAuthSessionToData
+    case failedToConvertKeychainDataToAuthSession
+    case failedToDeletePassword
+    case failedToDeletePasswordBecauseItemNotFound
+    case failedToSetPassword
 
-  init(keychainStoreError: KeychainStore.Error) {
-    switch keychainStoreError {
-    case .unhandled:
-      self = .unhandled
-    case .passwordNotFound:
-      self = .passwordNotFound
-    case .noService:
-      self = .noService
-    case .unexpectedPasswordData:
-      self = .unexpectedPasswordData
-    case .failedToCreateResponseStringFromAuthSession:
-      self = .failedToCreateResponseStringFromAuthSession
-    case .failedToConvertRedirectURItoURL:
-      self = .failedToConvertRedirectURItoURL
-    case .failedToConvertAuthSessionToData:
-      self = .failedToConvertAuthSessionToData
-    case .failedToDeletePassword:
-      self = .failedToDeletePassword
-    case .failedToDeletePasswordBecauseItemNotFound:
-      self = .failedToDeletePasswordBecauseItemNotFound
-    case .failedToSetPassword:
-      self = .failedToSetPassword
+    init(keychainStoreError: KeychainStore.Error) {
+      switch keychainStoreError {
+      case .unhandled:
+        self = .unhandled
+      case .passwordNotFound:
+        self = .passwordNotFound
+      case .noService:
+        self = .noService
+      case .unexpectedPasswordData:
+        self = .unexpectedPasswordData
+      case .failedToCreateResponseStringFromAuthSession:
+        self = .failedToCreateResponseStringFromAuthSession
+      case .failedToConvertRedirectURItoURL:
+        self = .failedToConvertRedirectURItoURL
+      case .failedToConvertAuthSessionToData:
+        self = .failedToConvertAuthSessionToData
+      case .failedToConvertKeychainDataToAuthSession:
+        self = .failedToConvertKeychainDataToAuthSession
+      case .failedToDeletePassword:
+        self = .failedToDeletePassword
+      case .failedToDeletePasswordBecauseItemNotFound:
+        self = .failedToDeletePasswordBecauseItemNotFound
+      case .failedToSetPassword:
+        self = .failedToSetPassword
+      }
     }
   }
 }
+

@@ -30,6 +30,7 @@
 @property (nonatomic) NSURL *googleAuthzEndpoint;
 @property (nonatomic) NSURL *tokenEndpoint;
 @property (nonatomic) NSURL *secureURL;
+@property (nonatomic) NSURL *insecureURL;
 @property (nonatomic) NSTimeInterval expectationTimeout;
 
 @end
@@ -38,6 +39,7 @@
 
 - (void)setUp {
   self.secureURL = [NSURL URLWithString:@"https://fake.com"];
+  self.insecureURL = [NSURL URLWithString:@"http://fake.com"];
   self.googleAuthzEndpoint = [NSURL URLWithString:@"https://accounts.google.com/o/oauth2/v2/auth"];
   self.tokenEndpoint = [NSURL URLWithString:@"https://www.googleapis.com/oauth2/v4/token"];
   self.expectationTimeout = 5;
@@ -83,13 +85,79 @@
   XCTAssertTrue([authSession isAuthorizedRequest:secureRequest]);
 }
 
+- (void)testAuthorizeSecureRequestWithCompletionEmptyAccessTokenError {
+  XCTestExpectation *authRequestExpectation =
+      [[XCTestExpectation alloc] initWithDescription:@"Authorize with completion"];
+
+  OIDTokenResponse *tokenResponse =
+      [OIDTokenResponse testInstanceWithEmptyAccessTokenWithIdToken:@""
+                                                            expires:nil
+                                                       tokenRequest:nil];
+  GTMAuthSession *authSession =
+      [[GTMAuthSession alloc] initWithAuthState:[OIDAuthState testInstanceWithTokenResponse:tokenResponse]];
+  NSMutableURLRequest *secureRequest = [NSMutableURLRequest requestWithURL:self.secureURL];
+
+  [authSession authorizeRequest:secureRequest completionHandler:^(NSError * _Nullable error) {
+    XCTAssertNotNil(error);
+    XCTAssertEqual(error.code, GTMAuthSessionErrorCodeAccessTokenEmptyForRequest);
+    [authRequestExpectation fulfill];
+  }];
+
+  XCTAssertTrue([authSession isAuthorizingRequest:secureRequest]);
+  [self waitForExpectations:@[authRequestExpectation] timeout:self.expectationTimeout];
+  XCTAssertFalse([authSession isAuthorizedRequest:secureRequest]);
+}
+
+- (void)testAuthorizeSecureRequestWithCompletionNilAccessTokenError {
+  XCTestExpectation *authRequestExpectation =
+      [[XCTestExpectation alloc] initWithDescription:@"Authorize with completion"];
+
+  OIDTokenResponse *tokenResponse =
+      [OIDTokenResponse testInstanceWithoutAccessTokenWithIdToken:@""
+                                                          expires:nil
+                                                     tokenRequest:nil];
+
+  GTMAuthSession *authSession =
+      [[GTMAuthSession alloc] initWithAuthState:[OIDAuthState testInstanceWithTokenResponse:tokenResponse]];
+  NSMutableURLRequest *secureRequest = [NSMutableURLRequest requestWithURL:self.secureURL];
+
+  [authSession authorizeRequest:secureRequest completionHandler:^(NSError * _Nullable error) {
+    XCTAssertNotNil(error);
+    XCTAssertEqual(error.code, GTMAuthSessionErrorCodeAccessTokenEmptyForRequest);
+    [authRequestExpectation fulfill];
+  }];
+
+  XCTAssertTrue([authSession isAuthorizingRequest:secureRequest]);
+  [self waitForExpectations:@[authRequestExpectation] timeout:self.expectationTimeout];
+  XCTAssertFalse([authSession isAuthorizedRequest:secureRequest]);
+}
+
+- (void)testAuthorizeInsecureRequestWithCompletionError {
+  XCTestExpectation *authRequestExpectation =
+      [[XCTestExpectation alloc] initWithDescription:@"Authorize with completion"];
+
+  GTMAuthSession *authSession =
+      [[GTMAuthSession alloc] initWithAuthState:[OIDAuthState testInstance]];
+  NSMutableURLRequest *secureRequest = [NSMutableURLRequest requestWithURL:self.insecureURL];
+
+  [authSession authorizeRequest:secureRequest completionHandler:^(NSError * _Nullable error) {
+    XCTAssertNotNil(error);
+    XCTAssertEqual(error.code, GTMAuthSessionErrorCodeCannotAuthorizeRequest);
+    [authRequestExpectation fulfill];
+  }];
+
+  XCTAssertTrue([authSession isAuthorizingRequest:secureRequest]);
+  [self waitForExpectations:@[authRequestExpectation] timeout:self.expectationTimeout];
+  XCTAssertFalse([authSession isAuthorizedRequest:secureRequest]);
+}
+
 - (void)testAuthorizeSecureRequestWithDelegate {
   XCTestExpectation *delegateExpectation =
       [[XCTestExpectation alloc] initWithDescription:@"Authorize with delegate"];
 
   OIDAuthState *authState = OIDAuthState.testInstance;
-  GTMAuthorizationTestingHelper *originalAuthorization =
-      [[GTMAuthorizationTestingHelper alloc] initWithAuthState:authState];
+  GTMAuthSession *originalAuthorization =
+      [[GTMAuthSession alloc] initWithAuthState:authState];
   GTMAuthorizationTestDelegate *testingDelegate =
       [[GTMAuthorizationTestDelegate alloc] initWithExpectation:delegateExpectation];
 
@@ -192,3 +260,4 @@
 }
 
 @end
+

@@ -32,7 +32,7 @@ requests with AppAuth.
   s.watchos.deployment_target = watchos_deployment_target
 
   s.framework = 'Security'
-  s.dependency 'GTMSessionFetcher/Core', '>= 1.5', '< 4.0'
+  s.dependency 'GTMSessionFetcher/Core', '>= 2.1', '< 4.0'
   s.dependency 'AppAuth/Core', '~> 1.6'
 
   s.test_spec 'unit' do |unit_tests|
@@ -40,7 +40,6 @@ requests with AppAuth.
       :ios => ios_deployment_target,
       :osx => osx_deployment_target,
       :tvos => tvos_deployment_target,
-      :watchos => watchos_deployment_target,
     }
     unit_tests.source_files = [
       'GTMAppAuth/Tests/Unit/**/*.swift',
@@ -54,14 +53,12 @@ requests with AppAuth.
       :ios => ios_deployment_target,
       :osx => osx_deployment_target,
       :tvos => tvos_deployment_target,
-      :watchos => watchos_deployment_target,
     }
     api_tests.source_files = [
       'GTMAppAuth/Tests/ObjCIntegration/**/*.m',
       'GTMAppAuth/Tests/Helpers/**/*.swift',
     ]
-    api_tests.dependency 'AppAuth'
-    # api_tests.dependency 'GTMAppAuth/TestHelpers'
+    api_tests.dependency 'AppAuth/Core'
   end
 
 end
