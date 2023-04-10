@@ -46,6 +46,7 @@ requests with AppAuth.
       'GTMAppAuth/Tests/Helpers/**/*.swift',
     ]
     unit_tests.dependency 'AppAuth/Core'
+    unit_tests.requires_app_host = true
   end
 
   s.test_spec 'objc-api-integration' do |api_tests|
@@ -59,6 +60,7 @@ requests with AppAuth.
       'GTMAppAuth/Tests/Helpers/**/*.swift',
     ]
     api_tests.dependency 'AppAuth/Core'
+    api_tests.requires_app_host = true
   end
 
 end
