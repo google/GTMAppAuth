@@ -185,8 +185,10 @@ public final class AuthSession: NSObject, GTMSessionFetcherAuthorizer, NSSecureC
   ///     domains may indicate a transitive error condition such as a network error, and typically
   ///     you do not need to reauthenticate the user on such errors.
   ///
-  /// The completion handler is scheduled on the main thread, unless the `callbackQueue` property is
-  /// set on the `fetcherService` in which case the handler is scheduled on that queue.
+  /// The completion handler is scheduled on unless the `callbackQueue` property set on the
+  /// `fetcherService`. If the `fetcherService` does not have a callbacak queue, then a global queue
+  /// with the quality of service specified as `userInitiated` is used since the callback may
+  /// provide UI with an updated error .
   @objc(authorizeRequest:completionHandler:)
   public func authorizeRequest(
     _ request: NSMutableURLRequest?,
@@ -283,7 +285,7 @@ public final class AuthSession: NSObject, GTMSessionFetcherAuthorizer, NSSecureC
     } else {
       args.error = Error.cannotAuthorizeRequest(request as URLRequest)
     }
-    let callbackQueue = fetcherService?.callbackQueue ?? DispatchQueue.main // DispatchQueue(label: "com.google.gtmappauth.update_error_queue")
+    let callbackQueue = fetcherService?.callbackQueue ?? DispatchQueue.global(qos: .userInteractive)
 
     callbackQueue.async {
       if let error = args.error, let delegate = self.delegate {
@@ -293,7 +295,7 @@ public final class AuthSession: NSObject, GTMSessionFetcherAuthorizer, NSSecureC
           args.error = updatedError ?? error
           errorSemaphore.signal()
         }
-        errorSemaphore.wait()
+        _ = errorSemaphore.wait(timeout: .now() + 1)
       }
     }
 
