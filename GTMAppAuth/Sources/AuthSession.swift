@@ -283,20 +283,18 @@ public final class AuthSession: NSObject, GTMSessionFetcherAuthorizer, NSSecureC
     } else {
       args.error = Error.cannotAuthorizeRequest(request as URLRequest)
     }
-    let callbackQueue = fetcherService?.callbackQueue ?? DispatchQueue(label: "com.google.GTMAppAuth.updateErrorQueue")
+    let callbackQueue = fetcherService?.callbackQueue ?? DispatchQueue.main // DispatchQueue(label: "com.google.gtmappauth.update_error_queue")
 
     callbackQueue.async {
-      let errorSemaphore = DispatchSemaphore(value: 0)
       if let error = args.error, let delegate = self.delegate {
+        let errorSemaphore = DispatchSemaphore(value: 0)
         // Use updated error if exists; otherwise, use whatever is already in `args.error`
         delegate.updatedError?(forAuthSession: self, originalError: error) { updatedError in
           args.error = updatedError ?? error
           errorSemaphore.signal()
         }
-      } else {
-        errorSemaphore.signal()
+        _ = errorSemaphore.wait(timeout: .now() + 1)
       }
-      errorSemaphore.wait()
     }
 
     callbackQueue.async { [weak self] in
