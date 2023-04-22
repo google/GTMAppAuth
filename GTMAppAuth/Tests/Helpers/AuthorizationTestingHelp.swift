@@ -107,4 +107,14 @@ public class AuthSessionDelegateProvider: NSObject, AuthSessionDelegate {
     }
     return expectedError
   }
+
+  public func updatedError(
+    forAuthSession authSession: AuthSession,
+    originalError: Error,
+    completion: @escaping (Error?) -> Void
+  ) {
+    XCTAssertEqual(authSession, originalAuthSession)
+    updatedErrorCalled = true
+    completion(expectedError)
+  }
 }
