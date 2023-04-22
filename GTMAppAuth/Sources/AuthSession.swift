@@ -186,9 +186,8 @@ public final class AuthSession: NSObject, GTMSessionFetcherAuthorizer, NSSecureC
   ///     you do not need to reauthenticate the user on such errors.
   ///
   /// The completion handler is scheduled on unless the `callbackQueue` property set on the
-  /// `fetcherService`. If the `fetcherService` does not have a callbacak queue, then a global queue
-  /// with the quality of service specified as `userInitiated` is used since the callback may
-  /// provide UI with an updated error .
+  /// `fetcherService`. If the `fetcherService` does not have a callback queue, then a queue is
+  /// created.
   @objc(authorizeRequest:completionHandler:)
   public func authorizeRequest(
     _ request: NSMutableURLRequest?,
@@ -285,7 +284,8 @@ public final class AuthSession: NSObject, GTMSessionFetcherAuthorizer, NSSecureC
     } else {
       args.error = Error.cannotAuthorizeRequest(request as URLRequest)
     }
-    let callbackQueue = fetcherService?.callbackQueue ?? DispatchQueue.global(qos: .userInteractive)
+    let qLabel = "com.google.gtmappauth.maybe_update_error"
+    let callbackQueue = fetcherService?.callbackQueue ?? DispatchQueue(label: qLabel)
 
     callbackQueue.async {
       if let error = args.error, let delegate = self.delegate {
