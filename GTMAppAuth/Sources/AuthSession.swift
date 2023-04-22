@@ -285,7 +285,7 @@ public final class AuthSession: NSObject, GTMSessionFetcherAuthorizer, NSSecureC
     }
     let callbackQueue = fetcherService?.callbackQueue ?? DispatchQueue(label: "com.google.GTMAppAuth.updateErrorQueue")
 
-    callbackQueue.async(flags: .barrier) {
+    callbackQueue.sync {
       if let error = args.error, let delegate = self.delegate {
         // Use updated error if exists; otherwise, use whatever is already in `args.error`
         delegate.updatedError?(forAuthSession: self, originalError: error) { updatedError in
