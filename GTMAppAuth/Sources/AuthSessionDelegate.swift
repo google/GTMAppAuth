@@ -30,8 +30,8 @@ public protocol AuthSessionDelegate {
 
   /// A method notifying the delegate that the authorization request failed.
   ///
-  /// Use this method to examine the error behind the failed authorization request and supply a more
-  /// custom error specifying whatever context is needed.
+  /// Use this method to examine the error behind the failed authorization request and supply a
+  /// customized error specifying whatever context is needed.
   ///
   /// - Parameters:
   ///   - authSession: The `AuthSession` whose authorization request failed.
@@ -41,4 +41,19 @@ public protocol AuthSessionDelegate {
     forAuthSession authSession: AuthSession,
     originalError: Error
   ) -> Error?
+
+  /// A method notifying the delegate that the authorization request failed.
+  ///
+  /// Use this method to examine the error behind the failed authorization request and supply a
+  /// customized error created asynchronously that specifies whatever context is needed.
+  ///
+  /// - Parameters:
+  ///   - authSession: The `AuthSession` whose authorization request failed.
+  ///   - originalError: The original `Error` associated with the failure.
+  ///   - completion: An escaping closure to pass back the updated error.
+  @objc optional func updatedError(
+    forAuthSession authSession: AuthSession,
+    originalError: Error,
+    completion: @escaping (Error?) -> Void
+  )
 }

@@ -285,14 +285,14 @@ public final class AuthSession: NSObject, GTMSessionFetcherAuthorizer, NSSecureC
     }
     let callbackQueue = fetcherService?.callbackQueue ?? DispatchQueue.main
 
-    if let error = args.error, let delegate = self.delegate {
-      // If there is an updated error, use that; otherwise, use whatever is already in `args.error`
-      let newError = delegate.updatedError?(forAuthSession: self, originalError: error)
-      args.error = newError ?? error
-    }
-
     callbackQueue.async { [weak self] in
       guard let self = self else { return }
+
+      if let error = args.error, let delegate = self.delegate {
+        // Use updated error if exists; otherwise, use whatever is already in `args.error`
+        let newError = delegate.updatedError?(forAuthSession: self, originalError: error)
+        args.error = newError ?? error
+      }
 
       switch args.callbackStyle {
       case .completion(let callback):
