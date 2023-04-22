@@ -293,7 +293,7 @@ public final class AuthSession: NSObject, GTMSessionFetcherAuthorizer, NSSecureC
           args.error = updatedError ?? error
           errorSemaphore.signal()
         }
-        _ = errorSemaphore.wait(timeout: .now() + 1)
+        errorSemaphore.wait()
       }
     }
 
