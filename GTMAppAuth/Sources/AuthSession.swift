@@ -284,35 +284,34 @@ public final class AuthSession: NSObject, GTMSessionFetcherAuthorizer, NSSecureC
     } else {
       args.error = Error.cannotAuthorizeRequest(request as URLRequest)
     }
-    let qLabel = "com.google.gtmappauth.maybe_update_error"
-    let callbackQueue = fetcherService?.callbackQueue ?? DispatchQueue(label: qLabel)
+    let callbackQueue = fetcherService?.callbackQueue ?? DispatchQueue.main
 
-    callbackQueue.async {
-      if let error = args.error, let delegate = self.delegate {
-        let errorSemaphore = DispatchSemaphore(value: 0)
-        // Use updated error if exists; otherwise, use whatever is already in `args.error`
-        delegate.updatedError?(forAuthSession: self, originalError: error) { updatedError in
-          args.error = updatedError ?? error
-          errorSemaphore.signal()
+    let callback: () -> Void = {
+      callbackQueue.async { [weak self] in
+        guard let self = self else { return }
+
+        switch args.callbackStyle {
+        case .completion(let callback):
+          self.invokeCompletionCallback(with: callback, error: args.error)
+        case .delegate(let delegate, let selector):
+          self.invokeCallback(
+            withDelegate: delegate,
+            selector: selector,
+            request: request,
+            error: args.error
+          )
         }
-        _ = errorSemaphore.wait(timeout: .now() + 1)
       }
     }
 
-    callbackQueue.async { [weak self] in
-      guard let self = self else { return }
-
-      switch args.callbackStyle {
-      case .completion(let callback):
-        self.invokeCompletionCallback(with: callback, error: args.error)
-      case .delegate(let delegate, let selector):
-        self.invokeCallback(
-          withDelegate: delegate,
-          selector: selector,
-          request: request,
-          error: args.error
-        )
+    if let error = args.error, let delegate = self.delegate {
+      // Use updated error if exists; otherwise, use whatever is already in `args.error`
+      delegate.updatedError?(forAuthSession: self, originalError: error) { updatedError in
+        args.error = updatedError ?? error
+        callback()
       }
+    } else {
+      callback()
     }
   }
 
