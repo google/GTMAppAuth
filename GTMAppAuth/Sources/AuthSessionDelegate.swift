@@ -31,20 +31,6 @@ public protocol AuthSessionDelegate {
   /// A method notifying the delegate that the authorization request failed.
   ///
   /// Use this method to examine the error behind the failed authorization request and supply a
-  /// customized error specifying whatever context is needed.
-  ///
-  /// - Parameters:
-  ///   - authSession: The `AuthSession` whose authorization request failed.
-  ///   - originalError: The original `Error` associated with the failure.
-  /// - Returns: The new error for `AuthSession` to send back or nil if no error should be sent.
-  @objc optional func updatedError(
-    forAuthSession authSession: AuthSession,
-    originalError: Error
-  ) -> Error?
-
-  /// A method notifying the delegate that the authorization request failed.
-  ///
-  /// Use this method to examine the error behind the failed authorization request and supply a
   /// customized error created asynchronously that specifies whatever context is needed.
   ///
   /// - Parameters:
