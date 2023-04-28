@@ -185,9 +185,8 @@ public final class AuthSession: NSObject, GTMSessionFetcherAuthorizer, NSSecureC
   ///     domains may indicate a transitive error condition such as a network error, and typically
   ///     you do not need to reauthenticate the user on such errors.
   ///
-  /// The completion handler is scheduled on unless the `callbackQueue` property set on the
-  /// `fetcherService`. If the `fetcherService` does not have a callback queue, then a queue is
-  /// created.
+  /// The completion handler is scheduled on the main thread, unless the `callbackQueue` property is
+  /// set on the `fetcherService` in which case the handler is scheduled on that queue.
   @objc(authorizeRequest:completionHandler:)
   public func authorizeRequest(
     _ request: NSMutableURLRequest?,
