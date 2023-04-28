@@ -304,7 +304,7 @@ public final class AuthSession: NSObject, GTMSessionFetcherAuthorizer, NSSecureC
       }
     }
 
-    if let error = args.error, let delegate = self.delegate, delegate.updatedError != nil {
+    if let error = args.error, let delegate = self.delegate {
       // Use updated error if exists; otherwise, use whatever is already in `args.error`
       delegate.updatedError?(forAuthSession: self, originalError: error) { updatedError in
         args.error = updatedError ?? error
