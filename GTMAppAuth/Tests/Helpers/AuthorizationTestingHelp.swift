@@ -63,10 +63,42 @@ public class AuthorizationTestDelegate: NSObject {
   }
 }
 
+/// A testing helper that does not implement the update error method in `AuthSessionDelegate`.
+@objc(GTMAuthSessionDelegateProvideMissingEMMErrorHandling)
+public class AuthSessionDelegateProvideMissingEMMErrorHandling: NSObject, AuthSessionDelegate {
+  /// The `AuthSession` to which this delegate was given.
+  @objc public var originalAuthSession: AuthSession?
+
+  /// Whether or not the delegate callback for additional refresh parameters was called.
+  ///
+  /// - Note: Defaults to `false`.
+  @objc public var additionalRefreshParametersCalled = false
+
+  /// Whether or not the delegate callback for authorization request failure was called.
+  ///
+  /// - Note: Defaults to `false`.
+  @objc public var updatedErrorCalled = false
+
+  /// The expected error from the delegate callback.
+  @objc public let expectedError: NSError?
+
+  @objc public init(originalAuthSession: AuthSession, expectedError: NSError? = nil) {
+    self.originalAuthSession = originalAuthSession
+    self.expectedError = expectedError
+  }
+
+  public func additionalTokenRefreshParameters(
+    forAuthSession authSession: AuthSession
+  ) -> [String : String]? {
+    XCTAssertEqual(authSession, originalAuthSession)
+    additionalRefreshParametersCalled = true
+    return [:]
+  }
+}
+
 /// A testing helper given to `AuthSession`'s `delegate` to verify delegate callbacks.
 @objc(GTMAuthSessionDelegateProvider)
 public class AuthSessionDelegateProvider: NSObject, AuthSessionDelegate {
-
   /// The `AuthSession` to which this delegate was given.
   @objc public var originalAuthSession: AuthSession?
 

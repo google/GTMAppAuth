@@ -268,6 +268,38 @@ class AuthSessionTests: XCTestCase {
     XCTAssertTrue(authSessionDelegate.updatedErrorCalled)
   }
 
+  func testAuthSessionAuthorizeRequestWithCompletionFailDelegateNoImplementUpdateErrorCallback() {
+    let authorizeSecureRequestExpectation = expectation(
+      description: "Authorize with completion expectation"
+    )
+    let authSession = AuthSession(
+      authState: OIDAuthState.testInstance()
+    )
+
+    // The error we expect from the
+    // `AuthSessionDelegate.updatedError(forAuthSession:error:)` callback
+    let expectedCustomErrorDomain = "SomeCustomDomain"
+    // There must be an error here for the delegate to get the `updatedError` callback
+    let insecureRequest = NSMutableURLRequest(url: insecureFakeURL)
+    let expectedError = AuthSession.Error.cannotAuthorizeRequest(insecureRequest as URLRequest)
+    let authSessionDelegate = AuthSessionDelegateProvideMissingEMMErrorHandling(
+      originalAuthSession: authSession
+    )
+    authSession.delegate = authSessionDelegate
+
+    authSession.authorizeRequest(insecureRequest) { error in
+      guard let error = error else {
+        return XCTFail("There should be an `NSError` authorizing \(insecureRequest)")
+      }
+      XCTAssertEqual(error as? AuthSession.Error, expectedError)
+      authorizeSecureRequestExpectation.fulfill()
+    }
+    XCTAssertTrue(authSession.isAuthorizingRequest(insecureRequest as URLRequest))
+    waitForExpectations(timeout: expectationTimeout)
+    XCTAssertFalse(authSession.isAuthorizedRequest(insecureRequest as URLRequest))
+    XCTAssertFalse(authSessionDelegate.updatedErrorCalled)
+  }
+
   func testAuthSessionAuthorizeRequestWithCompletionDidFailButDelegateDoesntUpdateError() {
     let authorizeSecureRequestExpectation = expectation(
       description: "Authorize with completion expectation"
