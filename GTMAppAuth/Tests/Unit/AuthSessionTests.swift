@@ -276,9 +276,6 @@ class AuthSessionTests: XCTestCase {
       authState: OIDAuthState.testInstance()
     )
 
-    // The error we expect from the
-    // `AuthSessionDelegate.updatedError(forAuthSession:error:)` callback
-    let expectedCustomErrorDomain = "SomeCustomDomain"
     // There must be an error here for the delegate to get the `updatedError` callback
     let insecureRequest = NSMutableURLRequest(url: insecureFakeURL)
     let expectedError = AuthSession.Error.cannotAuthorizeRequest(insecureRequest as URLRequest)
