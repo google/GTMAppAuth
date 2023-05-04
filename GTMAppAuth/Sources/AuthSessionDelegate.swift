@@ -37,7 +37,7 @@ public protocol AuthSessionDelegate {
   ///   - authSession: The `AuthSession` whose authorization request failed.
   ///   - originalError: The original `Error` associated with the failure.
   ///   - completion: An escaping closure to pass back the updated error.
-  @objc optional func updatedError(
+  @objc optional func updateError(
     forAuthSession authSession: AuthSession,
     originalError: Error,
     completion: @escaping (Error?) -> Void
