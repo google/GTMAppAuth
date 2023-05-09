@@ -1,3 +1,7 @@
+# 4.0.0
+
+- Updated `AuthSessionDelegate` method for updating error to take a completion to support async updates [#229](https://github.com/google/GTMAppAuth/pull/229)
+
 # 3.0.0
 
 - GTMAppAuth has been translated from Objective-C to Swift. ([#190](https://github.com/google/GTMAppAuth/pull/190))
