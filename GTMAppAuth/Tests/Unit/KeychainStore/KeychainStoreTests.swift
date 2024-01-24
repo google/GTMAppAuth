@@ -66,6 +66,8 @@ class KeychainStoreTests: XCTestCase {
       return
     }
 
+    XCTAssertEqual(testQuery[kSecUseDataProtectionKeychain as String], kCFBooleanTrue)
+
     let comparisonQuery = comparisonKeychainQuery(
       withAttributes: useDataProtectionAttributeSet,
       accountName: fakeWithDataProtection.accountName,
@@ -92,6 +94,8 @@ class KeychainStoreTests: XCTestCase {
       XCTFail("`fakeWithAccessGroup` missing keychain query attributes")
       return
     }
+
+    XCTAssertEqual(testQuery[kSecAttrAccessGroup as String], expectedGroupName)
 
     let comparisonQuery = comparisonKeychainQuery(
       withAttributes: accessGroupAttributeSet,
@@ -129,6 +133,9 @@ class KeychainStoreTests: XCTestCase {
       XCTFail("`fakeWithDataProtectionAndAccessGroup` missing keychain query attributes")
       return
     }
+
+    XCTAssertEqual(testQuery[kSecUseDataProtectionKeychain as String], kCFBooleanTrue)
+    XCTAssertEqual(testQuery[kSecAttrAccessGroup as String], expectedGroupName)
 
     let comparisonQuery = comparisonKeychainQuery(
       withAttributes: accessGroupAttributeSet,
@@ -172,6 +179,8 @@ class KeychainStoreTests: XCTestCase {
       return
     }
 
+    XCTAssertEqual(testQuery[kSecUseDataProtectionKeychain as String], kCFBooleanTrue)
+
     let comparisonQuery = comparisonKeychainQuery(
       withAttributes: useDataProtectionAttributeSet,
       accountName: fakeWithDataProtection.accountName,
@@ -199,6 +208,8 @@ class KeychainStoreTests: XCTestCase {
       XCTFail("`fakeWithAccessGroup` missing keychain query attributes")
       return
     }
+
+    XCTAssertEqual(testQuery[kSecAttrAccessGroup as String], expectedGroupName)
 
     let comparisonQuery = comparisonKeychainQuery(
       withAttributes: accessGroupAttributeSet,
@@ -237,6 +248,9 @@ class KeychainStoreTests: XCTestCase {
       XCTFail("`fakeWithDataProtectionAndAccessGroup` missing keychain query attributes")
       return
     }
+
+    XCTAssertEqual(testQuery[kSecUseDataProtectionKeychain as String], kCFBooleanTrue)
+    XCTAssertEqual(testQuery[kSecAttrAccessGroup as String], expectedGroupName)
 
     let comparisonQuery = comparisonKeychainQuery(
       withAttributes: accessGroupAttributeSet,
@@ -280,6 +294,8 @@ class KeychainStoreTests: XCTestCase {
       return
     }
 
+    XCTAssertEqual(testQuery[kSecUseDataProtectionKeychain as String], kCFBooleanTrue)
+
     let comparisonQuery = comparisonKeychainQuery(
       withAttributes: useDataProtectionAttributeSet,
       accountName: fakeWithDataProtection.accountName,
@@ -307,6 +323,8 @@ class KeychainStoreTests: XCTestCase {
       XCTFail("`fakeWithAccessGroup` missing keychain query attributes")
       return
     }
+
+    XCTAssertEqual(testQuery[kSecAttrAccessGroup as String], expectedGroupName)
 
     let comparisonQuery = comparisonKeychainQuery(
       withAttributes: accessGroupAttributeSet,
@@ -345,6 +363,9 @@ class KeychainStoreTests: XCTestCase {
       XCTFail("`fakeWithDataProtectionAndAccessGroup` missing keychain query attributes")
       return
     }
+
+    XCTAssertEqual(testQuery[kSecUseDataProtectionKeychain as String], kCFBooleanTrue)
+    XCTAssertEqual(testQuery[kSecAttrAccessGroup as String], expectedGroupName)
 
     let comparisonQuery = comparisonKeychainQuery(
       withAttributes: accessGroupAttributeSet,

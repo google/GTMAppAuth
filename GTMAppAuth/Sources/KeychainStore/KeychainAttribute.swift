@@ -24,6 +24,7 @@ public final class KeychainAttribute: NSObject {
     /// Indicates whether to treat macOS keychain items like iOS keychain items.
     ///
     /// This attribute will set `kSecUseDataProtectionKeychain` as true in the Keychain query.
+    @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
     case useDataProtectionKeychain
     /// The `String` name for the access group to use in the Keychain query.
     case accessGroup(String)
@@ -32,9 +33,13 @@ public final class KeychainAttribute: NSObject {
     public var keyName: String {
       switch self {
       case .useDataProtectionKeychain:
-        return "kSecUseDataProtectionKeychain"
+        if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *) {
+          return kSecUseDataProtectionKeychain as String
+        }
+
+        fatalError(".useDataProtectionKeychain is not available")
       case .accessGroup:
-        return "kSecKeychainAccessGroup"
+        return kSecAttrAccessGroup as String
       }
     }
   }
@@ -53,7 +58,7 @@ public final class KeychainAttribute: NSObject {
   /// Creates an instance of `KeychainAttribute` whose attribute is set to
   /// `.useDataProtectionKeychain`.
   /// - Returns: An instance of `KeychainAttribute`.
-  @available(macOS 10.15, *)
+  @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
   @objc public static let useDataProtectionKeychain = KeychainAttribute(
     attribute: .useDataProtectionKeychain
   )

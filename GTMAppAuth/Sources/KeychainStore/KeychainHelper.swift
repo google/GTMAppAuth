@@ -34,11 +34,6 @@ public protocol KeychainHelper {
 final class KeychainWrapper: KeychainHelper {
   let accountName = "OAuth"
   let keychainAttributes: Set<KeychainAttribute>
-  @available(macOS 10.15, *)
-  private var isMaxMacOSVersionGreaterThanTenOneFive: Bool {
-    let tenOneFive = OperatingSystemVersion(majorVersion: 10, minorVersion: 15, patchVersion: 0)
-    return ProcessInfo().isOperatingSystemAtLeast(tenOneFive)
-  }
 
   init(keychainAttributes: Set<KeychainAttribute> = []) {
     self.keychainAttributes = keychainAttributes
@@ -54,11 +49,7 @@ final class KeychainWrapper: KeychainHelper {
     keychainAttributes.forEach { configuration in
       switch configuration.attribute {
       case .useDataProtectionKeychain:
-#if os(macOS) && isMaxMacOSVersionGreaterThanTenOneFive
-        if #available(macOS 10.15, *) {
           query[configuration.attribute.keyName] = kCFBooleanTrue
-        }
-#endif
       case .accessGroup(let name):
         query[configuration.attribute.keyName] = name
       }
