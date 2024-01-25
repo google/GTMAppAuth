@@ -49,9 +49,7 @@ final class KeychainWrapper: KeychainHelper {
     keychainAttributes.forEach { configuration in
       switch configuration.attribute {
       case .useDataProtectionKeychain:
-        if #available(macOS 10.15, *) {
-          query[configuration.attribute.keyName] = kCFBooleanTrue
-        }
+        query[configuration.attribute.keyName] = kCFBooleanTrue
       case .accessGroup(let name):
         query[configuration.attribute.keyName] = name
       }
