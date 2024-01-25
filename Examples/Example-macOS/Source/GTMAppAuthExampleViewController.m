@@ -30,6 +30,8 @@
 
 #import "AppDelegate.h"
 
+static NSString *const kTeamIDPrefix = @"YOUR_TEAM_ID";
+
 /*! @brief The OIDC issuer from which the configuration will be discovered.
  */
 static NSString *const kIssuer = @"https://accounts.google.com";
@@ -66,12 +68,16 @@ static NSString *const kExampleAuthorizerKey = @"authorization";
   [super viewDidLoad];
 
   GTMKeychainAttribute *dataProtection = [GTMKeychainAttribute useDataProtectionKeychain];
-  GTMKeychainAttribute *accessGroup = [GTMKeychainAttribute keychainAccessGroupWithName:@"test"];
+  NSString *bundleID = @"com.example.GTMAppAuth.Example-macOS.test-group";
+  NSString *testGroup = [NSString stringWithFormat:@"%@.%@", kTeamIDPrefix, bundleID];
+  GTMKeychainAttribute *accessGroup = [GTMKeychainAttribute keychainAccessGroupWithName:testGroup];
   NSSet *attributes = [NSSet setWithArray:@[dataProtection, accessGroup]];
   self.keychainStore = [[GTMKeychainStore alloc] initWithItemName:kExampleAuthorizerKey
                                                keychainAttributes:attributes];
-//  self.keychainStore = [[GTMKeychainStore alloc] initWithItemName:kExampleAuthorizerKey];
 #if !defined(NS_BLOCK_ASSERTIONS)
+
+  NSAssert(![kTeamIDPrefix isEqualToString:@"YOUR_TEAM_ID"],
+           @"Update kTeamIDPrefix with your own team ID.");
 
   // NOTE:
   //
