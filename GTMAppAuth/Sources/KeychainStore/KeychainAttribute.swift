@@ -58,7 +58,7 @@ public final class KeychainAttribute: NSObject {
   /// Creates an instance of `KeychainAttribute` whose attribute is set to
   /// `.useDataProtectionKeychain`.
   /// - Returns: An instance of `KeychainAttribute`.
-  @available(macOS 10.15, *)
+  @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
   @objc public static let useDataProtectionKeychain = KeychainAttribute(
     attribute: .useDataProtectionKeychain
   )
