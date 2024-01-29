@@ -30,6 +30,16 @@
 
 #import "AppDelegate.h"
 
+/*! @brief The bundle ID will use in constructing the app group string for keychain queries.
+    @discussion The string here is a combination of this example app's bundle ID and the keychain
+        access group name added in the app's entitlements file.
+ */
+static NSString *kBundleIDAccessGroup = @"com.example.GTMAppAuth.Example-macOS.test-group";
+
+/*! @brief The team ID you will use in constructing the app group string for keychain queries.
+    @discussion The team ID you will use can be found in your developer team profile page on
+        developer.apple.com.
+ */
 static NSString *const kTeamIDPrefix = @"YOUR_TEAM_ID";
 
 /*! @brief The OIDC issuer from which the configuration will be discovered.
@@ -68,8 +78,7 @@ static NSString *const kExampleAuthorizerKey = @"authorization";
   [super viewDidLoad];
 
   GTMKeychainAttribute *dataProtection = [GTMKeychainAttribute useDataProtectionKeychain];
-  NSString *bundleID = @"com.example.GTMAppAuth.Example-macOS.test-group";
-  NSString *testGroup = [NSString stringWithFormat:@"%@.%@", kTeamIDPrefix, bundleID];
+  NSString *testGroup = [NSString stringWithFormat:@"%@.%@", kTeamIDPrefix, kBundleIDAccessGroup];
   GTMKeychainAttribute *accessGroup = [GTMKeychainAttribute keychainAccessGroupWithName:testGroup];
   NSSet *attributes = [NSSet setWithArray:@[dataProtection, accessGroup]];
   self.keychainStore = [[GTMKeychainStore alloc] initWithItemName:kExampleAuthorizerKey
