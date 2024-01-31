@@ -91,7 +91,7 @@ public class KeychainHelperFake: NSObject, KeychainHelper {
   @objc public func setPassword(
     _ password: String,
     forService service: String,
-    accessibility: CFTypeRef
+    accessibility: CFTypeRef?
   ) throws {
     do {
       try removePassword(forService: service)
