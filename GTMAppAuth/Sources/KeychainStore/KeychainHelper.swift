@@ -26,7 +26,8 @@ public protocol KeychainHelper {
   func password(forService service: String) throws -> String
   func passwordData(forService service: String) throws -> Data
   func removePassword(forService service: String) throws
-  func setPassword(_ password: String, forService service: String, accessibility: CFTypeRef?) throws
+  func setPassword(_ password: String, forService service: String) throws
+  func setPassword(_ password: String, forService service: String, accessibility: CFTypeRef) throws
   func setPassword(data: Data, forService service: String, accessibility: CFTypeRef?) throws
 }
 
@@ -100,11 +101,16 @@ final class KeychainWrapper: KeychainHelper {
       throw KeychainStore.Error.failedToDeletePassword(forItemName: service)
     }
   }
+  
+  func setPassword(_ password: String, forService service: String) throws {
+    let passwordData = Data(password.utf8)
+    try setPassword(data: passwordData, forService: service, accessibility: nil)
+  }
 
   func setPassword(
     _ password: String,
     forService service: String,
-    accessibility: CFTypeRef?
+    accessibility: CFTypeRef
   ) throws {
     let passwordData = Data(password.utf8)
     try setPassword(data: passwordData, forService: service, accessibility: accessibility)

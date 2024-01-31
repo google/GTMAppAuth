@@ -62,10 +62,11 @@ public final class KeychainStore: NSObject, AuthSessionStore {
   /// - Parameters:
   ///   - itemName: The `String` name for the credential to store in the keychain.
   ///   - keychainHelper: An instance conforming to `KeychainHelper`.
+  /// - Note: The `KeychainHelper`'s `keychainAttributes` are used if present.
   @objc public convenience init(itemName: String, keychainHelper: KeychainHelper) {
     self.init(
       itemName: itemName,
-      keychainAttributes: [],
+      keychainAttributes: keychainHelper.keychainAttributes,
       keychainHelper: keychainHelper
     )
   }
@@ -289,19 +290,21 @@ public final class KeychainStore: NSObject, AuthSessionStore {
       throw KeychainStore.Error.failedToCreateResponseStringFromAuthSession(authSession)
     }
 
-    var maybeAccessibility: CFString? = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
     if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *) {
-      #if os(macOS)
+    // We must use `kSecUseDataProtectionKeychain` if we use a `kSecAttrAccessible` attribute
+    // (https://developer.apple.com/documentation/security/ksecattraccessible?language=objc)
+#if os(macOS)
       if !keychainAttributes.contains(.useDataProtectionKeychain) {
-        maybeAccessibility = nil
+        try keychainHelper.setPassword(persistence, forService: itemName)
+        return
       }
-      #endif
+#endif
     }
 
     try keychainHelper.setPassword(
       persistence,
       forService: itemName,
-      accessibility: maybeAccessibility)
+      accessibility: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly)
   }
 }
 
