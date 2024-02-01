@@ -105,11 +105,11 @@ public final class KeychainStore: NSObject, AuthSessionStore {
 
     var maybeAccessibility: CFString? = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
     if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *) {
-      #if os(macOS)
+#if os(macOS)
       if !keychainAttributes.contains(.useDataProtectionKeychain) {
         maybeAccessibility = nil
       }
-      #endif
+#endif
     }
 
     try keychainHelper.setPassword(
@@ -132,11 +132,11 @@ public final class KeychainStore: NSObject, AuthSessionStore {
 
     var maybeAccessibility: CFString? = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
     if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *) {
-      #if os(macOS)
+#if os(macOS)
       if !keychainAttributes.contains(.useDataProtectionKeychain) {
         maybeAccessibility = nil
       }
-      #endif
+#endif
     }
 
     try keychainHelper.setPassword(
