@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -21,6 +21,7 @@
 
 /* Begin PBXFileReference section */
 		7355833228AFFC0B00AC24DC /* GTMAppAuth */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = GTMAppAuth; path = ../..; sourceTree = "<group>"; };
+		73B03D4C2B5EF66300EEA5DC /* Example-macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Example-macOS.entitlements"; sourceTree = "<group>"; };
 		C1AF3AE62818785B003BAEFF /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		F6016E701D2AC11F003497D7 /* Example-macOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Example-macOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F6016E8B1D2BD988003497D7 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = Source/AppDelegate.m; sourceTree = "<group>"; };
@@ -66,6 +67,7 @@
 		F6016E671D2AC11E003497D7 = {
 			isa = PBXGroup;
 			children = (
+				73B03D4C2B5EF66300EEA5DC /* Example-macOS.entitlements */,
 				7355833128AFFC0B00AC24DC /* Packages */,
 				C1AF3AE62818785B003BAEFF /* README.md */,
 				F6016E8A1D2BD973003497D7 /* Source */,
@@ -292,7 +294,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "Example-macOS.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = "$(SRCROOT)/Source/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -300,6 +306,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.example.GTMAppAuth.Example-macOS";
 				PRODUCT_NAME = "Example-macOS";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
 			name = Debug;
 		};
@@ -307,7 +314,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "Example-macOS.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = "$(SRCROOT)/Source/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -315,6 +326,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.example.GTMAppAuth.Example-macOS";
 				PRODUCT_NAME = "Example-macOS";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
 			name = Release;
 		};

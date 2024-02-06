@@ -30,6 +30,18 @@
 
 #import "AppDelegate.h"
 
+/*! @brief The bundle ID will use in constructing the app group string for keychain queries.
+    @discussion The string here is a combination of this example app's bundle ID and the keychain
+        access group name added in the app's entitlements file.
+ */
+static NSString *kBundleIDAccessGroup = @"com.example.GTMAppAuth.Example-macOS.test-group";
+
+/*! @brief The team ID you will use in constructing the app group string for keychain queries.
+    @discussion The team ID you will use can be found in your developer team profile page on
+        developer.apple.com.
+ */
+static NSString *const kTeamIDPrefix = @"YOUR_TEAM_ID";
+
 /*! @brief The OIDC issuer from which the configuration will be discovered.
  */
 static NSString *const kIssuer = @"https://accounts.google.com";
@@ -65,8 +77,16 @@ static NSString *const kExampleAuthorizerKey = @"authorization";
 - (void)viewDidLoad {
   [super viewDidLoad];
 
-  self.keychainStore = [[GTMKeychainStore alloc] initWithItemName:kExampleAuthorizerKey];
+  GTMKeychainAttribute *dataProtection = [GTMKeychainAttribute useDataProtectionKeychain];
+  NSString *testGroup = [NSString stringWithFormat:@"%@.%@", kTeamIDPrefix, kBundleIDAccessGroup];
+  GTMKeychainAttribute *accessGroup = [GTMKeychainAttribute keychainAccessGroupWithName:testGroup];
+  NSSet *attributes = [NSSet setWithArray:@[dataProtection, accessGroup]];
+  self.keychainStore = [[GTMKeychainStore alloc] initWithItemName:kExampleAuthorizerKey
+                                               keychainAttributes:attributes];
 #if !defined(NS_BLOCK_ASSERTIONS)
+
+  NSAssert(![kTeamIDPrefix isEqualToString:@"YOUR_TEAM_ID"],
+           @"Update kTeamIDPrefix with your own team ID.");
 
   // NOTE:
   //
