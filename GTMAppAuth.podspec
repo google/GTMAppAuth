@@ -32,8 +32,8 @@ requests with AppAuth.
   s.watchos.deployment_target = watchos_deployment_target
 
   s.framework = 'Security'
-  s.dependency 'GTMSessionFetcher/Core', '>= 2.1', '< 4.0'
-  s.dependency 'AppAuth/Core', '~> 1.6'
+  s.dependency 'GTMSessionFetcher/Core', '>= 3.3', '< 4.0'
+  s.dependency 'AppAuth/Core', '~> 1.7'
 
   s.test_spec 'unit' do |unit_tests|
     unit_tests.platforms = {

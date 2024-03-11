@@ -1,4 +1,4 @@
-// swift-tools-version:5.1
+// swift-tools-version:5.3
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 // Copyright 2021 Google LLC
@@ -32,8 +32,8 @@ let package = Package(
     )
   ],
   dependencies: [
-    .package(url: "https://github.com/google/gtm-session-fetcher.git", "2.1.0" ..< "4.0.0"),
-    .package(url: "https://github.com/openid/AppAuth-iOS.git", "1.6.0" ..< "2.0.0")
+    .package(url: "https://github.com/google/gtm-session-fetcher.git", "3.3.0" ..< "4.0.0"),
+    .package(url: "https://github.com/openid/AppAuth-iOS.git", "1.7.0" ..< "2.0.0")
   ],
   targets: [
     .target(
@@ -43,6 +43,7 @@ let package = Package(
         .product(name: "AppAuthCore", package: "AppAuth-iOS")
       ],
       path: "GTMAppAuth/Sources",
+      resources: [.copy("../../PrivacyInfo.xcprivacy")],
       linkerSettings: [
         .linkedFramework("Security"),
       ]
