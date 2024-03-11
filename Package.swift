@@ -1,4 +1,4 @@
-// swift-tools-version:5.1
+// swift-tools-version:5.3
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 // Copyright 2021 Google LLC
@@ -43,6 +43,7 @@ let package = Package(
         .product(name: "AppAuthCore", package: "AppAuth-iOS")
       ],
       path: "GTMAppAuth/Sources",
+      resources: [.copy("../../PrivacyInfo.xcprivacy")],
       linkerSettings: [
         .linkedFramework("Security"),
       ]
