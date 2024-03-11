@@ -26,6 +26,7 @@ public protocol Testing {
 
 @objc(GTMTestingConstants)
 public class TestingConstants: NSObject {
+  @objc public static let testAccessGroup = "testAccessGroup"
   @objc public static let testAccessToken = "access_token"
   @objc public static let accessTokenExpiresIn = 3600
   @objc public static let testRefreshToken = "refresh_token"

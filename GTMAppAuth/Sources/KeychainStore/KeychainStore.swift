@@ -62,10 +62,11 @@ public final class KeychainStore: NSObject, AuthSessionStore {
   /// - Parameters:
   ///   - itemName: The `String` name for the credential to store in the keychain.
   ///   - keychainHelper: An instance conforming to `KeychainHelper`.
+  /// - Note: The `KeychainHelper`'s `keychainAttributes` are used if present.
   @objc public convenience init(itemName: String, keychainHelper: KeychainHelper) {
     self.init(
       itemName: itemName,
-      keychainAttributes: [],
+      keychainAttributes: keychainHelper.keychainAttributes,
       keychainHelper: keychainHelper
     )
   }
@@ -100,12 +101,7 @@ public final class KeychainStore: NSObject, AuthSessionStore {
 
   @objc(saveAuthSession:error:)
   public func save(authSession: AuthSession) throws {
-    let authSessionData: Data = try authSessionData(fromAuthSession: authSession)
-    try keychainHelper.setPassword(
-      data: authSessionData,
-      forService: itemName,
-      accessibility: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
-    )
+    try save(authSession: authSession, withItemName: itemName)
   }
 
   /// Saves the provided `AuthSession` using the provided item name.
@@ -118,10 +114,22 @@ public final class KeychainStore: NSObject, AuthSessionStore {
   @objc(saveAuthSession:withItemName:error:)
   public func save(authSession: AuthSession, withItemName itemName: String) throws {
     let authSessionData = try authSessionData(fromAuthSession: authSession)
+
+    var maybeAccessibility: CFString? = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
+    if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *) {
+    // On macOS, we must use `kSecUseDataProtectionKeychain` if using `kSecAttrAccessible`
+    // (https://developer.apple.com/documentation/security/ksecattraccessible?language=objc)
+#if os(macOS)
+      if !keychainAttributes.contains(.useDataProtectionKeychain) {
+        maybeAccessibility = nil
+      }
+#endif
+    }
+
     try keychainHelper.setPassword(
       data: authSessionData,
       forService: itemName,
-      accessibility: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
+      accessibility: maybeAccessibility
     )
   }
 
@@ -268,6 +276,18 @@ public final class KeychainStore: NSObject, AuthSessionStore {
         .persistenceResponseString(forAuthSession: authSession) else {
       throw KeychainStore.Error.failedToCreateResponseStringFromAuthSession(authSession)
     }
+
+    if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *) {
+    // On macOS, we must use `kSecUseDataProtectionKeychain` if using `kSecAttrAccessible`
+    // (https://developer.apple.com/documentation/security/ksecattraccessible?language=objc)
+#if os(macOS)
+      if !keychainAttributes.contains(.useDataProtectionKeychain) {
+        try keychainHelper.setPassword(persistence, forService: itemName)
+        return
+      }
+#endif
+    }
+
     try keychainHelper.setPassword(
       persistence,
       forService: itemName,

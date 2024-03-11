@@ -48,8 +48,41 @@ class KeychainStoreTests: XCTestCase {
     keychainHelper.passwordStore.removeAll()
     keychainHelper.generatedKeychainQuery = nil
   }
+  
+  @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
+  func testKeychainAttributeKeysHaveCorrectNames() throws {
+    let expectedAccessGroup = "unit-test-group"
+    let attributes: Set<KeychainAttribute> = [
+      KeychainAttribute.useDataProtectionKeychain,
+      KeychainAttribute.keychainAccessGroup(name: expectedAccessGroup)
+    ]
+    let keychainHelperFake = KeychainHelperFake(keychainAttributes: attributes)
+    let store = KeychainStore(
+      itemName: TestingConstants.testKeychainItemName,
+      keychainHelper: keychainHelperFake
+    )
+    
+    try store.save(authSession: authSession)
+    guard let testQuery = keychainHelperFake.generatedKeychainQuery as? [String: AnyHashable] else {
+      XCTFail("`keychainHelperFake` missing keychain query attributes")
+      return
+    }
 
-  @available(macOS 10.15, *)
+    let comparisonQuery = comparisonKeychainQuery(
+      withAttributes: attributes,
+      accountName: keychainHelperFake.accountName,
+      service: TestingConstants.testKeychainItemName
+    )
+    XCTAssertEqual(testQuery, comparisonQuery)
+    XCTAssertNotNil(testQuery[kSecUseDataProtectionKeychain as String])
+    guard let testAccessGroup = testQuery[kSecAttrAccessGroup as String] as? String else {
+      XCTFail("`testQuery` should have a keychain access group")
+      return
+    }
+    XCTAssertEqual(testAccessGroup, expectedAccessGroup)
+  }
+
+  @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
   func testKeychainQueryHasDataProtectionAttributeOnSave() throws {
     let useDataProtectionAttributeSet: Set<KeychainAttribute> = [.useDataProtectionKeychain]
     let fakeWithDataProtection = KeychainHelperFake(
@@ -109,7 +142,7 @@ class KeychainStoreTests: XCTestCase {
     XCTAssertEqual(expectedGroupName, testGroupName)
   }
 
-  @available(macOS 10.15, *)
+  @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
   func testKeychainQueryHasDataProtectionAndAccessGroupAttributesOnSave() throws {
     let expectedGroupName = "testGroup"
     let accessGroupAttributeSet: Set<KeychainAttribute> = [
@@ -154,7 +187,7 @@ class KeychainStoreTests: XCTestCase {
     XCTAssertEqual(testAccessGroupName, expectedGroupName)
   }
 
-  @available(macOS 10.15, *)
+  @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
   func testKeychainQueryHasDataProtectionAttributeOnRead() throws {
     let useDataProtectionAttributeSet: Set<KeychainAttribute> = [.useDataProtectionKeychain]
     let fakeWithDataProtection = KeychainHelperFake(
@@ -216,7 +249,7 @@ class KeychainStoreTests: XCTestCase {
     XCTAssertEqual(expectedGroupName, testGroupName)
   }
 
-  @available(macOS 10.15, *)
+  @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
   func testKeychainQueryHasDataProtectionAndAccessGroupAttributesOnRead() throws {
     let expectedGroupName = "testGroup"
     let accessGroupAttributeSet: Set<KeychainAttribute> = [
@@ -262,7 +295,7 @@ class KeychainStoreTests: XCTestCase {
     XCTAssertEqual(testAccessGroupName, expectedGroupName)
   }
 
-  @available(macOS 10.15, *)
+  @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
   func testKeychainQueryHasDataProtectionAttributeOnRemove() throws {
     let useDataProtectionAttributeSet: Set<KeychainAttribute> = [.useDataProtectionKeychain]
     let fakeWithDataProtection = KeychainHelperFake(
@@ -324,7 +357,7 @@ class KeychainStoreTests: XCTestCase {
     XCTAssertEqual(expectedGroupName, testGroupName)
   }
 
-  @available(macOS 10.15, *)
+  @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
   func testKeychainQueryHasDataProtectionAndAccessGroupAttributesOnRemove() throws {
     let expectedGroupName = "testGroup"
     let accessGroupAttributeSet: Set<KeychainAttribute> = [

@@ -26,6 +26,7 @@ public protocol KeychainHelper {
   func password(forService service: String) throws -> String
   func passwordData(forService service: String) throws -> Data
   func removePassword(forService service: String) throws
+  func setPassword(_ password: String, forService service: String) throws
   func setPassword(_ password: String, forService service: String, accessibility: CFTypeRef) throws
   func setPassword(data: Data, forService service: String, accessibility: CFTypeRef?) throws
 }
@@ -34,11 +35,6 @@ public protocol KeychainHelper {
 final class KeychainWrapper: KeychainHelper {
   let accountName = "OAuth"
   let keychainAttributes: Set<KeychainAttribute>
-  @available(macOS 10.15, *)
-  private var isMaxMacOSVersionGreaterThanTenOneFive: Bool {
-    let tenOneFive = OperatingSystemVersion(majorVersion: 10, minorVersion: 15, patchVersion: 0)
-    return ProcessInfo().isOperatingSystemAtLeast(tenOneFive)
-  }
 
   init(keychainAttributes: Set<KeychainAttribute> = []) {
     self.keychainAttributes = keychainAttributes
@@ -54,11 +50,7 @@ final class KeychainWrapper: KeychainHelper {
     keychainAttributes.forEach { configuration in
       switch configuration.attribute {
       case .useDataProtectionKeychain:
-#if os(macOS) && isMaxMacOSVersionGreaterThanTenOneFive
-        if #available(macOS 10.15, *) {
-          query[configuration.attribute.keyName] = kCFBooleanTrue
-        }
-#endif
+        query[configuration.attribute.keyName] = kCFBooleanTrue
       case .accessGroup(let name):
         query[configuration.attribute.keyName] = name
       }
@@ -108,6 +100,11 @@ final class KeychainWrapper: KeychainHelper {
     guard status == noErr else {
       throw KeychainStore.Error.failedToDeletePassword(forItemName: service)
     }
+  }
+  
+  func setPassword(_ password: String, forService service: String) throws {
+    let passwordData = Data(password.utf8)
+    try setPassword(data: passwordData, forService: service, accessibility: nil)
   }
 
   func setPassword(

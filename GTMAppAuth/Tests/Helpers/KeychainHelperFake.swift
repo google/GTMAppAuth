@@ -88,6 +88,21 @@ public class KeychainHelperFake: NSObject, KeychainHelper {
     }
   }
 
+  @objc public func setPassword(_ password: String, forService service: String) throws {
+    do {
+      try removePassword(forService: service)
+    } catch KeychainStore.Error.failedToDeletePasswordBecauseItemNotFound {
+      // No need to throw this error since we are setting a new password
+    } catch {
+      throw error
+    }
+
+    guard let passwordData = password.data(using: .utf8) else {
+      throw KeychainStore.Error.unexpectedPasswordData(forItemName: service)
+    }
+    try setPassword(data: passwordData, forService: service, accessibility: nil)
+  }
+
   @objc public func setPassword(
     _ password: String,
     forService service: String,
@@ -104,7 +119,7 @@ public class KeychainHelperFake: NSObject, KeychainHelper {
     guard let passwordData = password.data(using: .utf8) else {
       throw KeychainStore.Error.unexpectedPasswordData(forItemName: service)
     }
-    try setPassword(data: passwordData, forService: service, accessibility: nil)
+    try setPassword(data: passwordData, forService: service, accessibility: accessibility)
   }
 
   @objc public func setPassword(

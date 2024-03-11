@@ -29,6 +29,20 @@ class GTMOAuth2CompatibilityTests: XCTestCase {
   private lazy var testPersistenceString: String = {
     return "access_token=\(TestingConstants.testAccessToken)&refresh_token=\(TestingConstants.testRefreshToken)&scope=\(TestingConstants.testScope2)&serviceProvider=\(TestingConstants.testServiceProvider)&userEmail=foo%40foo.com&userEmailIsVerified=y&userID=\(TestingConstants.testUserID)"
   }()
+  private lazy var keychainStoreWithAttributes: KeychainStore = {
+    let attributes: Set<KeychainAttribute>
+    if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *) {
+      attributes = [.useDataProtectionKeychain,
+                    .keychainAccessGroup(name: TestingConstants.testAccessGroup)]
+    } else {
+      attributes = [.keychainAccessGroup(name: TestingConstants.testAccessGroup)]
+    }
+    let keychainHelperWithAttributes = KeychainHelperFake(keychainAttributes: attributes)
+    return KeychainStore(
+      itemName: TestingConstants.testKeychainItemName,
+      keychainHelper: keychainHelperWithAttributes
+    )
+  }()
   private let keychainHelper = KeychainHelperFake(keychainAttributes: [])
   private lazy var keychainStore: KeychainStore = {
     return KeychainStore(
@@ -63,6 +77,9 @@ class GTMOAuth2CompatibilityTests: XCTestCase {
 
   func testSaveOAuth2AuthSession() throws {
     try keychainStore.saveWithGTMOAuth2Format(forAuthSession: expectedAuthSession)
+    // Save with keychain attributes to simulate macOS environment with
+    // `kSecUseDataProtectionKeychain`
+    try keychainStoreWithAttributes.saveWithGTMOAuth2Format(forAuthSession: expectedAuthSession)
   }
 
   func testSaveGTMOAuth2AuthSessionThrowsError() {
@@ -80,7 +97,34 @@ class GTMOAuth2CompatibilityTests: XCTestCase {
 
   func testRemoveOAuth2AuthSession() throws {
     try keychainStore.saveWithGTMOAuth2Format(forAuthSession: expectedAuthSession)
+    let _ = try keychainStore.retrieveAuthSessionInGTMOAuth2Format(
+      tokenURL: TestingConstants.testTokenURL,
+      redirectURI: TestingConstants.testRedirectURI,
+      clientID: TestingConstants.testClientID,
+      clientSecret: TestingConstants.testClientSecret
+    )
     try keychainStore.removeAuthSession()
+    XCTAssertThrowsError(try keychainStore.retrieveAuthSession()) { thrownError in
+      XCTAssertEqual(
+        thrownError as? KeychainStore.Error,
+        KeychainStore.Error.passwordNotFound(forItemName: TestingConstants.testKeychainItemName)
+      )
+    }
+
+    try keychainStoreWithAttributes.saveWithGTMOAuth2Format(forAuthSession: expectedAuthSession)
+    let _ = try keychainStoreWithAttributes.retrieveAuthSessionInGTMOAuth2Format(
+      tokenURL: TestingConstants.testTokenURL,
+      redirectURI: TestingConstants.testRedirectURI,
+      clientID: TestingConstants.testClientID,
+      clientSecret: TestingConstants.testClientSecret
+    )
+    try keychainStoreWithAttributes.removeAuthSession()
+    XCTAssertThrowsError(try keychainStoreWithAttributes.retrieveAuthSession()) { thrownError in
+      XCTAssertEqual(
+        thrownError as? KeychainStore.Error,
+        KeychainStore.Error.passwordNotFound(forItemName: TestingConstants.testKeychainItemName)
+      )
+    }
   }
 
   func testRemoveOAuth2AuthSessionhrowsError() {
@@ -97,6 +141,29 @@ class GTMOAuth2CompatibilityTests: XCTestCase {
   func testAuthSessionFromKeychainForName() throws {
     try keychainStore.saveWithGTMOAuth2Format(forAuthSession: expectedAuthSession)
     let authSession = try keychainStore.retrieveAuthSessionInGTMOAuth2Format(
+      tokenURL: TestingConstants.testTokenURL,
+      redirectURI: TestingConstants.testRedirectURI,
+      clientID: TestingConstants.testClientID,
+      clientSecret: TestingConstants.testClientID
+    )
+
+    XCTAssertEqual(authSession.authState.scope, expectedAuthSession.authState.scope)
+    XCTAssertEqual(
+      authSession.authState.lastTokenResponse?.accessToken,
+      expectedAuthSession.authState.lastTokenResponse?.accessToken
+    )
+    XCTAssertEqual(authSession.authState.refreshToken, expectedAuthSession.authState.refreshToken)
+    XCTAssertEqual(authSession.authState.isAuthorized, expectedAuthSession.authState.isAuthorized)
+    XCTAssertEqual(authSession.serviceProvider, expectedAuthSession.serviceProvider)
+    XCTAssertEqual(authSession.userID, expectedAuthSession.userID)
+    XCTAssertEqual(authSession.userEmail, expectedAuthSession.userEmail)
+    XCTAssertEqual(authSession.userEmailIsVerified, expectedAuthSession.userEmailIsVerified)
+    XCTAssertEqual(authSession.canAuthorize, expectedAuthSession.canAuthorize)
+  }
+  
+  func testAuthSessionFromKeychainWithAttributesForName() throws {
+    try keychainStoreWithAttributes.saveWithGTMOAuth2Format(forAuthSession: expectedAuthSession)
+    let authSession = try keychainStoreWithAttributes.retrieveAuthSessionInGTMOAuth2Format(
       tokenURL: TestingConstants.testTokenURL,
       redirectURI: TestingConstants.testRedirectURI,
       clientID: TestingConstants.testClientID,
