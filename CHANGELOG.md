@@ -1,3 +1,7 @@
+# 4.1.0
+- Fix keychain key bug ([#237](https://github.com/google/GTMAppAuth/pull/237))
+- Add privacy manifest ([#239](https://github.com/google/GTMAppAuth/pull/239))
+
 # 4.0.0
 
 - Updated `AuthSessionDelegate` method for updating error to take a completion to support async updates [#229](https://github.com/google/GTMAppAuth/pull/229)
