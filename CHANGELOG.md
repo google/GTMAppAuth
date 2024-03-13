@@ -1,3 +1,6 @@
+# 4.1.1
+- Fix PrivacyInfo bundling issues ([#241](https://github.com/google/GTMAppAuth/pull/241))
+
 # 4.1.0
 - Fix keychain key bug ([#237](https://github.com/google/GTMAppAuth/pull/237))
 - Add privacy manifest ([#239](https://github.com/google/GTMAppAuth/pull/239))
