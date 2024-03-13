@@ -43,7 +43,7 @@ let package = Package(
         .product(name: "AppAuthCore", package: "AppAuth-iOS")
       ],
       path: "GTMAppAuth/Sources",
-      resources: [.copy("../../PrivacyInfo.xcprivacy")],
+      resources: [.copy("Resources/PrivacyInfo.xcprivacy")],
       linkerSettings: [
         .linkedFramework("Security"),
       ]

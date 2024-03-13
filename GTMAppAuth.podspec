@@ -21,6 +21,9 @@ requests with AppAuth.
   s.source        = { :git => 'https://github.com/google/GTMAppAuth.git', :tag => s.version }
   s.prefix_header_file = false
   s.source_files = 'GTMAppAuth/Sources/**/*.swift'
+  s.resource_bundles = {
+    "GTMAppAuth_Privacy" => "GTMAppAuth/Sources/Resources/PrivacyInfo.xcprivacy"
+  }
 
   ios_deployment_target = '10.0'
   osx_deployment_target = '10.12'
