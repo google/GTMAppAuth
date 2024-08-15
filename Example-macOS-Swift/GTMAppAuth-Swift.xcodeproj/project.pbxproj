@@ -1,0 +1,604 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 48;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		385BE2527244022DBCBC22A8 /* Pods_GTMAppAuth_Swift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C1E6AA28D251392FA4B72DB9 /* Pods_GTMAppAuth_Swift.framework */; };
+		80C61DB5203C73BC00220CB9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80C61DB4203C73BC00220CB9 /* AppDelegate.swift */; };
+		80C61DB9203C73BC00220CB9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 80C61DB8203C73BC00220CB9 /* Assets.xcassets */; };
+		80C61DBC203C73BC00220CB9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 80C61DBA203C73BC00220CB9 /* Main.storyboard */; };
+		80C61DC8203C73BC00220CB9 /* GTMAppAuth_SwiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80C61DC7203C73BC00220CB9 /* GTMAppAuth_SwiftTests.swift */; };
+		80FB1248203C901100E14EEC /* bridging header.m in Sources */ = {isa = PBXBuildFile; fileRef = 80FB1247203C901100E14EEC /* bridging header.m */; };
+		80FB124D203D99E300E14EEC /* GTMAppAuthViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80FB124B203D99E300E14EEC /* GTMAppAuthViewController.swift */; };
+		915E13BE7642D4ABC232772E /* Pods_GTMAppAuth_SwiftTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7999701DEDDF7939467F05BF /* Pods_GTMAppAuth_SwiftTests.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		80C61DC4203C73BC00220CB9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 80C61DA9203C73BC00220CB9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 80C61DB0203C73BC00220CB9;
+			remoteInfo = "GTMAppAuth-Swift";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		24F24829DA3591D088B47B76 /* Pods-GTMAppAuth-SwiftTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GTMAppAuth-SwiftTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-GTMAppAuth-SwiftTests/Pods-GTMAppAuth-SwiftTests.debug.xcconfig"; sourceTree = "<group>"; };
+		529022113C7BAFF1FBB95BB7 /* Pods-GTMAppAuth-Swift.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GTMAppAuth-Swift.debug.xcconfig"; path = "Pods/Target Support Files/Pods-GTMAppAuth-Swift/Pods-GTMAppAuth-Swift.debug.xcconfig"; sourceTree = "<group>"; };
+		6D76C479BB087D444C644CE0 /* Pods-GTMAppAuth-SwiftTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GTMAppAuth-SwiftTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-GTMAppAuth-SwiftTests/Pods-GTMAppAuth-SwiftTests.release.xcconfig"; sourceTree = "<group>"; };
+		75A7C9EC69BCEDEF2F54737F /* Pods-GTMAppAuth-Swift.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GTMAppAuth-Swift.release.xcconfig"; path = "Pods/Target Support Files/Pods-GTMAppAuth-Swift/Pods-GTMAppAuth-Swift.release.xcconfig"; sourceTree = "<group>"; };
+		7999701DEDDF7939467F05BF /* Pods_GTMAppAuth_SwiftTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_GTMAppAuth_SwiftTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		80C61DB1203C73BC00220CB9 /* GTMAppAuth-Swift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "GTMAppAuth-Swift.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		80C61DB4203C73BC00220CB9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		80C61DB8203C73BC00220CB9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		80C61DBB203C73BC00220CB9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		80C61DBD203C73BC00220CB9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		80C61DBE203C73BC00220CB9 /* GTMAppAuth_Swift.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = GTMAppAuth_Swift.entitlements; sourceTree = "<group>"; };
+		80C61DC3203C73BC00220CB9 /* GTMAppAuth-SwiftTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "GTMAppAuth-SwiftTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		80C61DC7203C73BC00220CB9 /* GTMAppAuth_SwiftTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GTMAppAuth_SwiftTests.swift; sourceTree = "<group>"; };
+		80C61DC9203C73BC00220CB9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		80FB1246203C901100E14EEC /* GTMAppAuth-Swift-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "GTMAppAuth-Swift-Bridging-Header.h"; sourceTree = "<group>"; };
+		80FB1247203C901100E14EEC /* bridging header.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "bridging header.m"; sourceTree = "<group>"; };
+		80FB124B203D99E300E14EEC /* GTMAppAuthViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GTMAppAuthViewController.swift; sourceTree = "<group>"; };
+		80FB124F203EF86100E14EEC /* GTMAppAuth-Swift.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "GTMAppAuth-Swift.entitlements"; sourceTree = "<group>"; };
+		C1E6AA28D251392FA4B72DB9 /* Pods_GTMAppAuth_Swift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_GTMAppAuth_Swift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		80C61DAE203C73BC00220CB9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				385BE2527244022DBCBC22A8 /* Pods_GTMAppAuth_Swift.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		80C61DC0203C73BC00220CB9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				915E13BE7642D4ABC232772E /* Pods_GTMAppAuth_SwiftTests.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		80C61DA8203C73BC00220CB9 = {
+			isa = PBXGroup;
+			children = (
+				80FB1247203C901100E14EEC /* bridging header.m */,
+				80C61DB3203C73BC00220CB9 /* GTMAppAuth-Swift */,
+				80C61DC6203C73BC00220CB9 /* GTMAppAuth-SwiftTests */,
+				80C61DB2203C73BC00220CB9 /* Products */,
+				9EC1CC3DB1B35B11E1CBC089 /* Pods */,
+				A4EA1075EE079E0282B21511 /* Frameworks */,
+				80FB1246203C901100E14EEC /* GTMAppAuth-Swift-Bridging-Header.h */,
+			);
+			sourceTree = "<group>";
+		};
+		80C61DB2203C73BC00220CB9 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				80C61DB1203C73BC00220CB9 /* GTMAppAuth-Swift.app */,
+				80C61DC3203C73BC00220CB9 /* GTMAppAuth-SwiftTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		80C61DB3203C73BC00220CB9 /* GTMAppAuth-Swift */ = {
+			isa = PBXGroup;
+			children = (
+				80FB124F203EF86100E14EEC /* GTMAppAuth-Swift.entitlements */,
+				80FB124B203D99E300E14EEC /* GTMAppAuthViewController.swift */,
+				80C61DB4203C73BC00220CB9 /* AppDelegate.swift */,
+				80C61DB8203C73BC00220CB9 /* Assets.xcassets */,
+				80C61DBA203C73BC00220CB9 /* Main.storyboard */,
+				80C61DBD203C73BC00220CB9 /* Info.plist */,
+				80C61DBE203C73BC00220CB9 /* GTMAppAuth_Swift.entitlements */,
+			);
+			path = "GTMAppAuth-Swift";
+			sourceTree = "<group>";
+		};
+		80C61DC6203C73BC00220CB9 /* GTMAppAuth-SwiftTests */ = {
+			isa = PBXGroup;
+			children = (
+				80C61DC7203C73BC00220CB9 /* GTMAppAuth_SwiftTests.swift */,
+				80C61DC9203C73BC00220CB9 /* Info.plist */,
+			);
+			path = "GTMAppAuth-SwiftTests";
+			sourceTree = "<group>";
+		};
+		9EC1CC3DB1B35B11E1CBC089 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				529022113C7BAFF1FBB95BB7 /* Pods-GTMAppAuth-Swift.debug.xcconfig */,
+				75A7C9EC69BCEDEF2F54737F /* Pods-GTMAppAuth-Swift.release.xcconfig */,
+				24F24829DA3591D088B47B76 /* Pods-GTMAppAuth-SwiftTests.debug.xcconfig */,
+				6D76C479BB087D444C644CE0 /* Pods-GTMAppAuth-SwiftTests.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		A4EA1075EE079E0282B21511 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				C1E6AA28D251392FA4B72DB9 /* Pods_GTMAppAuth_Swift.framework */,
+				7999701DEDDF7939467F05BF /* Pods_GTMAppAuth_SwiftTests.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		80C61DB0203C73BC00220CB9 /* GTMAppAuth-Swift */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 80C61DCC203C73BC00220CB9 /* Build configuration list for PBXNativeTarget "GTMAppAuth-Swift" */;
+			buildPhases = (
+				9A4C33EEDDB7CE00290D1B02 /* [CP] Check Pods Manifest.lock */,
+				80C61DAD203C73BC00220CB9 /* Sources */,
+				80C61DAE203C73BC00220CB9 /* Frameworks */,
+				80C61DAF203C73BC00220CB9 /* Resources */,
+				17999F184A758A0B527829DB /* [CP] Embed Pods Frameworks */,
+				23B12367D5BB4A0E53CB3DC3 /* [CP] Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "GTMAppAuth-Swift";
+			productName = "GTMAppAuth-Swift";
+			productReference = 80C61DB1203C73BC00220CB9 /* GTMAppAuth-Swift.app */;
+			productType = "com.apple.product-type.application";
+		};
+		80C61DC2203C73BC00220CB9 /* GTMAppAuth-SwiftTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 80C61DCF203C73BC00220CB9 /* Build configuration list for PBXNativeTarget "GTMAppAuth-SwiftTests" */;
+			buildPhases = (
+				B8AF70AE16C4A0FC0E079F83 /* [CP] Check Pods Manifest.lock */,
+				80C61DBF203C73BC00220CB9 /* Sources */,
+				80C61DC0203C73BC00220CB9 /* Frameworks */,
+				80C61DC1203C73BC00220CB9 /* Resources */,
+				20681742433D6CFAD32BCA28 /* [CP] Embed Pods Frameworks */,
+				4C18273792505E09CECF386C /* [CP] Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				80C61DC5203C73BC00220CB9 /* PBXTargetDependency */,
+			);
+			name = "GTMAppAuth-SwiftTests";
+			productName = "GTMAppAuth-SwiftTests";
+			productReference = 80C61DC3203C73BC00220CB9 /* GTMAppAuth-SwiftTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		80C61DA9203C73BC00220CB9 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0920;
+				LastUpgradeCheck = 0920;
+				ORGANIZATIONNAME = Google;
+				TargetAttributes = {
+					80C61DB0203C73BC00220CB9 = {
+						CreatedOnToolsVersion = 9.2;
+						LastSwiftMigration = 0920;
+						ProvisioningStyle = Automatic;
+					};
+					80C61DC2203C73BC00220CB9 = {
+						CreatedOnToolsVersion = 9.2;
+						ProvisioningStyle = Automatic;
+						TestTargetID = 80C61DB0203C73BC00220CB9;
+					};
+				};
+			};
+			buildConfigurationList = 80C61DAC203C73BC00220CB9 /* Build configuration list for PBXProject "GTMAppAuth-Swift" */;
+			compatibilityVersion = "Xcode 8.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 80C61DA8203C73BC00220CB9;
+			productRefGroup = 80C61DB2203C73BC00220CB9 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				80C61DB0203C73BC00220CB9 /* GTMAppAuth-Swift */,
+				80C61DC2203C73BC00220CB9 /* GTMAppAuth-SwiftTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		80C61DAF203C73BC00220CB9 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				80C61DB9203C73BC00220CB9 /* Assets.xcassets in Resources */,
+				80C61DBC203C73BC00220CB9 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		80C61DC1203C73BC00220CB9 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		17999F184A758A0B527829DB /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-GTMAppAuth-Swift/Pods-GTMAppAuth-Swift-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/AppAuth/AppAuth.framework",
+				"${BUILT_PRODUCTS_DIR}/GTMAppAuth/GTMAppAuth.framework",
+				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AppAuth.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMAppAuth.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-GTMAppAuth-Swift/Pods-GTMAppAuth-Swift-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		20681742433D6CFAD32BCA28 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-GTMAppAuth-SwiftTests/Pods-GTMAppAuth-SwiftTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		23B12367D5BB4A0E53CB3DC3 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-GTMAppAuth-Swift/Pods-GTMAppAuth-Swift-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		4C18273792505E09CECF386C /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-GTMAppAuth-SwiftTests/Pods-GTMAppAuth-SwiftTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		9A4C33EEDDB7CE00290D1B02 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-GTMAppAuth-Swift-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		B8AF70AE16C4A0FC0E079F83 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-GTMAppAuth-SwiftTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		80C61DAD203C73BC00220CB9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				80FB1248203C901100E14EEC /* bridging header.m in Sources */,
+				80C61DB5203C73BC00220CB9 /* AppDelegate.swift in Sources */,
+				80FB124D203D99E300E14EEC /* GTMAppAuthViewController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		80C61DBF203C73BC00220CB9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				80C61DC8203C73BC00220CB9 /* GTMAppAuth_SwiftTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		80C61DC5203C73BC00220CB9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 80C61DB0203C73BC00220CB9 /* GTMAppAuth-Swift */;
+			targetProxy = 80C61DC4203C73BC00220CB9 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		80C61DBA203C73BC00220CB9 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				80C61DBB203C73BC00220CB9 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		80C61DCA203C73BC00220CB9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		80C61DCB203C73BC00220CB9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+			};
+			name = Release;
+		};
+		80C61DCD203C73BC00220CB9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 529022113C7BAFF1FBB95BB7 /* Pods-GTMAppAuth-Swift.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = "GTMAppAuth-Swift/GTMAppAuth-Swift.entitlements";
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 3GC4AU8T59;
+				INFOPLIST_FILE = "GTMAppAuth-Swift/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.mobilebloke.GoogleOAuthDemo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "GTMAppAuth-Swift-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 4.0;
+			};
+			name = Debug;
+		};
+		80C61DCE203C73BC00220CB9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 75A7C9EC69BCEDEF2F54737F /* Pods-GTMAppAuth-Swift.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = "GTMAppAuth-Swift/GTMAppAuth-Swift.entitlements";
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 3GC4AU8T59;
+				INFOPLIST_FILE = "GTMAppAuth-Swift/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.mobilebloke.GoogleOAuthDemo;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "GTMAppAuth-Swift-Bridging-Header.h";
+				SWIFT_VERSION = 4.0;
+			};
+			name = Release;
+		};
+		80C61DD0203C73BC00220CB9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 24F24829DA3591D088B47B76 /* Pods-GTMAppAuth-SwiftTests.debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = "GTMAppAuth-SwiftTests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "Google.GTMAppAuth-SwiftTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/GTMAppAuth-Swift.app/Contents/MacOS/GTMAppAuth-Swift";
+			};
+			name = Debug;
+		};
+		80C61DD1203C73BC00220CB9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6D76C479BB087D444C644CE0 /* Pods-GTMAppAuth-SwiftTests.release.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = "GTMAppAuth-SwiftTests/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "Google.GTMAppAuth-SwiftTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/GTMAppAuth-Swift.app/Contents/MacOS/GTMAppAuth-Swift";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		80C61DAC203C73BC00220CB9 /* Build configuration list for PBXProject "GTMAppAuth-Swift" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				80C61DCA203C73BC00220CB9 /* Debug */,
+				80C61DCB203C73BC00220CB9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		80C61DCC203C73BC00220CB9 /* Build configuration list for PBXNativeTarget "GTMAppAuth-Swift" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				80C61DCD203C73BC00220CB9 /* Debug */,
+				80C61DCE203C73BC00220CB9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		80C61DCF203C73BC00220CB9 /* Build configuration list for PBXNativeTarget "GTMAppAuth-SwiftTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				80C61DD0203C73BC00220CB9 /* Debug */,
+				80C61DD1203C73BC00220CB9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 80C61DA9203C73BC00220CB9 /* Project object */;
+}

@@ -1,0 +1,6 @@
+framework module Pods_GTMAppAuth_Swift {
+  umbrella header "Pods-GTMAppAuth-Swift-umbrella.h"
+
+  export *
+  module * { export * }
+}
