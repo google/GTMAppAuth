@@ -207,7 +207,7 @@
   XCTAssertEqual(error.code, GTMKeychainStoreErrorCodeFailedToDeletePasswordBecauseItemNotFound);
 }
 
-- (void)testKeychainStoreWithAccessGroup {
+- (void)testKeychainStoreAttributes {
   NSString *testAccessGroupName = @"testKeychainAccessGroup";
   GTMKeychainAttribute *keychainAccessGroup =
       [GTMKeychainAttribute keychainAccessGroupWithName:testAccessGroupName];
