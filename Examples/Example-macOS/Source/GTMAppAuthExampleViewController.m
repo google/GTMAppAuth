@@ -77,10 +77,9 @@ static NSString *const kExampleAuthorizerKey = @"authorization";
 - (void)viewDidLoad {
   [super viewDidLoad];
 
-  GTMKeychainAttribute *dataProtection = [GTMKeychainAttribute useDataProtectionKeychain];
   NSString *testGroup = [NSString stringWithFormat:@"%@.%@", kTeamIDPrefix, kBundleIDAccessGroup];
   GTMKeychainAttribute *accessGroup = [GTMKeychainAttribute keychainAccessGroupWithName:testGroup];
-  NSSet *attributes = [NSSet setWithArray:@[dataProtection, accessGroup]];
+  NSSet *attributes = [NSSet setWithArray:@[accessGroup]];
   self.keychainStore = [[GTMKeychainStore alloc] initWithItemName:kExampleAuthorizerKey
                                                keychainAttributes:attributes];
 #if !defined(NS_BLOCK_ASSERTIONS)
