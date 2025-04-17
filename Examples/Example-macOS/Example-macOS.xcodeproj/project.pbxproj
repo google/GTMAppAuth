@@ -298,13 +298,13 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = V5B29DAW4U;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = "$(SRCROOT)/Source/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.camdenking.example.GTMAppAuth.Example-macOS";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.example.GTMAppAuth.Example-macOS";
 				PRODUCT_NAME = "Example-macOS";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
@@ -318,13 +318,13 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = V5B29DAW4U;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = "$(SRCROOT)/Source/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.camdenking.example.GTMAppAuth.Example-macOS";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.example.GTMAppAuth.Example-macOS";
 				PRODUCT_NAME = "Example-macOS";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
