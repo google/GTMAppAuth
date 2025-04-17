@@ -48,7 +48,7 @@ final class KeychainWrapper: KeychainHelper {
     ]
 
     if #available(macOS 10.15, macCatalyst 13.1, iOS 13.0, tvOS 13.0, watchOS 6.0, *) {
-      query[configuration.attribute.keyName] = kCFBooleanTrue
+      query[kSecUseDataProtectionKeychain as String] = kCFBooleanTrue
     }
 
     keychainAttributes.forEach { configuration in

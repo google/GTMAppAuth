@@ -32,7 +32,11 @@ public final class KeychainAttribute: NSObject {
     public var keyName: String {
       switch self {
       case .useFileBasedKeychain:
-        return kSecUseDataProtectionKeychain as String
+        if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *) {
+            return kSecUseDataProtectionKeychain as String
+        } else {
+            fatalError("`KeychainAttribute.Attribute.useDataProtectionKeychain is only available on macOS 10.15 and greater")
+        }
       case .accessGroup:
         return kSecAttrAccessGroup as String
       }

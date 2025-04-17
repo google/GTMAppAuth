@@ -141,7 +141,7 @@ class KeychainStoreTests: XCTestCase {
   }
 
   func testKeychainQueryHasFileBasedKeychainAttributeOnRead() throws {
-    let useFileBasedKeychainAttributeSet: Set<KeychainAttribute> = [.useFileBasedKeychainAttributeSet]
+    let useFileBasedKeychainAttributeSet: Set<KeychainAttribute> = [.useFileBasedKeychain]
     let fakeWithFileBased = KeychainHelperFake(
       keychainAttributes: useFileBasedKeychainAttributeSet
     )
@@ -203,7 +203,7 @@ class KeychainStoreTests: XCTestCase {
 
   @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
   func testKeychainQueryHasFileBasedKeychainAttributeOnRemove() throws {
-    let useFileBasedKeychainAttributeSet: Set<KeychainAttribute> = [.useFileBasedKeychainAttributeSet]
+    let useFileBasedKeychainAttributeSet: Set<KeychainAttribute> = [.useFileBasedKeychain]
     let fakeWithFileBased = KeychainHelperFake(
       keychainAttributes: useFileBasedKeychainAttributeSet
     )
@@ -466,11 +466,12 @@ extension KeychainStoreTests {
       kSecClass as String: kSecClassGenericPassword,
       kSecAttrAccount as String : accountName,
       kSecAttrService as String: service,
+      kSecUseDataProtectionKeychain as String: kCFBooleanTrue
     ]
 
     attributes.forEach { configuration in
       switch configuration.attribute {
-      case .useFileBasedKeychainAttributeSet:
+      case .useFileBasedKeychain:
         query[configuration.attribute.keyName] = kCFBooleanFalse
       case .accessGroup(let name):
         query[configuration.attribute.keyName] = name

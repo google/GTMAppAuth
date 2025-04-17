@@ -287,10 +287,10 @@ apps entitlements for Keychain operations to succeed.
 
 ###### Migrating to data protected keychain storage
 
-Prior to version 5.0.0 GTMAppAuth defaulted to using the file-baed Keychain. It is reccomended that 
+Prior to version 5.0.0 GTMAppAuth defaulted to using the file-baed Keychain. It is recommended that 
 developers migrate to the data protection Keychain. 
 
-Exmaple migration:
+Example migration:
 ```swift
 // Create a keychain store with data protection.
 GTMKeychainStore dataProtectionKeychainStore = [[GTMKeychainStore alloc] 
@@ -298,7 +298,7 @@ GTMKeychainStore dataProtectionKeychainStore = [[GTMKeychainStore alloc]
 
 // Attempt to retrieve from Keychain.
 NSError *error;
-GTMAuthSesion *authSession = [keychainStore retrieveAuthSessionWithError:&error];
+GTMAuthSession *authSession = [keychainStore retrieveAuthSessionWithError:&error];
 
 // If no authSession found, try to retrieve from file-based Keychain.
 if (!authSession) {
