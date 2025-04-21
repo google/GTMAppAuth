@@ -469,7 +469,7 @@ extension KeychainStoreTests {
     ]
 
     if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *) {
-      query[kSecUseDataProtectionKeychain] = kCFBooleanTrue
+      query[kSecUseDataProtectionKeychain as String] = kCFBooleanTrue
     }
 
     attributes.forEach { configuration in
