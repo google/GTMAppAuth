@@ -475,7 +475,9 @@ extension KeychainStoreTests {
     attributes.forEach { configuration in
       switch configuration.attribute {
       case .useFileBasedKeychain:
-        query[configuration.attribute.keyName] = kCFBooleanFalse
+        if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *) {
+          query[configuration.attribute.keyName] = kCFBooleanFalse
+        }
       case .accessGroup(let name):
         query[configuration.attribute.keyName] = name
       }
