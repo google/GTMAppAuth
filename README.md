@@ -287,7 +287,7 @@ apps entitlements for Keychain operations to succeed.
 
 ###### Migrating to data protected keychain storage
 
-Prior to version 5.0.0 GTMAppAuth defaulted to using the file-baed Keychain. It is recommended that 
+Prior to version 5.0.0 GTMAppAuth defaulted to using the file-based Keychain. It is recommended that 
 developers migrate to the data protection Keychain. 
 
 Example migration:
