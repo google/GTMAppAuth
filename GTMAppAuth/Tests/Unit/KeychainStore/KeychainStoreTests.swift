@@ -466,8 +466,11 @@ extension KeychainStoreTests {
       kSecClass as String: kSecClassGenericPassword,
       kSecAttrAccount as String : accountName,
       kSecAttrService as String: service,
-      kSecUseDataProtectionKeychain as String: kCFBooleanTrue
     ]
+
+    if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *) {
+      query[kSecUseDataProtectionKeychain] = kCFBooleanTrue
+    }
 
     attributes.forEach { configuration in
       switch configuration.attribute {
