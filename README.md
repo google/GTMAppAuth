@@ -276,7 +276,7 @@ and this is encrypted and stored by
 
 For macOS, two Keychain storage options are available: the traditional file-based Keychain storage
 which uses access control lists and the more modern [data protection Keychain storage](https://developer.apple.com/documentation/security/ksecusedataprotectionkeychain?language=objc)
-which uses Keychain access control groups. By default, GTMAppAuth follows [Apples advice](https://developer.apple.com/documentation/security/ksecusedataprotectionkeychain?language=objc) 
+which uses Keychain access control groups. By default, GTMAppAuth follows [Apple's advice](https://developer.apple.com/documentation/security/ksecusedataprotectionkeychain?language=objc) 
 to use the data protection Keychain storage on macOS.  You may opt into using file-based Keychain 
 storage by including the `GTMKeychainAttribute.useFileBasedKeychain` attribute in the 
 `keychainAttributes` parameter of `initWithItemName:keychainAttributes:` when initializing 
@@ -317,7 +317,6 @@ if (!authSession) {
   }
 }
 ```
-
 
 ### Implementing Your Own Storage
 
