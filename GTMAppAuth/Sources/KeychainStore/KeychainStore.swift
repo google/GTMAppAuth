@@ -120,7 +120,7 @@ public final class KeychainStore: NSObject, AuthSessionStore {
     // On macOS, we must use `kSecUseDataProtectionKeychain` if using `kSecAttrAccessible`
     // (https://developer.apple.com/documentation/security/ksecattraccessible?language=objc)
 #if os(macOS)
-      if !keychainAttributes.contains(.useDataProtectionKeychain) {
+      if keychainAttributes.contains(.useFileBasedKeychain) {
         maybeAccessibility = nil
       }
 #endif
@@ -281,7 +281,7 @@ public final class KeychainStore: NSObject, AuthSessionStore {
     // On macOS, we must use `kSecUseDataProtectionKeychain` if using `kSecAttrAccessible`
     // (https://developer.apple.com/documentation/security/ksecattraccessible?language=objc)
 #if os(macOS)
-      if !keychainAttributes.contains(.useDataProtectionKeychain) {
+      if keychainAttributes.contains(.useFileBasedKeychain) {
         try keychainHelper.setPassword(persistence, forService: itemName)
         return
       }

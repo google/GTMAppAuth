@@ -30,13 +30,9 @@ class GTMOAuth2CompatibilityTests: XCTestCase {
     return "access_token=\(TestingConstants.testAccessToken)&refresh_token=\(TestingConstants.testRefreshToken)&scope=\(TestingConstants.testScope2)&serviceProvider=\(TestingConstants.testServiceProvider)&userEmail=foo%40foo.com&userEmailIsVerified=y&userID=\(TestingConstants.testUserID)"
   }()
   private lazy var keychainStoreWithAttributes: KeychainStore = {
-    let attributes: Set<KeychainAttribute>
-    if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *) {
-      attributes = [.useDataProtectionKeychain,
-                    .keychainAccessGroup(name: TestingConstants.testAccessGroup)]
-    } else {
-      attributes = [.keychainAccessGroup(name: TestingConstants.testAccessGroup)]
-    }
+    let attributes: Set<KeychainAttribute> = [
+          .keychainAccessGroup(name: TestingConstants.testAccessGroup)
+        ]
     let keychainHelperWithAttributes = KeychainHelperFake(keychainAttributes: attributes)
     return KeychainStore(
       itemName: TestingConstants.testKeychainItemName,

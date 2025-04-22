@@ -55,7 +55,7 @@ class AuthSessionTests: XCTestCase {
   override func tearDown() {
     super.tearDown()
     keychainHelper.passwordStore.removeAll()
-    keychainHelper.useDataProtectionKeychain = false
+    keychainHelper.useFileBasedKeychain = false
   }
 
   func testAuthorizeSecureRequestWithCompletion() {
@@ -594,7 +594,7 @@ class AuthSessionTests: XCTestCase {
     XCTAssertEqual(savedAuthSession.userID, authSession.userID)
     XCTAssertEqual(savedAuthSession.userEmail, authSession.userEmail)
     XCTAssertEqual(savedAuthSession.userEmailIsVerified, authSession.userEmailIsVerified)
-    XCTAssertFalse(keychainHelper.useDataProtectionKeychain)
+    XCTAssertFalse(keychainHelper.useFileBasedKeychain)
   }
 
   func testRetrieveAuthSessionForItemName() throws {
@@ -607,7 +607,7 @@ class AuthSessionTests: XCTestCase {
     XCTAssertEqual(retrievedAuthSession.userID, authSession.userID)
     XCTAssertEqual(retrievedAuthSession.userEmail, authSession.userEmail)
     XCTAssertEqual(retrievedAuthSession.userEmailIsVerified, authSession.userEmailIsVerified)
-    XCTAssertFalse(keychainHelper.useDataProtectionKeychain)
+    XCTAssertFalse(keychainHelper.useFileBasedKeychain)
   }
 
   func testRetrieveAuthSessionForMissingNameThrowsError() {

@@ -209,20 +209,31 @@
 
 - (void)testKeychainStoreAttributes {
   NSString *testAccessGroupName = @"testKeychainAccessGroup";
-  GTMKeychainAttribute *useDataProtection = [GTMKeychainAttribute useDataProtectionKeychain];
   GTMKeychainAttribute *keychainAccessGroup =
       [GTMKeychainAttribute keychainAccessGroupWithName:testAccessGroupName];
+  NSSet<GTMKeychainAttribute *> *attributes = [NSSet setWithArray:@[keychainAccessGroup]];
+
+  GTMKeychainStore *keychainStore =
+      [[GTMKeychainStore alloc] initWithItemName:[GTMTestingConstants testKeychainItemName]
+                              keychainAttributes:attributes];
+  XCTAssertTrue(keychainStore.keychainAttributes.count > 0);
+  XCTAssertFalse([keychainStore.keychainAttributes
+            containsObject:[GTMKeychainAttribute useFileBasedKeychain]]);
+  XCTAssertTrue([keychainStore.keychainAttributes containsObject:keychainAccessGroup]);
+}
+
+- (void)testKeychainStoreWithFileBasedAttribute {
+  GTMKeychainAttribute *useFileBasedKeychain = [GTMKeychainAttribute useFileBasedKeychain];
   NSSet<GTMKeychainAttribute *> *attributes =
       [NSSet setWithArray:@[
-        useDataProtection, keychainAccessGroup
+        useFileBasedKeychain
       ]];
 
   GTMKeychainStore *keychainStore =
       [[GTMKeychainStore alloc] initWithItemName:[GTMTestingConstants testKeychainItemName]
                               keychainAttributes:attributes];
   XCTAssertTrue(keychainStore.keychainAttributes.count > 0);
-  XCTAssertTrue([keychainStore.keychainAttributes containsObject:useDataProtection]);
-  XCTAssertTrue([keychainStore.keychainAttributes containsObject:keychainAccessGroup]);
+  XCTAssertTrue([keychainStore.keychainAttributes containsObject:useFileBasedKeychain]);
 }
 
 - (void)testSaveAuthSessionInGTMOAuth2Format {

@@ -272,13 +272,51 @@ representation of the relevant `GTMAuthSession` instance is supplied as the valu
 and this is encrypted and stored by
 [Keychain Services](https://developer.apple.com/documentation/security/keychain_services?language=objc).
 
+##### macOS
+
 For macOS, two Keychain storage options are available: the traditional file-based Keychain storage
-which uses access control lists and the more modern [data protection keychain storage](https://developer.apple.com/documentation/security/ksecusedataprotectionkeychain?language=objc)
-which uses Keychain access control groups. By default, GTMAppAuth uses the file-based Keychain storage on macOS.  You may opt
-into using data protection keychain storage by including the `GTMKeychainAttribute.useDataProtectionKeychain` attribute
-in the `keychainAttributes` parameter of `initWithItemName:keychainAttributes:` when initializing `GTMKeychainStore`.
-Note that Keychain items stored via one storage type will not be available via the other and macOS apps that choose
-to use the data protection Keychain will need to be signed in order for Keychain operations to succeed.
+which uses access control lists and the more modern [data protection Keychain storage](https://developer.apple.com/documentation/security/ksecusedataprotectionkeychain?language=objc)
+which uses Keychain access control groups. By default, GTMAppAuth follows [Apple's advice](https://developer.apple.com/documentation/security/ksecusedataprotectionkeychain?language=objc) 
+to use the data protection Keychain storage on macOS.  You may opt into using file-based Keychain 
+storage by including the `GTMKeychainAttribute.useFileBasedKeychain` attribute in the 
+`keychainAttributes` parameter of `initWithItemName:keychainAttributes:` when initializing 
+`GTMKeychainStore`. Note that Keychain items stored via one storage type will not be available via 
+the other. macOS apps that use the data protection Keychain without specifying an access group will 
+need to be include `$(AppIdentifierPrefix)$(CFBundleIdentifier)` as a keychain access group in their
+apps entitlements for Keychain operations to succeed.
+
+###### Migrating to data protected keychain storage
+
+Prior to version 5.0.0 GTMAppAuth defaulted to using the file-based Keychain. It is recommended that 
+developers migrate to the data protection Keychain. 
+
+Example migration:
+```swift
+// Create a keychain store with data protection.
+GTMKeychainStore dataProtectionKeychainStore = [[GTMKeychainStore alloc] 
+                                                    initWithItemName:kKeychainName];
+
+// Attempt to retrieve from Keychain.
+NSError *error;
+GTMAuthSession *authSession = [keychainStore retrieveAuthSessionWithError:&error];
+
+// If no authSession found, try to retrieve from file-based Keychain.
+if (!authSession) {
+  GTMKeychainAttribute *fileBased = [GTMKeychainAttribute useFileBasedKeychain];
+  NSSet *attributes = [NSSet setWithArray:@[fileBased]];
+  GTMKeychainStore fileBasedKeychainStore = [[GTMKeychainStore alloc] 
+                                                  initWithItemName:kExampleAuthorizerKey
+                                                  keychainAttributes:attributes];
+  authSession =[keychainStore retrieveAuthSessionWithError:&error];
+  
+  if (authSession) {
+    // Remove previously stored session from file-based Keychain.
+    [fileBasedKeychainStore removeAuthSessionWithError:&error];
+    // Save to the data protected Keychain.
+    [dataProtectionKeychainStore saveAuthSession:authSession error:&error];
+  }
+}
+```
 
 ### Implementing Your Own Storage
 

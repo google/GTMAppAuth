@@ -47,10 +47,16 @@ final class KeychainWrapper: KeychainHelper {
       kSecAttrService as String: service,
     ]
 
+    if #available(macOS 10.15, macCatalyst 13.1, iOS 13.0, tvOS 13.0, watchOS 6.0, *) {
+      query[kSecUseDataProtectionKeychain as String] = kCFBooleanTrue
+    }
+
     keychainAttributes.forEach { configuration in
       switch configuration.attribute {
-      case .useDataProtectionKeychain:
-        query[configuration.attribute.keyName] = kCFBooleanTrue
+      case .useFileBasedKeychain:
+        if #available(macOS 10.15, macCatalyst 13.1, iOS 13.0, tvOS 13.0, watchOS 6.0, *) {
+          query[configuration.attribute.keyName] = kCFBooleanFalse
+        }
       case .accessGroup(let name):
         query[configuration.attribute.keyName] = name
       }

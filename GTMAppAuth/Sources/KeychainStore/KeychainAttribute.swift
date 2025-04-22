@@ -21,22 +21,21 @@ import Foundation
 public final class KeychainAttribute: NSObject {
   /// An enumeratiion listing the various attributes used to configure the Keychain.
   public enum Attribute {
-    /// Indicates whether to treat macOS keychain items like iOS keychain items.
+    /// Indicates whether to use the legacy file-based keychain on macOS.
     ///
-    /// This attribute will set `kSecUseDataProtectionKeychain` as true in the Keychain query.
-    @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-    case useDataProtectionKeychain
+    /// This attribute will set `kSecUseDataProtectionKeychain` as `false` in the Keychain query.
+    case useFileBasedKeychain
     /// The `String` name for the access group to use in the Keychain query.
     case accessGroup(String)
 
     /// A `String` representation of the attribute.
     public var keyName: String {
       switch self {
-      case .useDataProtectionKeychain:
+      case .useFileBasedKeychain:
         if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *) {
           return kSecUseDataProtectionKeychain as String
         } else {
-          fatalError("`KeychainAttribute.Attribute.useDataProtectionKeychain is only available on macOS 10.15 and greater")
+          fatalError("`kSecUseDataProtectionKeychain is only available on macOS 10.15 and greater")
         }
       case .accessGroup:
         return kSecAttrAccessGroup as String
@@ -56,11 +55,10 @@ public final class KeychainAttribute: NSObject {
   }
 
   /// Creates an instance of `KeychainAttribute` whose attribute is set to
-  /// `.useDataProtectionKeychain`.
+  /// `.useFileBasedKeychain`.
   /// - Returns: An instance of `KeychainAttribute`.
-  @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-  @objc public static let useDataProtectionKeychain = KeychainAttribute(
-    attribute: .useDataProtectionKeychain
+  @objc public static let useFileBasedKeychain = KeychainAttribute(
+    attribute: .useFileBasedKeychain
   )
 
   /// Creates an instance of `KeychainAttribute` whose attribute is set to `.accessGroup`.

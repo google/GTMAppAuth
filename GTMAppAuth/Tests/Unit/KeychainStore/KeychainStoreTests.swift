@@ -53,7 +53,6 @@ class KeychainStoreTests: XCTestCase {
   func testKeychainAttributeKeysHaveCorrectNames() throws {
     let expectedAccessGroup = "unit-test-group"
     let attributes: Set<KeychainAttribute> = [
-      KeychainAttribute.useDataProtectionKeychain,
       KeychainAttribute.keychainAccessGroup(name: expectedAccessGroup)
     ]
     let keychainHelperFake = KeychainHelperFake(keychainAttributes: attributes)
@@ -82,26 +81,25 @@ class KeychainStoreTests: XCTestCase {
     XCTAssertEqual(testAccessGroup, expectedAccessGroup)
   }
 
-  @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-  func testKeychainQueryHasDataProtectionAttributeOnSave() throws {
-    let useDataProtectionAttributeSet: Set<KeychainAttribute> = [.useDataProtectionKeychain]
-    let fakeWithDataProtection = KeychainHelperFake(
-      keychainAttributes: useDataProtectionAttributeSet
+  func testKeychainQueryHasFileBasedKeychainAttributeOnSave() throws {
+    let useFileBasedKeychainAttributeSet: Set<KeychainAttribute> = [.useFileBasedKeychain]
+    let fakeWithFileBased = KeychainHelperFake(
+      keychainAttributes: useFileBasedKeychainAttributeSet
     )
     let store = KeychainStore(
       itemName: TestingConstants.testKeychainItemName,
-      keychainHelper: fakeWithDataProtection
+      keychainHelper: fakeWithFileBased
     )
     try store.save(authSession: authSession)
-    guard let testQuery = fakeWithDataProtection.generatedKeychainQuery as? [String: AnyHashable]
+    guard let testQuery = fakeWithFileBased.generatedKeychainQuery as? [String: AnyHashable]
     else {
-      XCTFail("`fakeWithDataProtection` missing keychain query attributes")
+      XCTFail("`fakeWithFileBased` missing keychain query attributes")
       return
     }
 
     let comparisonQuery = comparisonKeychainQuery(
-      withAttributes: useDataProtectionAttributeSet,
-      accountName: fakeWithDataProtection.accountName,
+      withAttributes: useFileBasedKeychainAttributeSet,
+      accountName: fakeWithFileBased.accountName,
       service: TestingConstants.testKeychainItemName
     )
     XCTAssertEqual(testQuery, comparisonQuery)
@@ -142,72 +140,26 @@ class KeychainStoreTests: XCTestCase {
     XCTAssertEqual(expectedGroupName, testGroupName)
   }
 
-  @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-  func testKeychainQueryHasDataProtectionAndAccessGroupAttributesOnSave() throws {
-    let expectedGroupName = "testGroup"
-    let accessGroupAttributeSet: Set<KeychainAttribute> = [
-      .useDataProtectionKeychain,
-      .keychainAccessGroup(name: expectedGroupName)
-    ]
-    let fakeWithDataProtectionAndAccessGroup = KeychainHelperFake(
-      keychainAttributes: accessGroupAttributeSet
+  func testKeychainQueryHasFileBasedKeychainAttributeOnRead() throws {
+    let useFileBasedKeychainAttributeSet: Set<KeychainAttribute> = [.useFileBasedKeychain]
+    let fakeWithFileBased = KeychainHelperFake(
+      keychainAttributes: useFileBasedKeychainAttributeSet
     )
     let store = KeychainStore(
       itemName: TestingConstants.testKeychainItemName,
-      keychainHelper: fakeWithDataProtectionAndAccessGroup
-    )
-    try store.save(authSession: authSession)
-    guard let testQuery = fakeWithDataProtectionAndAccessGroup.generatedKeychainQuery
-            as? [String: AnyHashable] else {
-      XCTFail("`fakeWithDataProtectionAndAccessGroup` missing keychain query attributes")
-      return
-    }
-
-    let comparisonQuery = comparisonKeychainQuery(
-      withAttributes: accessGroupAttributeSet,
-      accountName: fakeWithDataProtectionAndAccessGroup.accountName,
-      service: TestingConstants.testKeychainItemName
-    )
-    XCTAssertEqual(testQuery, comparisonQuery)
-
-    guard let testUseDataProtectionValue = testQuery[
-      KeychainAttribute.Attribute.useDataProtectionKeychain.keyName
-    ] as? Bool else {
-      XCTFail("`testQuery` did not have a `.useDataProtectionKeychain` attribute")
-      return
-    }
-    XCTAssertTrue(testUseDataProtectionValue)
-
-    guard let testAccessGroupName = testQuery[
-      KeychainAttribute.Attribute.accessGroup(expectedGroupName).keyName
-    ] else {
-      XCTFail("`testQuery` did not have an `.keychainAccessGroup` attribute")
-      return
-    }
-    XCTAssertEqual(testAccessGroupName, expectedGroupName)
-  }
-
-  @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-  func testKeychainQueryHasDataProtectionAttributeOnRead() throws {
-    let useDataProtectionAttributeSet: Set<KeychainAttribute> = [.useDataProtectionKeychain]
-    let fakeWithDataProtection = KeychainHelperFake(
-      keychainAttributes: useDataProtectionAttributeSet
-    )
-    let store = KeychainStore(
-      itemName: TestingConstants.testKeychainItemName,
-      keychainHelper: fakeWithDataProtection
+      keychainHelper: fakeWithFileBased
     )
     // Use `try?` to "throw away" the error since we are testing the keychain query and not the call
     _ = try? store.retrieveAuthSession()
-    guard let testQuery = fakeWithDataProtection.generatedKeychainQuery as? [String: AnyHashable]
+    guard let testQuery = fakeWithFileBased.generatedKeychainQuery as? [String: AnyHashable]
     else {
-      XCTFail("`fakeWithDataProtection` missing keychain query attributes")
+      XCTFail("`fakeWithFileBased` missing keychain query attributes")
       return
     }
 
     let comparisonQuery = comparisonKeychainQuery(
-      withAttributes: useDataProtectionAttributeSet,
-      accountName: fakeWithDataProtection.accountName,
+      withAttributes: useFileBasedKeychainAttributeSet,
+      accountName: fakeWithFileBased.accountName,
       service: TestingConstants.testKeychainItemName
     )
     XCTAssertEqual(testQuery, comparisonQuery)
@@ -250,72 +202,26 @@ class KeychainStoreTests: XCTestCase {
   }
 
   @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-  func testKeychainQueryHasDataProtectionAndAccessGroupAttributesOnRead() throws {
-    let expectedGroupName = "testGroup"
-    let accessGroupAttributeSet: Set<KeychainAttribute> = [
-      .useDataProtectionKeychain,
-      .keychainAccessGroup(name: expectedGroupName)
-    ]
-    let fakeWithDataProtectionAndAccessGroup = KeychainHelperFake(
-      keychainAttributes: accessGroupAttributeSet
+  func testKeychainQueryHasFileBasedKeychainAttributeOnRemove() throws {
+    let useFileBasedKeychainAttributeSet: Set<KeychainAttribute> = [.useFileBasedKeychain]
+    let fakeWithFileBased = KeychainHelperFake(
+      keychainAttributes: useFileBasedKeychainAttributeSet
     )
     let store = KeychainStore(
       itemName: TestingConstants.testKeychainItemName,
-      keychainHelper: fakeWithDataProtectionAndAccessGroup
-    )
-    // Use `try?` to "throw away" the error since we are testing the keychain query and not the call
-    _ = try? store.retrieveAuthSession()
-    guard let testQuery = fakeWithDataProtectionAndAccessGroup.generatedKeychainQuery
-            as? [String: AnyHashable] else {
-      XCTFail("`fakeWithDataProtectionAndAccessGroup` missing keychain query attributes")
-      return
-    }
-
-    let comparisonQuery = comparisonKeychainQuery(
-      withAttributes: accessGroupAttributeSet,
-      accountName: fakeWithDataProtectionAndAccessGroup.accountName,
-      service: TestingConstants.testKeychainItemName
-    )
-    XCTAssertEqual(testQuery, comparisonQuery)
-
-    guard let testUseDataProtectionValue = testQuery[
-      KeychainAttribute.Attribute.useDataProtectionKeychain.keyName
-    ] as? Bool else {
-      XCTFail("`testQuery` did not have a `.useDataProtectionKeychain` attribute")
-      return
-    }
-    XCTAssertTrue(testUseDataProtectionValue)
-
-    guard let testAccessGroupName = testQuery[
-      KeychainAttribute.Attribute.accessGroup(expectedGroupName).keyName
-    ] else {
-      XCTFail("`testQuery` did not have an `.keychainAccessGroup` attribute")
-      return
-    }
-    XCTAssertEqual(testAccessGroupName, expectedGroupName)
-  }
-
-  @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-  func testKeychainQueryHasDataProtectionAttributeOnRemove() throws {
-    let useDataProtectionAttributeSet: Set<KeychainAttribute> = [.useDataProtectionKeychain]
-    let fakeWithDataProtection = KeychainHelperFake(
-      keychainAttributes: useDataProtectionAttributeSet
-    )
-    let store = KeychainStore(
-      itemName: TestingConstants.testKeychainItemName,
-      keychainHelper: fakeWithDataProtection
+      keychainHelper: fakeWithFileBased
     )
     // Use `try?` to "throw away" the error since we are testing the keychain query and not the call
     _ = try? store.removeAuthSession()
-    guard let testQuery = fakeWithDataProtection.generatedKeychainQuery as? [String: AnyHashable]
+    guard let testQuery = fakeWithFileBased.generatedKeychainQuery as? [String: AnyHashable]
     else {
-      XCTFail("`fakeWithDataProtection` missing keychain query attributes")
+      XCTFail("`fakeWithFileBased` missing keychain query attributes")
       return
     }
 
     let comparisonQuery = comparisonKeychainQuery(
-      withAttributes: useDataProtectionAttributeSet,
-      accountName: fakeWithDataProtection.accountName,
+      withAttributes: useFileBasedKeychainAttributeSet,
+      accountName: fakeWithFileBased.accountName,
       service: TestingConstants.testKeychainItemName
     )
     XCTAssertEqual(testQuery, comparisonQuery)
@@ -355,52 +261,6 @@ class KeychainStoreTests: XCTestCase {
       return
     }
     XCTAssertEqual(expectedGroupName, testGroupName)
-  }
-
-  @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
-  func testKeychainQueryHasDataProtectionAndAccessGroupAttributesOnRemove() throws {
-    let expectedGroupName = "testGroup"
-    let accessGroupAttributeSet: Set<KeychainAttribute> = [
-      .useDataProtectionKeychain,
-      .keychainAccessGroup(name: expectedGroupName)
-    ]
-    let fakeWithDataProtectionAndAccessGroup = KeychainHelperFake(
-      keychainAttributes: accessGroupAttributeSet
-    )
-    let store = KeychainStore(
-      itemName: TestingConstants.testKeychainItemName,
-      keychainHelper: fakeWithDataProtectionAndAccessGroup
-    )
-    // Use `try?` to "throw away" the error since we are testing the keychain query and not the call
-    _ = try? store.removeAuthSession()
-    guard let testQuery = fakeWithDataProtectionAndAccessGroup.generatedKeychainQuery
-            as? [String: AnyHashable] else {
-      XCTFail("`fakeWithDataProtectionAndAccessGroup` missing keychain query attributes")
-      return
-    }
-
-    let comparisonQuery = comparisonKeychainQuery(
-      withAttributes: accessGroupAttributeSet,
-      accountName: fakeWithDataProtectionAndAccessGroup.accountName,
-      service: TestingConstants.testKeychainItemName
-    )
-    XCTAssertEqual(testQuery, comparisonQuery)
-
-    guard let testUseDataProtectionValue = testQuery[
-      KeychainAttribute.Attribute.useDataProtectionKeychain.keyName
-    ] as? Bool else {
-      XCTFail("`testQuery` did not have a `.useDataProtectionKeychain` attribute")
-      return
-    }
-    XCTAssertTrue(testUseDataProtectionValue)
-
-    guard let testAccessGroupName = testQuery[
-      KeychainAttribute.Attribute.accessGroup(expectedGroupName).keyName
-    ] else {
-      XCTFail("`testQuery` did not have an `.keychainAccessGroup` attribute")
-      return
-    }
-    XCTAssertEqual(testAccessGroupName, expectedGroupName)
   }
 
   func testSaveAndRetrieveAuthSession() throws {
@@ -608,10 +468,16 @@ extension KeychainStoreTests {
       kSecAttrService as String: service,
     ]
 
+    if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *) {
+      query[kSecUseDataProtectionKeychain as String] = kCFBooleanTrue
+    }
+
     attributes.forEach { configuration in
       switch configuration.attribute {
-      case .useDataProtectionKeychain:
-        query[configuration.attribute.keyName] = kCFBooleanTrue
+      case .useFileBasedKeychain:
+        if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *) {
+          query[configuration.attribute.keyName] = kCFBooleanFalse
+        }
       case .accessGroup(let name):
         query[configuration.attribute.keyName] = name
       }

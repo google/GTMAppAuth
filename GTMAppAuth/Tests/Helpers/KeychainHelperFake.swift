@@ -19,7 +19,7 @@ import GTMAppAuth
 
 @objc(GTMKeychainHelperFake)
 public class KeychainHelperFake: NSObject, KeychainHelper {
-  @objc public var useDataProtectionKeychain = false
+  @objc public var useFileBasedKeychain = false
   @objc public var passwordStore = [String: Data]()
   @objc public let accountName = "OauthTest"
   @objc public let keychainAttributes: Set<KeychainAttribute>
@@ -40,10 +40,14 @@ public class KeychainHelperFake: NSObject, KeychainHelper {
       kSecAttrService as String: service,
     ]
 
+    if #available(macOS 10.15, macCatalyst 13.1, iOS 13.0, tvOS 13.0, watchOS 6.0, *) {
+      query[kSecUseDataProtectionKeychain as String] = kCFBooleanTrue
+    }
+
     keychainAttributes.forEach { configuration in
       switch configuration.attribute {
-      case .useDataProtectionKeychain:
-        query[configuration.attribute.keyName] = kCFBooleanTrue
+      case .useFileBasedKeychain:
+        query[configuration.attribute.keyName] = kCFBooleanFalse
       case .accessGroup(let name):
         query[configuration.attribute.keyName] = name
       }
