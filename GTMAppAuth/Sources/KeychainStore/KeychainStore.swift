@@ -137,7 +137,7 @@ public final class KeychainStore: NSObject, AuthSessionStore {
     fromAuthSession authSession: AuthSession
   ) throws -> Data {
     let keyedArchiver: NSKeyedArchiver
-    if #available(iOS 11, macOS 10.13, tvOS 11.0, watchOS 4.0, *) {
+    if #available(iOS 12, macOS 10.13, tvOS 11.0, watchOS 4.0, *) {
       keyedArchiver = NSKeyedArchiver(requiringSecureCoding: true)
     } else {
       keyedArchiver = NSKeyedArchiver()
@@ -170,7 +170,7 @@ public final class KeychainStore: NSObject, AuthSessionStore {
 
   private func keyedUnarchiver(forData data: Data) throws -> NSKeyedUnarchiver {
     let keyedUnarchiver: NSKeyedUnarchiver
-    if #available(iOS 11.0, macOS 10.13, watchOS 4.0, tvOS 11.0, *) {
+    if #available(iOS 12.0, macOS 10.13, watchOS 4.0, tvOS 11.0, *) {
       keyedUnarchiver = try NSKeyedUnarchiver(forReadingFrom: data)
       keyedUnarchiver.requiresSecureCoding = true
     } else {
