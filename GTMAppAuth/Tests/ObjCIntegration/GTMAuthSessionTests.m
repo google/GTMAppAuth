@@ -169,7 +169,7 @@
   [self waitForExpectations:@[delegateExpectation] timeout:self.expectationTimeout];
 
   XCTAssertNotNil(testingDelegate.passedRequest);
-  XCTAssertEqual(originalRequest, testingDelegate.passedRequest);
+  XCTAssertEqualObjects(originalRequest, testingDelegate.passedRequest);
   XCTAssertNotNil(testingDelegate.passedAuthorization);
   XCTAssertEqual(originalAuthorization, testingDelegate.passedAuthorization);
   XCTAssertNil(testingDelegate.passedError);
