@@ -286,7 +286,6 @@ public final class AuthSession: NSObject, GTMSessionFetcherAuthorizer, NSSecureC
     let callbackQueue = fetcherService?.callbackQueue ?? DispatchQueue.main
 
     let callback: () -> Void = {
-      let requestCopy = request as URLRequest
       callbackQueue.async {
         switch args.callbackStyle {
         case .completion(let callback):
@@ -295,7 +294,7 @@ public final class AuthSession: NSObject, GTMSessionFetcherAuthorizer, NSSecureC
           self.invokeCallback(
             withDelegate: delegate,
             selector: selector,
-            request: requestCopy,
+            request: request,
             error: args.error
           )
         }
@@ -316,7 +315,7 @@ public final class AuthSession: NSObject, GTMSessionFetcherAuthorizer, NSSecureC
   private func invokeCallback(
     withDelegate delegate: Any,
     selector: Selector,
-    request: URLRequest,
+    request: NSMutableURLRequest,
     error: Swift.Error?
   ) {
     guard let delegate = delegate as? NSObject, delegate.responds(to: selector) else {
@@ -328,7 +327,7 @@ public final class AuthSession: NSObject, GTMSessionFetcherAuthorizer, NSSecureC
       NSObject,
       Selector,
       AuthSession,
-      URLRequest,
+      NSMutableURLRequest,
       NSError?
     ) -> Void
     let authorizeRequest: DelegateCallback = unsafeBitCast(
