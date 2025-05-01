@@ -1,3 +1,8 @@
+# 5.0.0
+- Update keychain default on Mac to be data protected ([#259](https://github.com/google/GTMAppAuth/pull/259))
+- Update AppAuth dependency to 2.0.0 ([#262](https://github.com/google/GTMAppAuth/pull/262))
+- Fix Swift 6 mode `@Sendable` closure warning ([#263](https://github.com/google/GTMAppAuth/pull/263))
+
 # 4.1.1
 - Fix PrivacyInfo bundling issues ([#241](https://github.com/google/GTMAppAuth/pull/241))
 
