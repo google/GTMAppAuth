@@ -21,7 +21,7 @@ let package = Package(
   name: "GTMAppAuth",
   platforms: [
     .macOS(.v10_12),
-    .iOS(.v10),
+    .iOS(.v12),
     .tvOS(.v10),
     .watchOS(.v6)
   ],
@@ -33,7 +33,7 @@ let package = Package(
   ],
   dependencies: [
     .package(url: "https://github.com/google/gtm-session-fetcher.git", "3.3.0" ..< "4.0.0"),
-    .package(url: "https://github.com/openid/AppAuth-iOS.git", "1.7.0" ..< "2.0.0")
+    .package(url: "https://github.com/openid/AppAuth-iOS.git", "2.0.0" ..< "3.0.0")
   ],
   targets: [
     .target(
