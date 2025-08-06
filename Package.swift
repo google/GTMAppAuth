@@ -73,6 +73,5 @@ let package = Package(
       ],
       path: "GTMAppAuth/Tests/ObjCIntegration"
     )
-  ],
-  swiftLanguageVersions: [.version("6")]
+  ]
 )
