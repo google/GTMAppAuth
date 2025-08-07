@@ -18,9 +18,9 @@ import Foundation
 
 /// The Keychain attribute used to configure the way the keychain stores your items.
 @objc(GTMKeychainAttribute)
-public final class KeychainAttribute: NSObject {
+public final class KeychainAttribute: NSObject, Sendable {
   /// An enumeratiion listing the various attributes used to configure the Keychain.
-  public enum Attribute {
+  public enum Attribute: Sendable {
     /// Indicates whether to use the legacy file-based keychain on macOS.
     ///
     /// This attribute will set `kSecUseDataProtectionKeychain` as `false` in the Keychain query.

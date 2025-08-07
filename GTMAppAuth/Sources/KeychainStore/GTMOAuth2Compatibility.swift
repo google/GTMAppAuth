@@ -108,10 +108,10 @@ public final class GTMOAuth2Compatibility: NSObject {
     return originalString.addingPercentEncoding(withAllowedCharacters: urlQueryCharacters)
   }
 
-  private static var googleAuthorizationURL = URL(string: "https://accounts.google.com/o/oauth2/v2/auth")!
+  private static let googleAuthorizationURL = URL(string: "https://accounts.google.com/o/oauth2/v2/auth")!
   static let googleTokenURL = URL(string: "https://www.googleapis.com/oauth2/v4/token")!
-  static var googleRevocationURL = URL(string: "https://accounts.google.com/o/oauth2/revoke")!
-  static var googleUserInfoURL = URL(string: "https://www.googleapis.com/oauth2/v3/userinfo")!
+  static let googleRevocationURL = URL(string: "https://accounts.google.com/o/oauth2/revoke")!
+  static let googleUserInfoURL = URL(string: "https://www.googleapis.com/oauth2/v3/userinfo")!
   static var nativeClientRedirectURI: String {
     return oobString
   }
