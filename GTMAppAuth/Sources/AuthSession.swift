@@ -225,9 +225,14 @@ public final class AuthSession: NSObject, GTMSessionFetcherAuthorizer, NSSecureC
     serialAuthArgsQueue.sync {
       authorizationArgs.append(args)
     }
-    let additionalRefreshParameters = delegate?.additionalTokenRefreshParameters?(
+    // Get raw parameters from delegate
+    let rawParameters = delegate?.additionalTokenRefreshParameters?(
       forAuthSession: self
     )
+    
+    // Safely convert any NSNumber values to String to prevent casting crashes
+    // This fixes issue #253 where refresh_token_expires_in comes as NSNumber
+    let additionalRefreshParameters = AuthSession.sanitizeRefreshParameters(rawParameters)
     let authStateAction = {
       (accessToken: String?, idToken: String?, error: Swift.Error?) in
       self.serialAuthArgsQueue.sync { [weak self] in
@@ -496,5 +501,29 @@ public extension AuthSession {
         self = .accessTokenEmptyForRequest
       }
     }
+  }
+  
+  /// Safely converts dictionary values to strings, handling NSNumber and other types
+  /// This fixes issue #253 where OAuth providers return numeric values that cause casting crashes
+  private static func sanitizeRefreshParameters(_ parameters: [String: Any]?) -> [String: String]? {
+    guard let parameters = parameters else { return nil }
+    
+    var sanitized = [String: String]()
+    for (key, value) in parameters {
+      if let stringValue = value as? String {
+        sanitized[key] = stringValue
+      } else if let numberValue = value as? NSNumber {
+        // Convert NSNumber to String to prevent casting crashes
+        // This handles refresh_token_expires_in and similar numeric fields
+        sanitized[key] = numberValue.stringValue
+      } else if let boolValue = value as? Bool {
+        // Handle boolean values explicitly
+        sanitized[key] = boolValue ? "true" : "false"
+      } else {
+        // For any other type, try string interpolation as fallback
+        sanitized[key] = "\(value)"
+      }
+    }
+    return sanitized.isEmpty ? nil : sanitized
   }
 }
