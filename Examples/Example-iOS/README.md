@@ -30,6 +30,9 @@ $ open Example-iOSForPod.xcworkspace
 
 ## Configuration
 
+The example requires iOS 15+ and uses the `UIScene` lifecycle. The OAuth redirect
+is handled in `SceneDelegate scene:openURLContexts:`.
+
 The example doesn't work out of the box, you need to configure it your own
 client ID.
 
