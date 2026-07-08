@@ -1,4 +1,4 @@
-/*! @file AppDelegate.m
+/*! @file SceneDelegate.h
     @brief GTMAppAuth SDK iOS Example
     @copyright
         Copyright 2016 Google Inc.
@@ -15,26 +15,12 @@
         See the License for the specific language governing permissions and
         limitations under the License.
  */
-#import "AppDelegate.h"
+#import <UIKit/UIKit.h>
 
-@import AppAuth;
+/*! @brief The example application's scene delegate.
+*/
+@interface SceneDelegate : UIResponder <UIWindowSceneDelegate>
 
-#import "GTMAppAuthExampleViewController.h"
-
-@implementation AppDelegate
-
-- (BOOL)application:(UIApplication *)application
-    didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-  return YES;
-}
-
-#pragma mark - UISceneSession lifecycle
-
-- (UISceneConfiguration *)application:(UIApplication *)application
-    configurationForConnectingSceneSession:(UISceneSession *)connectingSceneSession
-                                   options:(UISceneConnectionOptions *)options {
-  return [[UISceneConfiguration alloc] initWithName:@"Default Configuration"
-                                         sessionRole:connectingSceneSession.role];
-}
+@property(strong, nonatomic) UIWindow *window;
 
 @end
