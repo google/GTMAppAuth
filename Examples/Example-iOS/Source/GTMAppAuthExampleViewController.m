@@ -28,7 +28,7 @@
 @import GTMSessionFetcherCore;
 #endif
 
-#import "AppDelegate.h"
+#import "SceneDelegate.h"
 
 /*! @brief The OIDC issuer from which the configuration will be discovered.
  */
@@ -197,10 +197,10 @@ static NSString *const kKeychainStoreItemName = @"authorization";
                                                   responseType:OIDResponseTypeCode
                                           additionalParameters:nil];
     // performs authentication request
-    AppDelegate *appDelegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
+    SceneDelegate *sceneDelegate = (SceneDelegate *)self.view.window.windowScene.delegate;
     [self logMessage:@"Initiating authorization request with scope: %@", request.scope];
 
-    appDelegate.currentAuthorizationFlow =
+    sceneDelegate.currentAuthorizationFlow =
         [OIDAuthState authStateByPresentingAuthorizationRequest:request
             presentingViewController:self
                             callback:^(OIDAuthState *_Nullable authState,

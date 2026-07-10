@@ -17,10 +17,16 @@
  */
 #import <UIKit/UIKit.h>
 
+@protocol OIDExternalUserAgentSession;
+
 /*! @brief The example application's scene delegate.
 */
 @interface SceneDelegate : UIResponder <UIWindowSceneDelegate>
 
 @property(strong, nonatomic) UIWindow *window;
+
+/*! @brief The authorization flow session which receives the return URL from \SFSafariViewController.
+ */
+@property(nonatomic, strong, nullable) id<OIDExternalUserAgentSession> currentAuthorizationFlow;
 
 @end

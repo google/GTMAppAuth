@@ -19,7 +19,6 @@
 
 @import AppAuth;
 
-#import "AppDelegate.h"
 #import "GTMAppAuthExampleViewController.h"
 
 @implementation SceneDelegate
@@ -41,9 +40,8 @@
   if (!context) {
     return;
   }
-  AppDelegate *appDelegate = (AppDelegate *)UIApplication.sharedApplication.delegate;
-  if ([appDelegate.currentAuthorizationFlow resumeExternalUserAgentFlowWithURL:context.URL]) {
-    appDelegate.currentAuthorizationFlow = nil;
+  if ([self.currentAuthorizationFlow resumeExternalUserAgentFlowWithURL:context.URL]) {
+    self.currentAuthorizationFlow = nil;
   }
 }
 
