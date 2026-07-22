@@ -352,8 +352,10 @@ should save in GTMAppAuth format as described above).
 
 ## Included Samples
 
-Try out one of the included sample apps under [Examples](Examples). In the
-apps folder run `pod install`, then open the resulting `xcworkspace` file.
+Try out one of the included sample apps under [Examples](Examples). Open the
+Swift Package Manager project (`Example-iOS.xcodeproj`) directly, or for
+CocoaPods run `pod install` in the app's folder and open the resulting
+`xcworkspace` file.
 
 Be sure to follow the instructions in
 [Example-iOS/README.md](Examples/Example-iOS/README.md) or

@@ -25,12 +25,18 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.YOUR_CLIENT</string>
+				<string>$(OIDC_REDIRECT_URI_SCHEME)</string>
 			</array>
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>1</string>
+	<key>OIDCClientID</key>
+	<string>$(OIDC_CLIENT_ID)</string>
+	<key>OIDCIssuer</key>
+	<string>$(OIDC_ISSUER)</string>
+	<key>OIDCRedirectURI</key>
+	<string>$(OIDC_REDIRECT_URI)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
