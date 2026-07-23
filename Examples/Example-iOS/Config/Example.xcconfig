@@ -1,0 +1,20 @@
+// This file holds public placeholder defaults for the example app's
+// bundle identity and code signing. Personal overrides belong in the
+// sibling, gitignored Config/Example.local.xcconfig, which overrides
+// these defaults via the optional-include directive below.
+
+PRODUCT_BUNDLE_IDENTIFIER = com.example.GTMAppAuth.Example-iOS
+
+// OAuth configuration. These placeholder defaults keep the sample building;
+// put your real client values in Example.local.xcconfig.
+// (The $() in the issuer prevents // from starting an xcconfig comment.)
+OIDC_ISSUER = https:/$()/accounts.google.com
+OIDC_CLIENT_ID = YOUR_CLIENT.apps.googleusercontent.com
+OIDC_REDIRECT_URI = com.googleusercontent.apps.YOUR_CLIENT:/oauthredirect
+OIDC_REDIRECT_URI_SCHEME = com.googleusercontent.apps.YOUR_CLIENT
+
+// Code signing. Defaults to Automatic with no team. Override in
+// Example.local.xcconfig if you need Manual signing with a specific provisioning profile.
+CODE_SIGN_STYLE = Automatic
+
+#include? "Example.local.xcconfig"
