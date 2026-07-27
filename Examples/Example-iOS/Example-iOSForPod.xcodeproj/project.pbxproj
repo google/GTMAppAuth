@@ -380,6 +380,10 @@
 				INFOPLIST_FILE = Source/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OIDC_CLIENT_ID = "YOUR_CLIENT.apps.googleusercontent.com";
+				OIDC_ISSUER = "https://accounts.google.com";
+				OIDC_REDIRECT_URI = "com.googleusercontent.apps.YOUR_CLIENT:/oauthredirect";
+				OIDC_REDIRECT_URI_SCHEME = "com.googleusercontent.apps.YOUR_CLIENT";
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"$(inherited)",
@@ -398,6 +402,10 @@
 				INFOPLIST_FILE = Source/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OIDC_CLIENT_ID = "YOUR_CLIENT.apps.googleusercontent.com";
+				OIDC_ISSUER = "https://accounts.google.com";
+				OIDC_REDIRECT_URI = "com.googleusercontent.apps.YOUR_CLIENT:/oauthredirect";
+				OIDC_REDIRECT_URI_SCHEME = "com.googleusercontent.apps.YOUR_CLIENT";
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"$(inherited)",
