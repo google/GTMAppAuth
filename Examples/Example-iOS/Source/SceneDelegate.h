@@ -1,7 +1,7 @@
-/*! @file AppDelegate.h
+/*! @file SceneDelegate.h
     @brief GTMAppAuth SDK iOS Example
     @copyright
-        Copyright 2016 Google Inc.
+        Copyright 2026 Google LLC
     @copydetails
         Licensed under the Apache License, Version 2.0 (the "License");
         you may not use this file except in compliance with the License.
@@ -17,9 +17,16 @@
  */
 #import <UIKit/UIKit.h>
 
-/*! @brief The example application's delegate.
+@protocol OIDExternalUserAgentSession;
+
+/*! @brief The example application's scene delegate.
 */
-@interface AppDelegate : UIResponder <UIApplicationDelegate>
+@interface SceneDelegate : UIResponder <UIWindowSceneDelegate>
+
+@property(strong, nonatomic) UIWindow *window;
+
+/*! @brief The authorization flow session which receives the return URL from the external user agent (ASWebAuthenticationSession on iOS 15+).
+ */
+@property(nonatomic, strong, nullable) id<OIDExternalUserAgentSession> currentAuthorizationFlow;
 
 @end
-

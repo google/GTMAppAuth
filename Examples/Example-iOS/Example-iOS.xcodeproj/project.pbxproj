@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		346E916E1C29D42800D3620B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 346E916D1C29D42800D3620B /* main.m */; };
 		346E91711C29D42800D3620B /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 346E91701C29D42800D3620B /* AppDelegate.m */; };
+		346E91B11C29D42800D3620B /* SceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 346E91B01C29D42800D3620B /* SceneDelegate.m */; };
 		346E91791C29D42800D3620B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 346E91781C29D42800D3620B /* Assets.xcassets */; };
 		346E917C1C29D42800D3620B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 346E917A1C29D42800D3620B /* LaunchScreen.storyboard */; };
 		346E91991C2A245000D3620B /* SafariServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 346E91981C2A245000D3620B /* SafariServices.framework */; };
@@ -25,6 +26,8 @@
 		346E916D1C29D42800D3620B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		346E916F1C29D42800D3620B /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		346E91701C29D42800D3620B /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		346E91AF1C29D42800D3620B /* SceneDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SceneDelegate.h; sourceTree = "<group>"; };
+		346E91B01C29D42800D3620B /* SceneDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SceneDelegate.m; sourceTree = "<group>"; };
 		346E91781C29D42800D3620B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		346E917B1C29D42800D3620B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		346E917D1C29D42800D3620B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -86,6 +89,8 @@
 				346E916D1C29D42800D3620B /* main.m */,
 				346E916F1C29D42800D3620B /* AppDelegate.h */,
 				346E91701C29D42800D3620B /* AppDelegate.m */,
+				346E91AF1C29D42800D3620B /* SceneDelegate.h */,
+				346E91B01C29D42800D3620B /* SceneDelegate.m */,
 				34CB09BA1C42007600A54261 /* GTMAppAuthExampleViewController.h */,
 				34CB09BB1C42007600A54261 /* GTMAppAuthExampleViewController.m */,
 				34CB09BC1C42007600A54261 /* GTMAppAuthExampleViewController.xib */,
@@ -186,6 +191,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				346E91711C29D42800D3620B /* AppDelegate.m in Sources */,
+				346E91B11C29D42800D3620B /* SceneDelegate.m in Sources */,
 				346E916E1C29D42800D3620B /* main.m in Sources */,
 				34CB09BD1C42007600A54261 /* GTMAppAuthExampleViewController.m in Sources */,
 			);
@@ -303,7 +309,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = Source/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -322,7 +328,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = Source/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

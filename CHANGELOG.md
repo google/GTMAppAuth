@@ -1,3 +1,6 @@
+# Unreleased
+- Migrated the iOS example app to the UIScene lifecycle (adds SceneDelegate, UIApplicationSceneManifest); the iOS example now requires iOS 15+
+
 # 5.0.0
 - Update keychain default on Mac to be data protected ([#259](https://github.com/google/GTMAppAuth/pull/259))
 - Update AppAuth dependency to 2.0.0 ([#262](https://github.com/google/GTMAppAuth/pull/262))
