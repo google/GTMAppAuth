@@ -25,10 +25,10 @@ requests with AppAuth.
     "GTMAppAuth_Privacy" => "GTMAppAuth/Sources/Resources/PrivacyInfo.xcprivacy"
   }
 
-  ios_deployment_target = '12.0'
-  osx_deployment_target = '10.12'
-  tvos_deployment_target = '10.0'
-  watchos_deployment_target = '6.0'
+  ios_deployment_target = '15.0'
+  osx_deployment_target = '12.0'
+  tvos_deployment_target = '15.0'
+  watchos_deployment_target = '9.0'
   s.ios.deployment_target = ios_deployment_target
   s.osx.deployment_target = osx_deployment_target
   s.tvos.deployment_target = tvos_deployment_target
@@ -36,7 +36,7 @@ requests with AppAuth.
 
   s.framework = 'Security'
   s.dependency 'GTMSessionFetcher/Core', '>= 3.3', '< 4.0'
-  s.dependency 'AppAuth/Core', '~> 2.0'
+  s.dependency 'AppAuth/Core', '~> 3.0'
 
   s.test_spec 'unit' do |unit_tests|
     unit_tests.platforms = {
