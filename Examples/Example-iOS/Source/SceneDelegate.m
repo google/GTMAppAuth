@@ -40,7 +40,7 @@
   if (!context) {
     return;
   }
-  if ([self.currentAuthorizationFlow resumeExternalUserAgentFlowWithURL:context.URL]) {
+  if ([self.currentAuthorizationFlow resumeExternalUserAgentFlowWithURL:context.URL error:NULL]) {
     self.currentAuthorizationFlow = nil;
   }
 }
