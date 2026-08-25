@@ -9,12 +9,15 @@ on:
       - master
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
 
   pod-lib-lint:
     runs-on: macos-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
     - name: Update Bundler
       run: bundle update --bundler
     - name: Install Ruby gems with Bundler
@@ -25,7 +28,7 @@ jobs:
   spm-build-test:
     runs-on: macos-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
     - name: Build package
       run: swift build
     - name: Run Swift tests

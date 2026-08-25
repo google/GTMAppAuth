@@ -5,6 +5,9 @@ on:
     - cron: '0 8 * * *' # Cron uses UTC; run at nightly at midnight PST
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   cron:
     runs-on: ${{ matrix.os }}
@@ -14,7 +17,7 @@ jobs:
         os: [macos-latest]
   
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
     - name: Archive for iOS
       run: |
         xcodebuild \
