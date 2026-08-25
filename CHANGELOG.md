@@ -1,4 +1,4 @@
-# 6.0.0
+UNRELEASED
 - Migrated the iOS example app to the UIScene lifecycle (adds SceneDelegate, UIApplicationSceneManifest); the iOS example now requires iOS 15+
 - BREAKING: Raised minimum deployment targets to iOS 15.0, macOS 12.0, tvOS 15.0 and watchOS 9.0, and `swift-tools-version` to 5.7, to adopt AppAuth 3.0.0.
 - BREAKING: Updated the AppAuth dependency to 3.0.0.

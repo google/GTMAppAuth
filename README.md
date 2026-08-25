@@ -22,6 +22,13 @@ Compatibility methods for GTMOAuth2 are offered allowing you to migrate
 from GTMOAuth2 to GTMAppAuth preserving previously serialized authorizations
 (so users shouldn't need to re-authenticate).
 
+## Requirements
+
+- GTMAppAuth 6.0.0 requires iOS 15.0+, macOS 12.0+, tvOS 15.0+, watchOS 9.0+ and Swift tools 5.7+.
+- It depends on AppAuth 3.x and supports GTMSessionFetcher 3.3 through 5.x.
+
+Projects that must keep supporting iOS 12 through 14 should remain on GTMAppAuth 5.x.
+
 ## Setup
 
 If you use [CocoaPods](https://guides.cocoapods.org/using/getting-started.html),
