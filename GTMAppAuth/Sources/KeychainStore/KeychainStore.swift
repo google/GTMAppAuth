@@ -116,15 +116,13 @@ public final class KeychainStore: NSObject, AuthSessionStore {
     let authSessionData = try authSessionData(fromAuthSession: authSession)
 
     var maybeAccessibility: CFString? = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
-    if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *) {
     // On macOS, we must use `kSecUseDataProtectionKeychain` if using `kSecAttrAccessible`
     // (https://developer.apple.com/documentation/security/ksecattraccessible?language=objc)
 #if os(macOS)
-      if keychainAttributes.contains(.useFileBasedKeychain) {
-        maybeAccessibility = nil
-      }
-#endif
+    if keychainAttributes.contains(.useFileBasedKeychain) {
+      maybeAccessibility = nil
     }
+#endif
 
     try keychainHelper.setPassword(
       data: authSessionData,
@@ -136,12 +134,7 @@ public final class KeychainStore: NSObject, AuthSessionStore {
   private func authSessionData(
     fromAuthSession authSession: AuthSession
   ) throws -> Data {
-    let keyedArchiver: NSKeyedArchiver
-    if #available(iOS 12, macOS 10.13, tvOS 11.0, watchOS 4.0, *) {
-      keyedArchiver = NSKeyedArchiver(requiringSecureCoding: true)
-    } else {
-      keyedArchiver = NSKeyedArchiver()
-    }
+    let keyedArchiver = NSKeyedArchiver(requiringSecureCoding: true)
 
     // The previous name for `AuthSession` was `GTMAppAuthFetcherAuthorization`. To allow legacy
     // versions of this library to unarchive and archive instances of `AuthSession` from new
@@ -169,14 +162,8 @@ public final class KeychainStore: NSObject, AuthSessionStore {
   }
 
   private func keyedUnarchiver(forData data: Data) throws -> NSKeyedUnarchiver {
-    let keyedUnarchiver: NSKeyedUnarchiver
-    if #available(iOS 12.0, macOS 10.13, watchOS 4.0, tvOS 11.0, *) {
-      keyedUnarchiver = try NSKeyedUnarchiver(forReadingFrom: data)
-      keyedUnarchiver.requiresSecureCoding = true
-    } else {
-      keyedUnarchiver = NSKeyedUnarchiver(forReadingWith: data)
-      keyedUnarchiver.requiresSecureCoding = false
-    }
+    let keyedUnarchiver = try NSKeyedUnarchiver(forReadingFrom: data)
+    keyedUnarchiver.requiresSecureCoding = true
     // The previous name for `AuthSession` was `GTMAppAuthFetcherAuthorization` and so unarchiving
     // requires mapping the name previous instances were archived under to the new name.
     keyedUnarchiver.setClass(AuthSession.self, forClassName: AuthSession.legacyArchiveName)
@@ -277,16 +264,14 @@ public final class KeychainStore: NSObject, AuthSessionStore {
       throw KeychainStore.Error.failedToCreateResponseStringFromAuthSession(authSession)
     }
 
-    if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *) {
     // On macOS, we must use `kSecUseDataProtectionKeychain` if using `kSecAttrAccessible`
     // (https://developer.apple.com/documentation/security/ksecattraccessible?language=objc)
 #if os(macOS)
-      if keychainAttributes.contains(.useFileBasedKeychain) {
-        try keychainHelper.setPassword(persistence, forService: itemName)
-        return
-      }
-#endif
+    if keychainAttributes.contains(.useFileBasedKeychain) {
+      try keychainHelper.setPassword(persistence, forService: itemName)
+      return
     }
+#endif
 
     try keychainHelper.setPassword(
       persistence,
