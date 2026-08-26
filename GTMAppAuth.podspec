@@ -1,8 +1,8 @@
 Pod::Spec.new do |s|
 
   s.name          = 'GTMAppAuth'
-  s.version       = '5.0.0'
-  s.swift_version = '4.0'
+  s.version       = '6.0.0'
+  s.swift_version = '5.7'
   s.summary       = 'Authorize GTM Session Fetcher requests with AppAuth via GTMAppAuth'
 
   s.description   = <<-DESC
@@ -35,7 +35,7 @@ requests with AppAuth.
   s.watchos.deployment_target = watchos_deployment_target
 
   s.framework = 'Security'
-  s.dependency 'GTMSessionFetcher/Core', '>= 3.3', '< 4.0'
+  s.dependency 'GTMSessionFetcher/Core', '>= 3.3', '< 6.0'
   s.dependency 'AppAuth/Core', '~> 3.0'
 
   s.test_spec 'unit' do |unit_tests|
