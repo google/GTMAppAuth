@@ -57,6 +57,7 @@
 		73E4FD2928B056AF003D602E /* AppAuth.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = AppAuth.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8536F19A676D520C21C03D35 /* Pods-Example-iOSForPod.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Example-iOSForPod.debug.xcconfig"; path = "Target Support Files/Pods-Example-iOSForPod/Pods-Example-iOSForPod.debug.xcconfig"; sourceTree = "<group>"; };
 		C1AF3AE928187F71003BAEFF /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		C1C0F1D02E2F000000000002 /* Config/Example.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config/Example.xcconfig; sourceTree = "<group>"; };
 		D863799628187F71003BAEFF /* SceneDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SceneDelegate.h; sourceTree = "<group>"; };
 		D863799728187F71003BAEFF /* SceneDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SceneDelegate.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -94,6 +95,7 @@
 			isa = PBXGroup;
 			children = (
 				C1AF3AE928187F71003BAEFF /* README.md */,
+				C1C0F1D02E2F000000000002 /* Config/Example.xcconfig */,
 				346E916B1C29D42800D3620B /* Source */,
 				341564001C487ABA00ECA3D9 /* Frameworks */,
 				346E916A1C29D42800D3620B /* Products */,
@@ -281,6 +283,7 @@
 /* Begin XCBuildConfiguration section */
 		346E917E1C29D42800D3620B /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = C1C0F1D02E2F000000000002 /* Config/Example.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -330,6 +333,7 @@
 		};
 		346E917F1C29D42800D3620B /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = C1C0F1D02E2F000000000002 /* Config/Example.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -380,10 +384,6 @@
 				INFOPLIST_FILE = Source/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				OIDC_CLIENT_ID = "YOUR_CLIENT.apps.googleusercontent.com";
-				OIDC_ISSUER = "https://accounts.google.com";
-				OIDC_REDIRECT_URI = "com.googleusercontent.apps.YOUR_CLIENT:/oauthredirect";
-				OIDC_REDIRECT_URI_SCHEME = "com.googleusercontent.apps.YOUR_CLIENT";
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"$(inherited)",
@@ -402,10 +402,6 @@
 				INFOPLIST_FILE = Source/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				OIDC_CLIENT_ID = "YOUR_CLIENT.apps.googleusercontent.com";
-				OIDC_ISSUER = "https://accounts.google.com";
-				OIDC_REDIRECT_URI = "com.googleusercontent.apps.YOUR_CLIENT:/oauthredirect";
-				OIDC_REDIRECT_URI_SCHEME = "com.googleusercontent.apps.YOUR_CLIENT";
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"$(inherited)",
