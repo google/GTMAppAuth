@@ -33,3 +33,17 @@ jobs:
       run: swift build
     - name: Run Swift tests
       run: swift test
+
+  xcode-27-preview-test:
+    # Xcode 27 is currently only available on the preview `xcode-27` image, on
+    # which Xcode 27 beta is the only (thus, default) Xcode. The image is
+    # preview, so this job does not block merges.
+    # https://github.com/actions/runner-images/issues/14404
+    runs-on: xcode-27
+    continue-on-error: true
+    steps:
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+    - name: Build package
+      run: swift build
+    - name: Run Swift tests
+      run: swift test
