@@ -28,27 +28,32 @@
 @import GTMSessionFetcherCore;
 #endif
 
-#import "AppDelegate.h"
+#import "SceneDelegate.h"
 
 /*! @brief The OIDC issuer from which the configuration will be discovered.
+    @discussion Populated from Info.plist ("OIDCIssuer" key), which in turn is set from the
+        OIDC_ISSUER build setting in Config/Example.xcconfig (override in
+        Config/Example.local.xcconfig).
  */
-static NSString *const kIssuer = @"https://accounts.google.com";
+#define kIssuer ((NSString *)[[NSBundle mainBundle] objectForInfoDictionaryKey:@"OIDCIssuer"])
 
 /*! @brief The OAuth client ID.
     @discussion For Google, register your client at
         https://console.developers.google.com/apis/credentials?project=_
-        The client should be registered with the "iOS" type.
+        The client should be registered with the "iOS" type. Populated from Info.plist
+        ("OIDCClientID" key) via the OIDC_CLIENT_ID build setting in
+        Config/Example.local.xcconfig.
  */
-static NSString *const kClientID = @"YOUR_CLIENT.apps.googleusercontent.com";
+#define kClientID ((NSString *)[[NSBundle mainBundle] objectForInfoDictionaryKey:@"OIDCClientID"])
 
 /*! @brief The OAuth redirect URI for the client @c kClientID.
     @discussion With Google, the scheme of the redirect URI is the reverse DNS notation of the
         client ID. This scheme must be registered as a scheme in the project's Info
-        property list ("CFBundleURLTypes" plist key). Any path component will work, we use
-        'oauthredirect' here to help disambiguate from any other use of this scheme.
+        property list ("CFBundleURLTypes" plist key). Populated from Info.plist
+        ("OIDCRedirectURI" key) via the OIDC_REDIRECT_URI build setting in
+        Config/Example.local.xcconfig.
  */
-static NSString *const kRedirectURI =
-    @"com.googleusercontent.apps.YOUR_CLIENT:/oauthredirect";
+#define kRedirectURI     ((NSString *)[[NSBundle mainBundle] objectForInfoDictionaryKey:@"OIDCRedirectURI"])
 
 /*! @brief The key used to store our `GTMAuthSession` in the keychain.
  */
@@ -71,17 +76,17 @@ static NSString *const kKeychainStoreItemName = @"authorization";
   // NOTE:
   //
   // To run this sample, you need to register your own iOS client at
-  // https://console.developers.google.com/apis/credentials?project=_ and update three configuration
-  // points in the sample: kClientID and kRedirectURI constants in AppAuthExampleViewController.m
-  // and the URI scheme in Info.plist (URL Types -> Item 0 -> URL Schemes -> Item 0).
+  // https://console.developers.google.com/apis/credentials?project=_ and set the
+  // OIDC_CLIENT_ID, OIDC_REDIRECT_URI, and OIDC_REDIRECT_URI_SCHEME build settings in
+  // Config/Example.local.xcconfig (see Config/Example.xcconfig for the placeholder defaults).
   // Full instructions: https://github.com/openid/AppAuth-iOS/blob/master/Example/README.md
 
   NSAssert(![kClientID isEqualToString:@"YOUR_CLIENT.apps.googleusercontent.com"],
-           @"Update kClientID with your own client ID. "
+           @"Set OIDC_CLIENT_ID in Config/Example.local.xcconfig to your own client ID. "
             "Instructions: https://github.com/openid/AppAuth-iOS/blob/master/Example/README.md");
 
   NSAssert(![kRedirectURI isEqualToString:@"com.googleusercontent.apps.YOUR_CLIENT:/oauthredirect"],
-           @"Update kRedirectURI with your own redirect URI. "
+           @"Set OIDC_REDIRECT_URI in Config/Example.local.xcconfig to your own redirect URI. "
             "Instructions: https://github.com/openid/AppAuth-iOS/blob/master/Example/README.md");
 
   // verifies that the custom URI scheme has been updated in the Info.plist
@@ -92,8 +97,8 @@ static NSString *const kKeychainStoreItemName = @"authorization";
   NSString *urlScheme = urlSchemes.firstObject;
 
   NSAssert(![urlScheme isEqualToString:@"com.googleusercontent.apps.YOUR_CLIENT"],
-           @"Configure the URI scheme in Info.plist (URL Types -> Item 0 -> URL Schemes -> Item 0) "
-            "with the scheme of your redirect URI. Full instructions: "
+           @"Set OIDC_REDIRECT_URI_SCHEME in Config/Example.local.xcconfig to the scheme of your "
+            "redirect URI. Full instructions: "
             "https://github.com/openid/AppAuth-iOS/blob/master/Example/README.md");
 
 #endif // !defined(NS_BLOCK_ASSERTIONS)
@@ -197,10 +202,10 @@ static NSString *const kKeychainStoreItemName = @"authorization";
                                                   responseType:OIDResponseTypeCode
                                           additionalParameters:nil];
     // performs authentication request
-    AppDelegate *appDelegate = (AppDelegate *)[UIApplication sharedApplication].delegate;
+    SceneDelegate *sceneDelegate = (SceneDelegate *)self.view.window.windowScene.delegate;
     [self logMessage:@"Initiating authorization request with scope: %@", request.scope];
 
-    appDelegate.currentAuthorizationFlow =
+    sceneDelegate.currentAuthorizationFlow =
         [OIDAuthState authStateByPresentingAuthorizationRequest:request
             presentingViewController:self
                             callback:^(OIDAuthState *_Nullable authState,
