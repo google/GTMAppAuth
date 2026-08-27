@@ -1,9 +1,9 @@
-# Unreleased
-- Migrated the iOS example app to the UIScene lifecycle (adds SceneDelegate, UIApplicationSceneManifest); the iOS example now requires iOS 15+
-- BREAKING: Raised minimum deployment targets to iOS 15.0, macOS 12.0, tvOS 15.0 and watchOS 9.0, and `swift-tools-version` to 5.7, to adopt AppAuth 3.0.0.
-- BREAKING: Updated the AppAuth dependency to 3.0.0.
-- Widened the GTMSessionFetcher dependency to allow 4.x and 5.x ([#273](https://github.com/google/GTMAppAuth/issues/273)).
-- Updated the CocoaPods development dependency to 1.17.0.
+# 6.0.0
+- BREAKING: Updated the AppAuth dependency to 3.0.0 and raised the minimum deployment targets to iOS 15.0, macOS 12.0, tvOS 15.0 and watchOS 9.0, along with `swift-tools-version` 5.7 ([#280](https://github.com/google/GTMAppAuth/pull/280))
+- Widened the GTMSessionFetcher dependency to allow 4.x and 5.x, and updated the CocoaPods development dependency to 1.17.0 ([#284](https://github.com/google/GTMAppAuth/pull/284))
+- Migrated the iOS example app to the UIScene lifecycle; the iOS example now requires iOS 15+ ([#278](https://github.com/google/GTMAppAuth/pull/278))
+- Updated the iOS example to use xcconfig-based client configuration ([#279](https://github.com/google/GTMAppAuth/pull/279))
+- Fixed compile errors when building in Swift 6 language mode ([#267](https://github.com/google/GTMAppAuth/pull/267))
 
 # 5.0.0
 - Update keychain default on Mac to be data protected ([#259](https://github.com/google/GTMAppAuth/pull/259))
