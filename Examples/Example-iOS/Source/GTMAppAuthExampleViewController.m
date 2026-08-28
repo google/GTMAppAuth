@@ -18,6 +18,7 @@
 
 #import "GTMAppAuthExampleViewController.h"
 
+#import <CommonCrypto/CommonDigest.h>
 #import <QuartzCore/QuartzCore.h>
 
 @import AppAuth;
@@ -63,6 +64,7 @@ static NSString *const kKeychainStoreItemName = @"authorization";
                                                OIDAuthStateErrorDelegate>
 
 @property (nonatomic, strong) GTMKeychainStore *keychainStore;
+@property (nonatomic, strong) UIButton *forceRefreshButton;
 
 @end
 
@@ -72,6 +74,7 @@ static NSString *const kKeychainStoreItemName = @"authorization";
   [super viewDidLoad];
 
   self.keychainStore = [[GTMKeychainStore alloc] initWithItemName:kKeychainStoreItemName];
+
 #if !defined(NS_BLOCK_ASSERTIONS)
   // NOTE:
   //
@@ -103,14 +106,51 @@ static NSString *const kKeychainStoreItemName = @"authorization";
 
 #endif // !defined(NS_BLOCK_ASSERTIONS)
 
+  _authAutoButton.accessibilityIdentifier = @"authorize_button";
+  _userinfoButton.accessibilityIdentifier = @"userinfo_button";
+  _clearAuthStateButton.accessibilityIdentifier = @"clear_auth_state_button";
+  _logTextView.accessibilityIdentifier = @"log_text_view";
+
   _logTextView.layer.borderColor = [UIColor colorWithWhite:0.8 alpha:1.0].CGColor;
   _logTextView.layer.borderWidth = 1.0f;
   _logTextView.alwaysBounceVertical = YES;
   _logTextView.textContainer.lineBreakMode = NSLineBreakByCharWrapping;
   _logTextView.text = @"";
 
+  if ([[NSUserDefaults standardUserDefaults] boolForKey:@"GTMAppAuthTestClearKeychain"]) {
+    NSError *error;
+    [self.keychainStore removeAuthSessionWithError:&error];
+    if (error) {
+      [self logMessage:@"Test hook: clear keychain result: %@", error];
+    } else {
+      [self logMessage:@"Test hook: cleared keychain auth session"];
+    }
+  }
+
+  self.forceRefreshButton = [UIButton buttonWithType:UIButtonTypeSystem];
+  [self.forceRefreshButton setTitle:@"Force Refresh" forState:UIControlStateNormal];
+  self.forceRefreshButton.accessibilityIdentifier = @"force_refresh_button";
+  self.forceRefreshButton.translatesAutoresizingMaskIntoConstraints = NO;
+  [self.forceRefreshButton addTarget:self
+                              action:@selector(forceTokenRefresh:)
+                    forControlEvents:UIControlEventTouchUpInside];
+  [self.view addSubview:self.forceRefreshButton];
+
+  [NSLayoutConstraint activateConstraints:@[
+    [self.forceRefreshButton.leadingAnchor
+        constraintEqualToAnchor:_clearAuthStateButton.trailingAnchor constant:16],
+    [self.forceRefreshButton.centerYAnchor
+        constraintEqualToAnchor:_clearAuthStateButton.centerYAnchor],
+  ]];
+
   [self loadState];
   [self updateUI];
+
+  if ([[NSUserDefaults standardUserDefaults] boolForKey:@"GTMAppAuthTestForceRefreshOnLaunch"]) {
+    [self forceTokenRefresh:nil];
+  }
+
+  [self logTestStateForEvent:@"launch"];
 }
 
 /*! @brief Saves the @c GTMAuthSession to the keychain.
@@ -152,6 +192,7 @@ static NSString *const kKeychainStoreItemName = @"authorization";
 - (void)updateUI {
   _userinfoButton.enabled = _authSession.canAuthorize;
   _clearAuthStateButton.enabled = _authSession.canAuthorize;
+  self.forceRefreshButton.enabled = _authSession.canAuthorize;
   // dynamically changes authorize button text depending on authorized state
   if (!_authSession.canAuthorize) {
     [_authAutoButton setTitle:@"Authorize" forState:UIControlStateNormal];
@@ -165,6 +206,7 @@ static NSString *const kKeychainStoreItemName = @"authorization";
 - (void)stateChanged {
   [self saveState];
   [self updateUI];
+  [self logTestStateForEvent:@"state_changed"];
 }
 
 - (void)didChangeState:(OIDAuthState *)state {
@@ -271,6 +313,79 @@ static NSString *const kKeychainStoreItemName = @"authorization";
     // Success response!
     [self logMessage:@"Success: %@", jsonDictionaryOrArray];
   }];
+}
+
+- (IBAction)forceTokenRefresh:(nullable id)sender {
+  if (!self.authSession.canAuthorize) {
+    [self logMessage:@"Force refresh: no authorized session"];
+    return;
+  }
+  NSString *beforeFingerprint =
+      [self fingerprintForToken:self.authSession.authState.lastTokenResponse.accessToken];
+  [self.authSession.authState setNeedsTokenRefresh];
+  [self.authSession.authState performActionWithFreshTokens:^(NSString *_Nullable accessToken,
+                                                             NSString *_Nullable idToken,
+                                                             NSError *_Nullable error) {
+    dispatch_async(dispatch_get_main_queue(), ^{
+      if (error) {
+        [self logMessage:@"Force refresh failed: %@", [error localizedDescription]];
+        return;
+      }
+      NSString *afterFingerprint = [self fingerprintForToken:accessToken];
+      [self logMessage:@"Force refresh succeeded; access token fingerprint %@ -> %@",
+                       beforeFingerprint, afterFingerprint];
+      [self logTestStateForEvent:@"force_refresh"];
+    });
+  }];
+}
+
+/*! @brief Logs a machine-readable state line for the given event.
+    @param event The event name to log.
+ */
+- (void)logTestStateForEvent:(NSString *)event {
+  BOOL canAuthorize = self.authSession.canAuthorize;
+  BOOL hasRefreshToken = self.authSession.authState.refreshToken.length > 0;
+  NSString *accessToken = self.authSession.authState.lastTokenResponse.accessToken;
+  NSString *fingerprint = [self fingerprintForToken:accessToken];
+  NSDate *expiration = self.authSession.authState.lastTokenResponse.accessTokenExpirationDate;
+  NSString *expirationString = nil;
+  if (expiration) {
+    NSISO8601DateFormatter *formatter = [[NSISO8601DateFormatter alloc] init];
+    expirationString = [formatter stringFromDate:expiration];
+  }
+
+  NSDictionary *state = @{
+    @"event": event,
+    @"canAuthorize": @(canAuthorize),
+    @"hasRefreshToken": @(hasRefreshToken),
+    @"accessTokenFingerprint": fingerprint ?: [NSNull null],
+    @"accessTokenExpiration": expirationString ?: [NSNull null]
+  };
+
+  NSError *error;
+  NSData *jsonData = [NSJSONSerialization dataWithJSONObject:state options:0 error:&error];
+  if (jsonData) {
+    NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    NSLog(@"GTMAPPAUTH_TEST_STATE %@", jsonString);
+  }
+}
+
+/*! @brief Returns a fingerprint (first 8 hex characters of SHA-256) for the given token.
+    @param token The token to fingerprint.
+    @return The fingerprint string, or nil if the token is nil or empty.
+ */
+- (nullable NSString *)fingerprintForToken:(nullable NSString *)token {
+  if (token.length == 0) {
+    return nil;
+  }
+  NSData *data = [token dataUsingEncoding:NSUTF8StringEncoding];
+  uint8_t digest[CC_SHA256_DIGEST_LENGTH];
+  CC_SHA256(data.bytes, (CC_LONG)data.length, digest);
+  NSMutableString *output = [NSMutableString stringWithCapacity:8];
+  for (int i = 0; i < 4; i++) {
+    [output appendFormat:@"%02x", digest[i]];
+  }
+  return [output copy];
 }
 
 /*! @brief Logs a message to stdout and the textfield.

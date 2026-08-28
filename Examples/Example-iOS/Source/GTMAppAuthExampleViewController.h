@@ -41,6 +41,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (IBAction)authWithAutoCodeExchange:(nullable id)sender;
 
+/*! @brief Forces the next token use to refresh the access token, then refreshes it.
+    @param sender IBAction sender.
+ */
+- (IBAction)forceTokenRefresh:(nullable id)sender;
+
 /*! @brief Performs a Userinfo API call using @c GTMAuthSession.
     @param sender IBAction sender.
  */
