@@ -22,11 +22,7 @@
 
 @import AppAuth;
 @import GTMAppAuth;
-#ifdef COCOAPODS
-@import GTMSessionFetcher;
-#else // SPM
 @import GTMSessionFetcherCore;
-#endif
 
 #import "SceneDelegate.h"
 
