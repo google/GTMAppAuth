@@ -3,6 +3,9 @@
 [![License](https://img.shields.io/cocoapods/l/GTMAppAuth.svg?style=flat)](https://cocoapods.org/pods/GTMAppAuth)
 [![tests](https://github.com/google/GTMAppAuth/actions/workflows/tests.yml/badge.svg?event=push)](https://github.com/google/GTMAppAuth/actions/workflows/tests.yml)
 
+> [!IMPORTANT]
+> **CocoaPods distribution is deprecated.** CocoaPods trunk becomes read-only on December 2, 2026. GTMAppAuth 6.0.0 is the last version published to CocoaPods; future releases are distributed through Swift Package Manager only. See [Migrating from CocoaPods to Swift Package Manager](MIGRATING_FROM_COCOAPODS.md).
+
 # GTMAppAuth for Apple Platforms
 
 GTMAppAuth enables you to use [AppAuth](https://github.com/openid/AppAuth-iOS)
@@ -31,12 +34,23 @@ Projects that must keep supporting iOS 12 through 14 should remain on GTMAppAuth
 
 ## Setup
 
-If you use [CocoaPods](https://guides.cocoapods.org/using/getting-started.html),
-simply add:
+GTMAppAuth is distributed with [Swift Package Manager](https://swift.org/package-manager/).
 
-    pod 'GTMAppAuth'
+In Xcode, choose **File > Add Package Dependencies…**, enter
+`https://github.com/google/GTMAppAuth`, and add the `GTMAppAuth` product to your target.
 
-To your `Podfile` and run `pod install`.
+Or add it to your `Package.swift`:
+
+```swift
+dependencies: [
+  .package(url: "https://github.com/google/GTMAppAuth.git", from: "6.0.0")
+]
+```
+
+and depend on `.product(name: "GTMAppAuth", package: "GTMAppAuth")` in your target.
+
+If you currently use CocoaPods, see
+[Migrating from CocoaPods to Swift Package Manager](MIGRATING_FROM_COCOAPODS.md).
 
 ## Usage
 
@@ -360,9 +374,7 @@ should save in GTMAppAuth format as described above).
 ## Included Samples
 
 Try out one of the included sample apps under [Examples](Examples). Open the
-Swift Package Manager project (`Example-iOS.xcodeproj`) directly, or for
-CocoaPods run `pod install` in the app's folder and open the resulting
-`xcworkspace` file.
+Swift Package Manager project (`Example-iOS.xcodeproj`) directly.
 
 Be sure to follow the instructions in
 [Example-iOS/README.md](Examples/Example-iOS/README.md) or
