@@ -1,6 +1,6 @@
-[![Version](https://img.shields.io/cocoapods/v/GTMAppAuth.svg?style=flat)](https://cocoapods.org/pods/GTMAppAuth)
-[![Platform](https://img.shields.io/cocoapods/p/GTMAppAuth.svg?style=flat)](https://cocoapods.org/pods/GTMAppAuth)
-[![License](https://img.shields.io/cocoapods/l/GTMAppAuth.svg?style=flat)](https://cocoapods.org/pods/GTMAppAuth)
+[![Release](https://img.shields.io/github/v/release/google/GTMAppAuth?style=flat)](https://github.com/google/GTMAppAuth/releases)
+[![Swift Package Manager](https://img.shields.io/badge/Swift_Package_Manager-compatible-brightgreen?style=flat)](https://swift.org/package-manager/)
+[![License](https://img.shields.io/github/license/google/GTMAppAuth?style=flat)](LICENSE)
 [![tests](https://github.com/google/GTMAppAuth/actions/workflows/tests.yml/badge.svg?event=push)](https://github.com/google/GTMAppAuth/actions/workflows/tests.yml)
 
 > [!IMPORTANT]
