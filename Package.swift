@@ -29,6 +29,11 @@ let package = Package(
     .library(
       name: "GTMAppAuth",
       targets: ["GTMAppAuth"]
+    ),
+    // In-memory fakes for packages that test against GTMAppAuth.
+    .library(
+      name: "GTMAppAuthTestHelpers",
+      targets: ["GTMAppAuthTestHelpers"]
     )
   ],
   dependencies: [
@@ -49,18 +54,28 @@ let package = Package(
       ]
     ),
     .target(
+      name: "GTMAppAuthTestHelpers",
+      dependencies: [
+        "GTMAppAuth"
+      ],
+      path: "GTMAppAuth/Tests/Helpers/Fakes"
+    ),
+    // Test factories for AppAuth types and XCTest delegates used only by this package's own tests; not a product, because its @objc extensions would collide with downstream packages' own test categories.
+    .target(
       name: "TestHelpers",
       dependencies: [
         .product(name: "AppAuthCore", package: "AppAuth-iOS"),
         "GTMAppAuth"
       ],
-      path: "GTMAppAuth/Tests/Helpers"
+      path: "GTMAppAuth/Tests/Helpers",
+      exclude: ["Fakes"]
     ),
     .testTarget(
       name: "GTMAppAuthTests",
       dependencies: [
         "GTMAppAuth",
-        "TestHelpers"
+        "TestHelpers",
+        "GTMAppAuthTestHelpers"
       ],
       path: "GTMAppAuth/Tests/Unit"
     ),
@@ -69,7 +84,8 @@ let package = Package(
       dependencies: [
         .product(name: "AppAuthCore", package: "AppAuth-iOS"),
         "GTMAppAuth",
-        "TestHelpers"
+        "TestHelpers",
+        "GTMAppAuthTestHelpers"
       ],
       path: "GTMAppAuth/Tests/ObjCIntegration"
     )

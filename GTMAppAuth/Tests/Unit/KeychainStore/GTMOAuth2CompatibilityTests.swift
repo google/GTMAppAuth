@@ -20,6 +20,7 @@ import XCTest
 #if SWIFT_PACKAGE
 import AppAuthCore
 import TestHelpers
+import GTMAppAuthTestHelpers
 #else
 import AppAuth
 #endif

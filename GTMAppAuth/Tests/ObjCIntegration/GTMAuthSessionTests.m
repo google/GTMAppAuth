@@ -19,6 +19,7 @@
 #if SWIFT_PACKAGE
 @import AppAuthCore;
 @import TestHelpers;
+@import GTMAppAuthTestHelpers;
 #else
 @import AppAuth;
 #import "GTMAppAuth_Unit_objc_api_integration-Swift.h"

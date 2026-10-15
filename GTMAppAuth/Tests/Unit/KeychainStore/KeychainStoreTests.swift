@@ -19,7 +19,8 @@ import XCTest
 // the latter doesn't define separate Clang modules for subspecs
 #if SWIFT_PACKAGE
 import AppAuthCore
-@testable import TestHelpers
+import TestHelpers
+@testable import GTMAppAuthTestHelpers
 #else
 import AppAuth
 #endif
