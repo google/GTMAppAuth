@@ -24,6 +24,8 @@ public class KeychainHelperFake: NSObject, KeychainHelper {
   @objc public let accountName = "OauthTest"
   @objc public let keychainAttributes: Set<KeychainAttribute>
   @objc public var generatedKeychainQuery: [String: Any]?
+  /// When set, every `setPassword` variant throws this error instead of storing the password.
+  @objc public var setPasswordError: Error?
   /// Data generated from `NSKeyedArchiver` treated as a property list to test class name mapping.
   private(set) var archiveDataPropertyList: Any?
   /// Data generated from `NSKeyedUnarchiver` treated as a property list to test class name mapping.
@@ -93,6 +95,9 @@ public class KeychainHelperFake: NSObject, KeychainHelper {
   }
 
   @objc public func setPassword(_ password: String, forService service: String) throws {
+    if let setPasswordError = setPasswordError {
+      throw setPasswordError
+    }
     do {
       try removePassword(forService: service)
     } catch KeychainStore.Error.failedToDeletePasswordBecauseItemNotFound {
@@ -112,6 +117,9 @@ public class KeychainHelperFake: NSObject, KeychainHelper {
     forService service: String,
     accessibility: CFTypeRef
   ) throws {
+    if let setPasswordError = setPasswordError {
+      throw setPasswordError
+    }
     do {
       try removePassword(forService: service)
     } catch KeychainStore.Error.failedToDeletePasswordBecauseItemNotFound {
@@ -131,6 +139,9 @@ public class KeychainHelperFake: NSObject, KeychainHelper {
     forService service: String,
     accessibility: CFTypeRef?
   ) throws {
+    if let setPasswordError = setPasswordError {
+      throw setPasswordError
+    }
     guard !service.isEmpty else { throw KeychainStore.Error.noService }
 
     // Use `try?` instead of try to avoid throwing in the ObjC integration tests and test failures

@@ -48,6 +48,7 @@ class KeychainStoreTests: XCTestCase {
     super.tearDown()
     keychainHelper.passwordStore.removeAll()
     keychainHelper.generatedKeychainQuery = nil
+    keychainHelper.setPasswordError = nil
   }
   
   @available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 6.0, *)
@@ -361,6 +362,30 @@ class KeychainStoreTests: XCTestCase {
         .passwordNotFound(forItemName: TestingConstants.testKeychainItemName)
       )
     }
+  }
+
+  func testSaveAuthSessionThrowsWhenKeychainWriteFails() {
+    keychainHelper.setPasswordError = NSError(domain: "test", code: 7)
+
+    XCTAssertThrowsError(try keychainStore.save(authSession: authSession)) { thrownError in
+      let nsError = thrownError as NSError
+      XCTAssertEqual(nsError.domain, "test")
+      XCTAssertEqual(nsError.code, 7)
+    }
+    XCTAssertTrue(keychainHelper.passwordStore.isEmpty)
+  }
+
+  func testSaveWithGTMOAuth2FormatThrowsWhenKeychainWriteFails() {
+    keychainHelper.setPasswordError = NSError(domain: "test", code: 7)
+
+    XCTAssertThrowsError(
+      try keychainStore.saveWithGTMOAuth2Format(forAuthSession: authSession)
+    ) { thrownError in
+      let nsError = thrownError as NSError
+      XCTAssertEqual(nsError.domain, "test")
+      XCTAssertEqual(nsError.code, 7)
+    }
+    XCTAssertTrue(keychainHelper.passwordStore.isEmpty)
   }
 
   // MARK: - NSKeyed(Un)Archiver Class Name Mapping

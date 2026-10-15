@@ -30,7 +30,7 @@ let package = Package(
       name: "GTMAppAuth",
       targets: ["GTMAppAuth"]
     ),
-    // In-memory fakes for packages that test against GTMAppAuth.
+    // In-memory fakes for packages that test against GTMAppAuth: KeychainHelperFake and AuthSessionStoreFake.
     .library(
       name: "GTMAppAuthTestHelpers",
       targets: ["GTMAppAuthTestHelpers"]
