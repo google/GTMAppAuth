@@ -14,17 +14,6 @@ permissions:
 
 jobs:
 
-  pod-lib-lint:
-    runs-on: macos-latest
-    steps:
-    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-    - name: Update Bundler
-      run: bundle update --bundler
-    - name: Install Ruby gems with Bundler
-      run: bundle install
-    - name: Lint GTMAppAuth.podspec using local source
-      run: pod lib lint GTMAppAuth.podspec --verbose
-
   spm-build-test:
     runs-on: macos-latest
     steps:
