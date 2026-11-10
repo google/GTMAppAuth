@@ -3,8 +3,7 @@
 [![License](https://img.shields.io/github/license/google/GTMAppAuth?style=flat)](LICENSE)
 [![tests](https://github.com/google/GTMAppAuth/actions/workflows/tests.yml/badge.svg?event=push)](https://github.com/google/GTMAppAuth/actions/workflows/tests.yml)
 
-> [!IMPORTANT]
-> **CocoaPods distribution is deprecated.** CocoaPods trunk becomes read-only on December 2, 2026. GTMAppAuth 6.0.0 is the last version published to CocoaPods; future releases are distributed through Swift Package Manager only. See [Migrating from CocoaPods to Swift Package Manager](MIGRATING_FROM_COCOAPODS.md).
+> **CocoaPods support ended with GTMAppAuth 6.0.0.** Later releases are distributed through Swift Package Manager only. See [Migrating from CocoaPods to Swift Package Manager](MIGRATING_FROM_COCOAPODS.md).
 
 # GTMAppAuth for Apple Platforms
 

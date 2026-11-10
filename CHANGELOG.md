@@ -1,5 +1,6 @@
 # Unreleased
 - Deprecated CocoaPods distribution. GTMAppAuth 6.0.0 is the last release published to CocoaPods; CocoaPods trunk becomes read-only on December 2, 2026. See [MIGRATING_FROM_COCOAPODS.md](MIGRATING_FROM_COCOAPODS.md) for moving to Swift Package Manager. ([#277](https://github.com/google/GTMAppAuth/issues/277))
+- Removed the podspec, the examples' Podfiles and `ForPod` projects, and the `pod lib lint` CI job. GTMAppAuth 6.0.0 remains the last version on CocoaPods; later releases are distributed through Swift Package Manager only. See [MIGRATING_FROM_COCOAPODS.md](MIGRATING_FROM_COCOAPODS.md). ([#277](https://github.com/google/GTMAppAuth/issues/277))
 
 # 6.0.0
 - BREAKING: Updated the AppAuth dependency to 3.0.0 and raised the minimum deployment targets to iOS 15.0, macOS 12.0, tvOS 15.0 and watchOS 9.0, along with `swift-tools-version` 5.7 ([#280](https://github.com/google/GTMAppAuth/pull/280))
